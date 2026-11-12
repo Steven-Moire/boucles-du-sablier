@@ -74,5 +74,55 @@ Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données)
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
+## Équipement et forge à recettes — PROPOSITION (étape 2, en attente de validation)
+
+### Principes
+- **Le village garde les objets** : une fois forgé, un objet appartient au village pour toujours (`meta.items`). Le héros oublie son niveau, pas son équipement. Cela colle au lore (« le forgeron garde tes plans »).
+- **3 emplacements** : arme (puissance, critique), armure (PV, armure, esquive), accessoire (utilitaire : temps de boucle, butin). Un objet par emplacement, on change librement au village entre deux boucles.
+- **Matériaux propres à chaque zone**, lâchés par les monstres : c'est la raison de refaire une zone déjà terminée (farm).
+- **Recettes débloquées par le bestiaire** : une recette apparaît à la forge quand **tous les monstres qui donnent ses matériaux ont été vaincus au moins une fois** (`bestiary[id].killed`, déjà sauvegardé). Le bestiaire affiche « Sert à : … » dans la fiche du monstre.
+- **Paliers par niveau de Forge** (le bâtiment existant) : palier 1 à Forge niv 1, palier 2 à Forge niv 3, palier 3 à Forge niv 5. Le bâtiment Forge garde ses bonus actuels.
+- Un objet se forge **une seule fois** (pas de niveaux d'objet dans cette version).
+
+### Matériaux (nouveaux butins)
+| Matériau | Zone | Source (chance, quantité) |
+|---|---|---|
+| 🟫 Cuir | Prés | Mulot (35 %, 1) · Sanglier (50 %, 1) |
+| 🦷 Défense d'alpha | Prés | Sanglier alpha (100 %, 1) |
+| 🐺 Fourrure | Collines | Loup gris (50 %, 1) |
+| 🔹 Éclat de pierre | Collines | Golem de pierre (50 %, 1) |
+| 🐾 Griffe d'ours | Collines | Ours ancien (100 %, 1) |
+| ⏳ Sable du sablier | Sommet | Gardien du Sablier (100 %, 2) |
+
+Le bois et le minerai existants servent aussi. L'or reste le coût principal.
+
+### Recettes
+| Emplacement | Objet | Bonus | Coût | Débloquée par | Palier |
+|---|---|---|---|---|---|
+| Arme | Pioche affûtée | +2 puissance | 15 🪙 · 2 🪵 · 2 🪨 | dès la Forge | 1 |
+| Arme | Coutelas de défense | +3 puissance, +3 % critique | 40 🪙 · 2 🦷 · 3 🟫 | Sanglier alpha vaincu | 1 |
+| Arme | Pioche à griffes | +5 puissance, +5 % critique | 120 🪙 · 2 🐾 · 4 🔹 · 3 🪨 | Ours ancien vaincu | 2 |
+| Armure | Tablier de cuir | +15 PV, +1 armure | 20 🪙 · 4 🟫 | Mulot ou Sanglier vaincu | 1 |
+| Armure | Manteau de fourrure | +30 PV, +1 armure, +3 % esquive | 60 🪙 · 5 🐺 · 3 🟫 | Loup gris vaincu | 2 |
+| Armure | Plastron de pierre | +25 PV, +3 armure | 100 🪙 · 6 🔹 · 4 🪨 | Golem vaincu | 2 |
+| Accessoire | Lanterne de mineur | +5 s de boucle | 30 🪙 · 2 🪵 · 3 🪨 | dès la Forge | 1 |
+| Accessoire | Collier de crocs | +4 % esquive, +3 % critique | 50 🪙 · 4 🐺 · 1 🐾 | Loup + Ours vaincus | 2 |
+| Accessoire | Sablier de poche | +10 s de boucle, +10 % d'or | 200 🪙 · 2 ⏳ | Gardien vaincu | 3 |
+
+Ordres de grandeur : le Tablier de cuir vaut à peu près un niveau de Forge plus deux niveaux d'Entraîneur en PV, pour ~20 🪙 et un peu de farm. La Pioche à griffes (+5 puissance) vaut ~5 niveaux d'Entraîneur : c'est l'objet qui rend le boss abordable, mais elle demande d'avoir battu l'Ours, deux fois pour 2 griffes.
+
+### Équilibrage
+- Cible inchangée : **boss entre la 9e et la 13e boucle** dans `node tools/sim.js`. Le bot forgera l'objet le plus fort payable par emplacement, après ses achats au village.
+- Leviers si la simu sort de la cible : chances de drop des matériaux d'abord (elles règlent le temps de farm), puis bonus des objets. Les coûts des bâtiments ne bougent pas.
+- Les nouvelles stats passent par `heroBase()` comme les trophées : aucun changement dans le combat.
+
+### Sauvegarde
+Nouveaux champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.mats = {}` (stock de matériaux), `meta.items = {}` (objets forgés), `meta.equip = {arme:null, armure:null, accessoire:null}`.
+
+### Interface
+- Onglet Village → section Forge : liste des recettes connues (grisées si non payables), « ??? » pour celles pas encore révélées avec l'indice « Vaincs … », bouton FORGER.
+- Section Équipement : 3 emplacements, choix parmi les objets forgés.
+- Barre du haut : les matériaux n'y sont pas (trop nombreux), ils sont dans la section Forge.
+
 ## Backlog
 Voir la feuille de route dans `CLAUDE.md`. Prochaines étapes : découper le code, ajouter l'équipement et la forge à recettes, donner un rôle à la renommée, puis la mine.
