@@ -43,6 +43,18 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 5. Bâtiments du village (pour une future vue « village »)
 
 ## Suivi des assets
+Prompts complets, modèle et seeds : `tools/sprites.json`. Modèle actuel : DreamShaperXL Turbo (8 pas, CFG 2), sans LoRA pixel art.
+Limites connues de la v1 : visages peu lisibles en 48-64 px, Gardien sans son sablier (le modèle l'ignore), restes de sol sous certains sprites. À reprendre avec un LoRA pixel art et une retouche à la main.
+
 | Asset | Fichier | Prompt (résumé) | Seed | État |
 |---|---|---|---|---|
-| Héros | `assets/sprites/heros.png` | mineur fou + sablier fêlé | | à faire |
+| Héros | `assets/sprites/heros.png` | mineur fou, casque jaune + pioche | 1100 | v1 (SD + pixelize, sans retouche) |
+| Mulot dentu | `assets/sprites/mulot.png` | souris en colère, grandes incisives | 2001 | v1 (SD + pixelize, sans retouche) |
+| Sanglier | `assets/sprites/sanglier.png` | sanglier de profil | 3101 | v1 (SD + pixelize, sans retouche) |
+| Sanglier alpha | `assets/sprites/sanglier_alpha.png` | sanglier couvert de boue, couronne de brindilles | 4101 | v1 (SD + pixelize, sans retouche) |
+| Loup gris | `assets/sprites/loup.png` | loup qui grogne, de profil | 5002 | v1 (SD + pixelize, sans retouche) |
+| Golem de pierre | `assets/sprites/golem.png` | golem de rochers, cœur de cristal bleu | 6002 | v1 (SD + pixelize, sans retouche) |
+| Ours ancien | `assets/sprites/ours.png` | ours géant, runes gravées | 7101 | v1 (SD + pixelize, sans retouche) |
+| Gardien du Sablier | `assets/sprites/gardien.png` | gardien de pierre et d'or | 8103 | v1 (SD + pixelize, sans retouche) |
+| Fond Prés de l'Aube | `assets/sprites/bg_pres.png` | prairie à l'aube, ciel rose | 9000 | v1 (SD + pixelize, sans retouche) |
+| Fond Collines grises | `assets/sprites/bg_collines.png` | collines rocheuses, falaises | 9500 | v1 (SD + pixelize, sans retouche) |

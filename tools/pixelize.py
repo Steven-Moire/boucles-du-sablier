@@ -13,7 +13,7 @@ Dépendance : pip install pillow
 """
 import argparse
 from pathlib import Path
-from PIL import Image, ImageFilter
+from PIL import Image, ImageEnhance, ImageFilter
 
 
 def load_palette(path):
@@ -27,8 +27,21 @@ def load_palette(path):
     return cols
 
 
+def lab(c):
+    """sRGB (0-255) -> CIELAB (D65) : distance perceptuelle, garde les bruns bruns au lieu de les griser."""
+    def lin(v):
+        v /= 255
+        return v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
+    r, g, b = (lin(v) for v in c)
+    x, y, z = (r * .4124 + g * .3576 + b * .1805) / .95047, r * .2126 + g * .7152 + b * .0722, (r * .0193 + g * .1192 + b * .9505) / 1.08883
+    f = lambda t: t ** (1 / 3) if t > .008856 else 7.787 * t + 16 / 116
+    fx, fy, fz = f(x), f(y), f(z)
+    return 116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)
+
+
 def nearest(c, cols):
-    return min(cols, key=lambda p: (p[0] - c[0]) ** 2 * 3 + (p[1] - c[1]) ** 2 * 4 + (p[2] - c[2]) ** 2 * 2)
+    lc = lab(c)
+    return min(cols, key=lambda p: sum((a - b) ** 2 for a, b in zip(lab(p), lc)))
 
 
 def remove_bg(img, tol, work=384):
@@ -100,7 +113,7 @@ def outline(img, color):
     return out
 
 
-def pixelize(src, dst, size, palette=None, colors=16, bg=None, tol=120, preview=1, crop=True, line=False):
+def pixelize(src, dst, size, palette=None, colors=16, bg=None, tol=120, preview=1, crop=True, line=False, sat=1.35):
     img = Image.open(src).convert('RGBA')
     if bg == 'auto':
         img = remove_bg(img, tol)
@@ -112,7 +125,8 @@ def pixelize(src, dst, size, palette=None, colors=16, bg=None, tol=120, preview=
     nw, nh = max(1, round(w * scale)), max(1, round(h * scale))
     small = img.convert('RGBa').resize((nw, nh), Image.Resampling.BOX).convert('RGBA')
     alpha = small.getchannel('A').point(lambda a: 255 if a > 128 else 0)   # alpha binaire
-    q = small.convert('RGB').quantize(colors=colors, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
+    rgb = ImageEnhance.Color(small.convert('RGB')).enhance(sat)   # pixel art = couleurs franches, évite le gris
+    q = rgb.quantize(colors=colors, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
     if palette:
         cols = load_palette(palette)
         flat = q.getpalette()[:colors * 3]
@@ -142,7 +156,8 @@ if __name__ == '__main__':
     p.add_argument('--tol', type=int, default=120, help='tolérance du détourage')
     p.add_argument('--no-crop', action='store_true', help='ne pas recadrer sur le sujet')
     p.add_argument('--outline', action='store_true', help='contour sombre d\'un pixel (couleur la plus sombre de la palette)')
+    p.add_argument('--sat', type=float, default=1.35, help='saturation avant verrouillage palette (1 = inchangée)')
     p.add_argument('--preview', type=int, default=1, help='agrandissement xN (1 = taille réelle, à garder pour le jeu)')
     a = p.parse_args()
     print('écrit', a.dst, pixelize(a.src, a.dst, a.size, a.palette, a.colors, a.bg, a.tol, a.preview,
-                                   not a.no_crop, a.outline))
+                                   not a.no_crop, a.outline, a.sat))
