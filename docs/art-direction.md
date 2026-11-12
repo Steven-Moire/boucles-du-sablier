@@ -24,7 +24,7 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 - Dans le CSS : `image-rendering: pixelated;`, avec des agrandissements en multiples entiers uniquement.
 
 ## Pipeline Stable Diffusion (en local)
-1. **Modèle** : Juggernaut XI + LoRA Pixel Art XL (`nerijs/pixel-art-xl`, installé dans `C:\StableDiffusionorge\webui\models\Lora\`). Génère en 1024 × 1024, sur fond uni clair.
+1. **Modèle** : Juggernaut XI + LoRA Pixel Art XL (`nerijs/pixel-art-xl`, installé dans `C:\StableDiffusion\forge\webui\models\Lora\`). Génère en 1024 × 1024, sur fond uni clair.
 2. **Préfixe de style** (identique pour tous les assets, pour la cohérence) :
    `pixel art, 16-bit game sprite, clean crisp pixels, limited color palette, soft shading, light from top-left, centered, full body, plain flat light background`
 3. **Négatif** : `blurry, gradient background, text, watermark, jpeg artifacts, anti-aliasing, 3d render, photo, realistic`
