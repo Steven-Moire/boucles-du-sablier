@@ -1,0 +1,14 @@
+screenshots/
+__pycache__/
+*.pyc
+node_modules/
+.DS_Store
+# images brutes de Stable Diffusion (garder seulement les sprites finaux)
+sd_raw/
+
+# outillage Claude local (rapatrié d'atlas, jamais versionné : dépôt public)
+.claude/
+.mcp.json
+CLAUDE.local.md
+# archive source du prototype
+*.zip
