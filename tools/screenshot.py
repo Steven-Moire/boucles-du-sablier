@@ -16,8 +16,10 @@ OUT = ROOT / 'screenshots'
 
 def serve():
     """Les modules ES ne se chargent pas en file:// : on sert le dossier en HTTP sur un port libre."""
-    handler = functools.partial(http.server.SimpleHTTPRequestHandler, directory=str(ROOT))
-    handler.log_message = lambda *a: None
+    class Quiet(http.server.SimpleHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+    handler = functools.partial(Quiet, directory=str(ROOT))
     srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     return srv

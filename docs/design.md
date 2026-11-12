@@ -74,55 +74,111 @@ Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données)
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
-## Équipement et forge à recettes — PROPOSITION (étape 2, en attente de validation)
+## Équipement et forge à recettes — PROPOSITION v2 (étape 2, en attente de validation)
 
-### Principes
-- **Le village garde les objets** : une fois forgé, un objet appartient au village pour toujours (`meta.items`). Le héros oublie son niveau, pas son équipement. Cela colle au lore (« le forgeron garde tes plans »).
-- **3 emplacements** : arme (puissance, critique), armure (PV, armure, esquive), accessoire (utilitaire : temps de boucle, butin). Un objet par emplacement, on change librement au village entre deux boucles.
-- **Matériaux propres à chaque zone**, lâchés par les monstres : c'est la raison de refaire une zone déjà terminée (farm).
-- **Recettes débloquées par le bestiaire** : une recette apparaît à la forge quand **tous les monstres qui donnent ses matériaux ont été vaincus au moins une fois** (`bestiary[id].killed`, déjà sauvegardé). Le bestiaire affiche « Sert à : … » dans la fiche du monstre.
-- **Paliers par niveau de Forge** (le bâtiment existant) : palier 1 à Forge niv 1, palier 2 à Forge niv 3, palier 3 à Forge niv 5. Le bâtiment Forge garde ses bonus actuels.
-- Un objet se forge **une seule fois** (pas de niveaux d'objet dans cette version).
+### Retours de Steven (2026-11-12)
+- Un objet se forge **une fois**, puis s'**améliore à la forge**. Question ouverte : l'amélioration survit-elle d'une boucle à l'autre ?
+- Plusieurs **types d'armes** avec des stats et des attributs différents, dont des **éléments**.
+- Avant de choisir la règle de déblocage des recettes : voir le tableau de loot ci-dessous.
 
-### Matériaux (nouveaux butins)
-| Matériau | Zone | Source (chance, quantité) |
+### Tableau de loot (mesuré avec le bot de `tools/sim.js`, 10 parties, sans équipement)
+| Monstre | Rang | Cases (niv) | Stats niv min → max (PV / pui / arm) | XP | Butin actuel | Trophée (chance) | 1re victoire (boucle) | Victoires avant le boss | Victoires / boucle en fin de partie |
+|---|---|---|---|---|---|---|---|---|---|
+| Mulot dentu | normal | Prés 1-3 | 10 / 2,7 / 0 → 24 / 5,6 / 1 | 4-12 | 1-2 🪙 | Incisive (4 %) | 1 | 118 (94-142) | 11 |
+| Sanglier | normal | Prés 2-4 | 25 / 4,8 / 1 → 45 / 8,2 / 2 | 8-16 | 2-4 🪙, 🪵 15 % | Défense (3 %) | 1 | 81 (67-109) | 8 |
+| Sanglier alpha | élite | Prés 4 | 108 / 10,5 / 3 | 48 | 10-15 🪙, 1-3 🪵 50 % | Couronne de boue (15 %) | 3 (2-3) | 8 (7-11) | 1 |
+| Loup gris | normal | Collines 3-7 | 25 / 6,2 / 1 → 54 / 12,6 / 3 | 12-28 | 2-4 🪙 | Croc (3 %) | 2 (1-3) | 112 (83-147) | 16 |
+| Golem de pierre | normal | Collines 4-7 | 54 / 7,8 / 3 → 90 / 12,6 / 5 | 16-28 | 3-5 🪙, 🪨 40 % | Cœur de pierre (3 %) | 4 (2-4) | 64 (40-80) | 10 |
+| Ours ancien | élite | Collines 7 | 192 / 17,6 / 5 | 84 | 20-30 🪙, 1-2 🪨 50 % | Griffe (15 %) | 7 (5-8) | 5 (3-6) | 1 |
+| Gardien du Sablier | boss | Sommet 8 | 408 / 22,7 / 6 | 160 | 80-100 🪙 | Fragment (100 %) | 10 (8-13) | 1 | — |
+
+À retenir : un monstre normal tombe **~100 fois** avant le boss, une élite **~1 fois par boucle**. Les matériaux des normaux doivent donc être rares ou très demandés ; ceux des élites rythment la progression.
+
+### Matériaux (taux revus pour ces volumes)
+| Matériau | Source (chance, quantité) | Stock attendu au moment du boss |
 |---|---|---|
-| 🟫 Cuir | Prés | Mulot (35 %, 1) · Sanglier (50 %, 1) |
-| 🦷 Défense d'alpha | Prés | Sanglier alpha (100 %, 1) |
-| 🐺 Fourrure | Collines | Loup gris (50 %, 1) |
-| 🔹 Éclat de pierre | Collines | Golem de pierre (50 %, 1) |
-| 🐾 Griffe d'ours | Collines | Ours ancien (100 %, 1) |
-| ⏳ Sable du sablier | Sommet | Gardien du Sablier (100 %, 2) |
+| 🟫 Cuir | Mulot 20 %, Sanglier 30 % (1) | ~48 |
+| 🦷 Défense d'alpha | Sanglier alpha 100 % (1) | ~8 |
+| 🐺 Fourrure | Loup gris 25 % (1) | ~28 |
+| 🔹 Éclat de pierre | Golem 30 % (1) | ~19 |
+| 🐾 Griffe d'ours | Ours ancien 100 % (1) | ~5 |
+| ⏳ Sable du sablier | Gardien 100 % (2) | après le boss |
 
-Le bois et le minerai existants servent aussi. L'or reste le coût principal.
+### Types d'armes
+Puissance de référence 16, cible sans armure puis avec 5 d'armure :
+| Type | Attaque toutes les | Dégâts par coup | Particularité | Dégâts / s (arm 0 → arm 5) |
+|---|---|---|---|---|
+| Équilibrée (pioche) | 0,9 s | ×1 | — | 17,8 → 12,2 |
+| Rapide (coutelas) | 0,6 s | ×0,7 | +5 % critique | 18,7 → 10,3 |
+| Lourde (marteau) | 1,4 s | ×1,5 | ignore 2 d'armure | 17,1 → 15,0 |
 
-### Recettes
-| Emplacement | Objet | Bonus | Coût | Débloquée par | Palier |
+Le rapide domine contre les nuées sans armure (Prés), le lourd contre les golems et l'ours.
+
+### Éléments
+Un élément s'**infuse** dans une arme à la forge (un seul à la fois, remplaçable). Il multiplie le coup entier : `dégâts = max(1, puissance × multiplicateur × élément − armure)`, ×1,5 sur une faiblesse, ×0,5 sur une résistance.
+
+| Monstre | Faible à | Résiste à |
+|---|---|---|
+| Mulot, Sanglier | 🔥 Feu | — |
+| Sanglier alpha | ❄️ Givre | 🔥 Feu (boue cuite) |
+| Loup gris | 🔥 Feu | ❄️ Givre (fourrure) |
+| Golem de pierre | ❄️ Givre (le gel fend la pierre) | 🔥 Feu |
+| Ours ancien | ⚡ Foudre | ❄️ Givre |
+| Gardien du Sablier | ⚡ Foudre (la foudre change le sable en verre) | 🔥 Feu, ❄️ Givre |
+
+| Infusion | Coût | Disponible |
+|---|---|---|
+| 🔥 Feu | 20 🪙 · 6 🪵 | dès la Forge |
+| ❄️ Givre | 40 🪙 · 3 🐺 · 2 🔹 | Loup et Golem vaincus |
+| ⚡ Foudre | 80 🪙 · 1 🐾 · 3 🔹 | Ours vaincu |
+
+### Objets
+| Emplacement | Objet | Type | Bonus de base | Coût de forge | Débloqué par |
 |---|---|---|---|---|---|
-| Arme | Pioche affûtée | +2 puissance | 15 🪙 · 2 🪵 · 2 🪨 | dès la Forge | 1 |
-| Arme | Coutelas de défense | +3 puissance, +3 % critique | 40 🪙 · 2 🦷 · 3 🟫 | Sanglier alpha vaincu | 1 |
-| Arme | Pioche à griffes | +5 puissance, +5 % critique | 120 🪙 · 2 🐾 · 4 🔹 · 3 🪨 | Ours ancien vaincu | 2 |
-| Armure | Tablier de cuir | +15 PV, +1 armure | 20 🪙 · 4 🟫 | Mulot ou Sanglier vaincu | 1 |
-| Armure | Manteau de fourrure | +30 PV, +1 armure, +3 % esquive | 60 🪙 · 5 🐺 · 3 🟫 | Loup gris vaincu | 2 |
-| Armure | Plastron de pierre | +25 PV, +3 armure | 100 🪙 · 6 🔹 · 4 🪨 | Golem vaincu | 2 |
-| Accessoire | Lanterne de mineur | +5 s de boucle | 30 🪙 · 2 🪵 · 3 🪨 | dès la Forge | 1 |
-| Accessoire | Collier de crocs | +4 % esquive, +3 % critique | 50 🪙 · 4 🐺 · 1 🐾 | Loup + Ours vaincus | 2 |
-| Accessoire | Sablier de poche | +10 s de boucle, +10 % d'or | 200 🪙 · 2 ⏳ | Gardien vaincu | 3 |
+| Arme | Vieille pioche | équilibrée | +0 | offerte | départ |
+| Arme | Coutelas d'os | rapide | +2 puissance, +5 % critique | 30 🪙 · 2 🦷 · 4 🟫 | Sanglier alpha |
+| Arme | Marteau de carrier | lourde | +3 puissance | 60 🪙 · 6 🔹 · 4 🪨 | Golem |
+| Arme | Pioche à griffes | équilibrée | +5 puissance, +5 % critique | 120 🪙 · 2 🐾 · 5 🔹 | Ours ancien |
+| Armure | Tablier de cuir | — | +15 PV, +1 armure | 20 🪙 · 6 🟫 | Mulot et Sanglier |
+| Armure | Manteau de fourrure | — | +25 PV, +1 armure, +4 % esquive | 50 🪙 · 8 🐺 · 4 🟫 | Loup gris |
+| Armure | Plastron de pierre | — | +20 PV, +3 armure, −3 % esquive | 90 🪙 · 8 🔹 · 4 🪨 | Golem |
+| Accessoire | Lanterne de mineur | — | +5 s de boucle | 30 🪙 · 4 🪵 · 3 🪨 | dès la Forge |
+| Accessoire | Collier de crocs | — | +4 % esquive, +3 % critique | 50 🪙 · 6 🐺 · 1 🐾 | Loup et Ours |
+| Accessoire | Sablier de poche | — | +10 s de boucle, +10 % d'or | 200 🪙 · 2 ⏳ | Gardien |
 
-Ordres de grandeur : le Tablier de cuir vaut à peu près un niveau de Forge plus deux niveaux d'Entraîneur en PV, pour ~20 🪙 et un peu de farm. La Pioche à griffes (+5 puissance) vaut ~5 niveaux d'Entraîneur : c'est l'objet qui rend le boss abordable, mais elle demande d'avoir battu l'Ours, deux fois pour 2 griffes.
+### Amélioration à la forge (+1 à +5)
+- Gain par niveau : arme **+1 puissance** ; armure **+6 PV et +0,5 armure** ; accessoire **+20 % de son bonus de base**.
+- Coût du niveau n → n+1 (n = 0 à 4) : `20 × 1,6ⁿ` 🪙 + `2 × (n+1)` matériaux de la zone de l'objet ; les niveaux +4 et +5 demandent aussi 1 matériau d'élite de la zone (🦷 Prés, 🐾 Collines).
+- Total pour un objet des Prés à +5 : 316 🪙, 30 🟫, 2 🦷. C'est le débouché principal des matériaux de farm.
+- Le niveau max d'un objet est celui du bâtiment Forge (plafonné à 5) : le bâtiment existant garde un rôle.
+
+### Persistance de l'amélioration (à trancher)
+| Option | Principe | Pour | Contre |
+|---|---|---|---|
+| **A (recommandée)** | Objet et niveaux permanents | Cohérent avec le lore (le village et le forgeron se souviennent), standard des jeux idle, simple à sauvegarder | La puissance monte vite : se règle par les coûts |
+| B | Objet permanent, niveaux remis à zéro à chaque boucle | Tension à chaque boucle | Demande des ressources « de boucle » séparées ; refaire les mêmes améliorations à chaque boucle devient répétitif |
+| C | A + un affûtage temporaire en cours de boucle (ex. pierre à aiguiser trouvée en exploration : +2 puissance jusqu'à la fin de la boucle) | Garde A et ajoute de petites décisions en boucle | Une mécanique de plus, à faire dans une étape suivante |
+
+### Déblocage des recettes (à trancher, voir le tableau de loot)
+| Option | Règle | Arrivée des recettes (boucle médiane) |
+|---|---|---|
+| 1 | 1re victoire contre chaque monstre requis | Prés : 1-3 · Golem : 4 · Ours : 7 |
+| 2 | Compteur : 10 victoires (normal), 2 (élite) | Prés : 1-2 · Alpha : ~4 · Golem : ~5 · Ours : ~8 |
+
+Avec l'option 2, un seuil d'élite au-delà de 2 repousse les armes de l'Ours après le boss. Elle demande un compteur `bestiary[id].kills` (nouveau champ, défaut 0).
 
 ### Équilibrage
-- Cible inchangée : **boss entre la 9e et la 13e boucle** dans `node tools/sim.js`. Le bot forgera l'objet le plus fort payable par emplacement, après ses achats au village.
-- Leviers si la simu sort de la cible : chances de drop des matériaux d'abord (elles règlent le temps de farm), puis bonus des objets. Les coûts des bâtiments ne bougent pas.
-- Les nouvelles stats passent par `heroBase()` comme les trophées : aucun changement dans le combat.
+- Cible inchangée : **boss entre la 9e et la 13e boucle** dans `node tools/sim.js`. Le bot forgera, améliorera et infusera selon une règle simple : l'arme la plus forte contre la zone visée, puis les améliorations les moins chères.
+- Leviers dans l'ordre : chances de drop, puis coûts d'amélioration, puis bonus des objets. Les bâtiments ne bougent pas.
 
 ### Sauvegarde
-Nouveaux champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.mats = {}` (stock de matériaux), `meta.items = {}` (objets forgés), `meta.equip = {arme:null, armure:null, accessoire:null}`.
+Nouveaux champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.mats = {}`, `meta.items = {vieille_pioche:{lvl:0}}`, `meta.equip = {arme:'vieille_pioche', armure:null, accessoire:null}`, l'élément dans `meta.items[id].elem`, et `bestiary[id].kills` si l'option 2 est retenue.
 
-### Interface
-- Onglet Village → section Forge : liste des recettes connues (grisées si non payables), « ??? » pour celles pas encore révélées avec l'indice « Vaincs … », bouton FORGER.
-- Section Équipement : 3 emplacements, choix parmi les objets forgés.
-- Barre du haut : les matériaux n'y sont pas (trop nombreux), ils sont dans la section Forge.
+### Découpage proposé (une mécanique à la fois)
+1. Matériaux + forge + équipement (sans types ni éléments) : jouable, simu dans la cible.
+2. Améliorations +1 à +5.
+3. Types d'armes (vitesse, multiplicateur, perce-armure).
+4. Éléments et infusions.
 
 ## Backlog
 Voir la feuille de route dans `CLAUDE.md`. Prochaines étapes : découper le code, ajouter l'équipement et la forge à recettes, donner un rôle à la renommée, puis la mine.
