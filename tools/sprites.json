@@ -1,11 +1,34 @@
 {
   "palette": "docs/palette.hex",
   "model": {
-    "checkpoint": "DreamShaperXL_Turbo_v2_1.safetensors",
-    "steps": 8,
-    "cfg": 2,
-    "sampler": "DPM++ SDE",
-    "scheduler": "Karras"
+    "name": "pxl",
+    "checkpoint": "Juggernaut-XI-byRunDiffusion.safetensors",
+    "steps": 30,
+    "cfg": 6,
+    "sampler": "DPM++ 2M",
+    "scheduler": "Karras",
+    "lora": "pixel-art-xl:1.2"
+  },
+  "pixelize": {
+    "sat": 1.0,
+    "colors": 24
+  },
+  "profiles": {
+    "v1_turbo": {
+      "checkpoint": "DreamShaperXL_Turbo_v2_1.safetensors",
+      "steps": 8,
+      "cfg": 2,
+      "sampler": "DPM++ SDE",
+      "scheduler": "Karras"
+    },
+    "pxl_turbo": {
+      "checkpoint": "DreamShaperXL_Turbo_v2_1.safetensors",
+      "steps": 8,
+      "cfg": 2,
+      "sampler": "DPM++ SDE",
+      "scheduler": "Karras",
+      "lora": "pixel-art-xl:1.2"
+    }
   },
   "gen_size": [
     1024,
@@ -19,57 +42,65 @@
       "kind": "sprite",
       "size": 64,
       "seed_base": 1100,
-      "seed": 1100,
-      "prompt": "a wild-eyed eccentric old miner, (dented yellow mining helmet with headlamp:1.4), (pickaxe resting on his shoulder:1.4), messy white hair sticking out, leather apron, muddy boots, (small cracked glowing hourglass hanging from his belt:1.2), crooked grin"
+      "prompt": "a wild-eyed eccentric old miner, (dented yellow mining helmet with headlamp:1.4), (pickaxe resting on his shoulder:1.4), messy white hair sticking out, leather apron, muddy boots, (small cracked glowing hourglass hanging from his belt:1.2), crooked grin",
+      "seed_v1": 1100,
+      "seed": "pxl_1101"
     },
     "mulot": {
       "kind": "sprite",
       "size": 48,
       "seed_base": 2000,
-      "seed": 2001,
-      "prompt": "a small angry field mouse with big buck teeth, brown fur, side view, cute monster"
+      "prompt": "a small angry field mouse with big buck teeth, brown fur, side view, cute monster",
+      "seed_v1": 2001,
+      "seed": "pxl_2002"
     },
     "sanglier": {
       "kind": "sprite",
       "size": 48,
       "seed_base": 3100,
-      "seed": 3101,
-      "prompt": "a wild boar with tusks, dark brown bristly fur, side view, charging pose, monster"
+      "prompt": "a wild boar with tusks, dark brown bristly fur, side view, charging pose, monster",
+      "seed_v1": 3101,
+      "seed": "pxl_3103"
     },
     "sanglier_alpha": {
       "kind": "sprite",
       "size": 64,
       "seed_base": 4100,
-      "seed": 4101,
-      "prompt": "a huge alpha wild boar covered in dried mud, a crown made of mud and twigs on its head, scarred, big tusks, side view, elite monster"
+      "prompt": "a huge alpha wild boar covered in dried mud, a crown made of mud and twigs on its head, scarred, big tusks, side view, elite monster",
+      "seed_v1": 4101,
+      "seed": "pxl_4103"
     },
     "loup": {
       "kind": "sprite",
       "size": 48,
       "seed_base": 5000,
-      "seed": 5002,
-      "prompt": "a grey wolf snarling, side view, monster"
+      "prompt": "a grey wolf snarling, side view, monster",
+      "seed_v1": 5002,
+      "seed": "pxl_5000"
     },
     "golem": {
       "kind": "sprite",
       "size": 48,
       "seed_base": 6000,
-      "seed": 6002,
-      "prompt": "a small stone golem made of grey boulders, glowing blue crystal heart, mossy, front view, monster"
+      "prompt": "a small stone golem made of grey boulders, glowing blue crystal heart, mossy, front view, monster",
+      "seed_v1": 6002,
+      "seed": "pxl_6000"
     },
     "ours": {
       "kind": "sprite",
       "size": 64,
       "seed_base": 7100,
-      "seed": 7101,
-      "prompt": "an ancient giant brown bear with grey muzzle, huge claws, ancient runes carved in its fur, side view, elite monster"
+      "prompt": "an ancient giant brown bear with grey muzzle, huge claws, ancient runes carved in its fur, side view, elite monster",
+      "seed_v1": 7101,
+      "seed": "pxl_7100"
     },
     "gardien": {
       "kind": "sprite",
       "size": 96,
       "seed_base": 8100,
-      "seed": 8103,
-      "prompt": "a towering stone guardian statue holding a giant glowing hourglass, ancient temple guardian, sand flowing, golden runes, front view, boss monster"
+      "prompt": "a towering stone guardian statue holding a giant glowing hourglass, ancient temple guardian, sand flowing, golden runes, front view, boss monster",
+      "seed_v1": 8103,
+      "seed": "pxl_8103"
     },
     "bg_pres": {
       "kind": "bg",
@@ -79,8 +110,11 @@
         768
       ],
       "seed_base": 9000,
+      "prompt": "green meadow at dawn, rolling grass hills, wildflowers, distant trees, soft pink and blue sky, peaceful",
+      "seed_v1": 9000,
       "seed": 9000,
-      "prompt": "green meadow at dawn, rolling grass hills, wildflowers, distant trees, soft pink and blue sky, peaceful"
+      "sat": 1.35,
+      "colors": 24
     },
     "bg_collines": {
       "kind": "bg",
@@ -90,8 +124,11 @@
         768
       ],
       "seed_base": 9500,
+      "prompt": "grey rocky hills, windswept cliffs, boulders, sparse dry grass, overcast pale sky, distant mountain peak",
+      "seed_v1": 9500,
       "seed": 9500,
-      "prompt": "grey rocky hills, windswept cliffs, boulders, sparse dry grass, overcast pale sky, distant mountain peak"
+      "sat": 1.35,
+      "colors": 24
     }
   }
 }

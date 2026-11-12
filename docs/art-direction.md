@@ -24,7 +24,7 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 - Dans le CSS : `image-rendering: pixelated;`, avec des agrandissements en multiples entiers uniquement.
 
 ## Pipeline Stable Diffusion (en local)
-1. **Modèle** : SDXL avec un LoRA pixel art (il en existe plusieurs sur Civitai / Hugging Face). Génère en 1024 × 1024, sur fond uni clair.
+1. **Modèle** : Juggernaut XI + LoRA Pixel Art XL (`nerijs/pixel-art-xl`, installé dans `C:\StableDiffusionorge\webui\models\Lora\`). Génère en 1024 × 1024, sur fond uni clair.
 2. **Préfixe de style** (identique pour tous les assets, pour la cohérence) :
    `pixel art, 16-bit game sprite, clean crisp pixels, limited color palette, soft shading, light from top-left, centered, full body, plain flat light background`
 3. **Négatif** : `blurry, gradient background, text, watermark, jpeg artifacts, anti-aliasing, 3d render, photo, realistic`
@@ -43,18 +43,18 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 5. Bâtiments du village (pour une future vue « village »)
 
 ## Suivi des assets
-Prompts complets, modèle et seeds : `tools/sprites.json`. Modèle actuel : DreamShaperXL Turbo (8 pas, CFG 2), sans LoRA pixel art.
-Limites connues de la v1 : visages peu lisibles en 48-64 px, Gardien sans son sablier (le modèle l'ignore), restes de sol sous certains sprites. À reprendre avec un LoRA pixel art et une retouche à la main.
+Prompts complets, modèle et seeds : `tools/sprites.json`. Modèle actuel (v2) : **Juggernaut XI + LoRA Pixel Art XL** (poids 1,2 ; 30 pas ; CFG 6 ; DPM++ 2M Karras), pixelisation sans saturation et 24 couleurs. Les fonds restent ceux de la v1 (DreamShaperXL Turbo, profil `v1_turbo`) : en v2 leur ciel tombait sur le cyan de la palette.
+Limites connues : le héros tient une lampe-bâton plutôt qu'une pioche, petites ombres grises sous certains monstres. À retoucher à la main.
 
 | Asset | Fichier | Prompt (résumé) | Seed | État |
 |---|---|---|---|---|
-| Héros | `assets/sprites/heros.png` | mineur fou, casque jaune + pioche | 1100 | v1 (SD + pixelize, sans retouche) |
-| Mulot dentu | `assets/sprites/mulot.png` | souris en colère, grandes incisives | 2001 | v1 (SD + pixelize, sans retouche) |
-| Sanglier | `assets/sprites/sanglier.png` | sanglier de profil | 3101 | v1 (SD + pixelize, sans retouche) |
-| Sanglier alpha | `assets/sprites/sanglier_alpha.png` | sanglier couvert de boue, couronne de brindilles | 4101 | v1 (SD + pixelize, sans retouche) |
-| Loup gris | `assets/sprites/loup.png` | loup qui grogne, de profil | 5002 | v1 (SD + pixelize, sans retouche) |
-| Golem de pierre | `assets/sprites/golem.png` | golem de rochers, cœur de cristal bleu | 6002 | v1 (SD + pixelize, sans retouche) |
-| Ours ancien | `assets/sprites/ours.png` | ours géant, runes gravées | 7101 | v1 (SD + pixelize, sans retouche) |
-| Gardien du Sablier | `assets/sprites/gardien.png` | gardien de pierre et d'or | 8103 | v1 (SD + pixelize, sans retouche) |
-| Fond Prés de l'Aube | `assets/sprites/bg_pres.png` | prairie à l'aube, ciel rose | 9000 | v1 (SD + pixelize, sans retouche) |
-| Fond Collines grises | `assets/sprites/bg_collines.png` | collines rocheuses, falaises | 9500 | v1 (SD + pixelize, sans retouche) |
+| Héros | `assets/sprites/heros.png` | mineur fou, casque jaune + pioche | pxl_1101 | v2 (Juggernaut + Pixel Art XL) |
+| Mulot dentu | `assets/sprites/mulot.png` | souris en colère, grandes incisives | pxl_2002 | v2 (Juggernaut + Pixel Art XL) |
+| Sanglier | `assets/sprites/sanglier.png` | sanglier de profil | pxl_3103 | v2 (Juggernaut + Pixel Art XL) |
+| Sanglier alpha | `assets/sprites/sanglier_alpha.png` | sanglier couvert de boue, couronne de brindilles | pxl_4103 | v2 (Juggernaut + Pixel Art XL) |
+| Loup gris | `assets/sprites/loup.png` | loup qui grogne, de profil | pxl_5000 | v2 (Juggernaut + Pixel Art XL) |
+| Golem de pierre | `assets/sprites/golem.png` | golem de rochers, cœur de cristal bleu | pxl_6000 | v2 (Juggernaut + Pixel Art XL) |
+| Ours ancien | `assets/sprites/ours.png` | ours géant, runes gravées | pxl_7100 | v2 (Juggernaut + Pixel Art XL) |
+| Gardien du Sablier | `assets/sprites/gardien.png` | gardien de pierre et d'or | pxl_8103 | v2 (Juggernaut + Pixel Art XL) |
+| Fond Prés de l'Aube | `assets/sprites/bg_pres.png` | prairie à l'aube, ciel rose | 9000 | v1 (Turbo) |
+| Fond Collines grises | `assets/sprites/bg_collines.png` | collines rocheuses, falaises | 9500 | v1 (Turbo) |

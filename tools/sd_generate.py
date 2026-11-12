@@ -31,19 +31,21 @@ def post(url, payload):
         return json.load(r)
 
 
-def generate(spec, name, n, url, seed0=None):
+def generate(spec, name, n, url, seed0=None, profile=None):
     a = spec['assets'][name]
-    cfg = spec['model']
+    cfg = spec['profiles'][profile] if profile else spec['model']
+    lora = f" <lora:{cfg['lora']}>" if cfg.get('lora') else ''
     w, h = a.get('gen', spec['gen_size'])
     style = spec['style_bg'] if a['kind'] == 'bg' else spec['style_sprite']
     base = seed0 if seed0 is not None else a.get('seed_base', 1000)
     for i in range(n):
         seed = base + i
-        dst = RAW / name / f'{seed}.png'
+        tag = profile or cfg.get('name')
+        dst = RAW / name / (f'{tag}_{seed}.png' if tag else f'{seed}.png')
         if dst.exists():
             print('déjà là', dst.relative_to(ROOT)); continue
         payload = {
-            'prompt': f"{style}, {a['prompt']}", 'negative_prompt': spec['negative'],
+            'prompt': f"{cfg.get('prefix', '')}{style}, {a['prompt']}{lora}", 'negative_prompt': spec['negative'],
             'seed': seed, 'width': w, 'height': h, 'steps': cfg['steps'], 'cfg_scale': cfg['cfg'],
             'sampler_name': cfg['sampler'], 'scheduler': cfg.get('scheduler', 'Automatic'),
             'override_settings': {'sd_model_checkpoint': cfg['checkpoint']},
@@ -65,7 +67,9 @@ def build(spec):
             print('manquant', src.relative_to(ROOT)); continue
         dst = OUT / f'{name}.png'
         sprite = a['kind'] != 'bg'
-        size = pixelize(src, dst, a['size'], ROOT / spec['palette'], colors=a.get('colors', 16 if sprite else 24),
+        px = spec.get('pixelize', {})
+        size = pixelize(src, dst, a['size'], ROOT / spec['palette'], colors=a.get('colors', px.get('colors', 16) if sprite else 32),
+                        sat=a.get('sat', px.get('sat', 1.35)),
                         bg='auto' if sprite else None, tol=a.get('tol', 120), crop=sprite, line=sprite)
         print('écrit', dst.relative_to(ROOT), size)
 
@@ -76,6 +80,7 @@ if __name__ == '__main__':
     p.add_argument('--all', action='store_true')
     p.add_argument('-n', type=int, default=4, help='nombre de variantes')
     p.add_argument('--seed', type=int, help='première seed (défaut : seed_base de l\'asset)')
+    p.add_argument('--profile', help="profil de modèle (clé de 'profiles' dans sprites.json) ; fichiers bruts préfixés par son nom")
     p.add_argument('--build', action='store_true', help='pixelise les seeds retenues vers assets/sprites/')
     p.add_argument('--url', default='http://127.0.0.1:7860')
     args = p.parse_args()
@@ -84,4 +89,4 @@ if __name__ == '__main__':
         build(spec)
     else:
         for name in (spec['assets'] if args.all else args.names):
-            generate(spec, name, args.n, args.url, args.seed)
+            generate(spec, name, args.n, args.url, args.seed, args.profile)
