@@ -1,0 +1,30 @@
+{
+  "palette": "docs/palette.hex",
+  "model": {"checkpoint": "DreamShaperXL_Turbo_v2_1.safetensors", "steps": 8, "cfg": 2, "sampler": "DPM++ SDE", "scheduler": "Karras"},
+  "gen_size": [1024, 1024],
+  "style_sprite": "pixel art, 16-bit game sprite, clean crisp pixels, limited color palette, soft shading, light from top-left, centered, full body, single character, plain flat white background",
+  "style_bg": "pixel art, 16-bit game background, side view landscape, clean crisp pixels, limited color palette, soft warm light, no characters",
+  "negative": "blurry, gradient background, text, watermark, signature, jpeg artifacts, anti-aliasing, 3d render, photo, realistic, multiple characters, frame, border, cropped",
+  "assets": {
+    "heros":    {"kind": "sprite", "size": 64, "seed_base": 1100, "seed": null,
+                 "prompt": "a wild-eyed eccentric old miner, (dented yellow mining helmet with headlamp:1.4), (pickaxe resting on his shoulder:1.4), messy white hair sticking out, leather apron, muddy boots, (small cracked glowing hourglass hanging from his belt:1.2), crooked grin"},
+    "mulot":    {"kind": "sprite", "size": 48, "seed_base": 2000, "seed": null,
+                 "prompt": "a small angry field mouse with big buck teeth, brown fur, side view, cute monster"},
+    "sanglier": {"kind": "sprite", "size": 48, "seed_base": 3000, "seed": null,
+                 "prompt": "a wild boar with tusks, dark brown bristly fur, side view, charging pose, monster"},
+    "sanglier_alpha": {"kind": "sprite", "size": 64, "seed_base": 4000, "seed": null,
+                 "prompt": "a huge alpha wild boar covered in dried mud, a crown made of mud and twigs on its head, scarred, big tusks, side view, elite monster"},
+    "loup":     {"kind": "sprite", "size": 48, "seed_base": 5000, "seed": null,
+                 "prompt": "a grey wolf snarling, side view, monster"},
+    "golem":    {"kind": "sprite", "size": 48, "seed_base": 6000, "seed": null,
+                 "prompt": "a small stone golem made of grey boulders, glowing blue crystal heart, mossy, front view, monster"},
+    "ours":     {"kind": "sprite", "size": 64, "seed_base": 7000, "seed": null,
+                 "prompt": "an ancient giant brown bear with grey muzzle, huge claws, ancient runes carved in its fur, side view, elite monster"},
+    "gardien":  {"kind": "sprite", "size": 96, "seed_base": 8000, "seed": null,
+                 "prompt": "a towering stone guardian statue holding a giant glowing hourglass, ancient temple guardian, sand flowing, golden runes, front view, boss monster"},
+    "bg_pres":  {"kind": "bg", "size": 320, "gen": [1344, 768], "seed_base": 9000, "seed": null,
+                 "prompt": "green meadow at dawn, rolling grass hills, wildflowers, distant trees, soft pink and blue sky, peaceful"},
+    "bg_collines": {"kind": "bg", "size": 320, "gen": [1344, 768], "seed_base": 9500, "seed": null,
+                 "prompt": "grey rocky hills, windswept cliffs, boulders, sparse dry grass, overcast pale sky, distant mountain peak"}
+  }
+}

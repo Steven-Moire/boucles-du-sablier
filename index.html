@@ -89,7 +89,16 @@ button{font-family:inherit;cursor:pointer}
 .unit{position:relative;width:132px;background:rgba(12,13,18,.85);border:1px solid #000;border-radius:9px;padding:8px 8px 7px;text-align:center;transition:opacity .5s, filter .5s}
 .unit .por{font-size:46px;line-height:1.15;user-select:none}
 .unit.elite{width:150px;border-color:#7a3a3a}.unit.elite .por{font-size:60px}
-.unit.boss{width:190px;border-color:var(--gold-d)}.unit.boss .por{font-size:80px}
+.unit.boss{width:210px;border-color:var(--gold-d)}.unit.boss .por{font-size:80px}
+/* sprites pixel art : agrandissement entier (×2), repli emoji si l'image manque */
+.spr{display:block;margin:0 auto;image-rendering:pixelated;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
+.unit .spr{width:96px;height:96px;object-fit:contain;object-position:bottom}
+.unit.elite .spr{width:128px;height:128px}
+.unit.boss .spr{width:192px;height:192px}
+.unit.hero .spr{width:128px;height:128px}
+.herom .spr{width:32px;height:32px}
+.mbox .spr{width:96px;height:96px;object-fit:contain}
+.scene.has-bg{image-rendering:pixelated}
 .unit .nm{font-size:12px;font-weight:700;display:flex;gap:5px;justify-content:center;align-items:center;white-space:nowrap}
 .unit .nm b{background:#000;color:var(--gold);font-family:var(--pix);font-size:10px;padding:2px 4px;border-radius:3px}
 .unit .bar{height:15px;margin-top:5px;line-height:15px;flex:none}
@@ -220,7 +229,7 @@ button{font-family:inherit;cursor:pointer}
         <div class="sc-enemies" id="scEnemies"></div>
         <div class="sc-bottom">
           <div class="unit hero" id="u-hero">
-            <div class="por">🧙</div>
+            <div class="por"><img class="spr" src="assets/sprites/heros.png" alt="🧙" onerror="this.outerHTML=this.alt"></div>
             <div class="nm"><b id="heroLv">1</b> Héros</div>
             <div class="bar hp"><i id="heroHpBar"></i><span id="heroHpTxt"></span></div>
             <div class="swing"><i id="heroSwing"></i></div>
@@ -587,6 +596,11 @@ const fmt = n => Math.round(n).toLocaleString('fr-FR');
 const pct = n => Math.round(n * 100) + ' %';
 const setHTML = (el, html) => { if (el._h !== html){ el.innerHTML = html; el._h = html; } };
 const anyUpgrade = () => Object.keys(UPGRADES).some(k => upgradeState(G, k).ok);
+// sprite pixel art (assets/sprites/<clé>.png) ; si l'image manque, l'emoji (alt) prend sa place
+const spr = (key, emoji) => `<img class="spr" src="assets/sprites/${key}.png" alt="${emoji}" onerror="this.outerHTML=this.alt">`;
+const SCENE_BG = {pres:'bg_pres', collines:'bg_collines'};
+const sceneBgOk = {};
+for (const b in SCENE_BG){ const im = new Image(); im.onload = () => { sceneBgOk[b] = true; }; im.src = `assets/sprites/${SCENE_BG[b]}.png`; }
 const loopFresh = () => { const r = G.run; return !r.over && !r.action && r.completed.size === 1 && r.timeLeft === r.timeMax; };
 
 // ---------- toasts ----------
@@ -637,7 +651,7 @@ function renderMap(){
     const done = r.completed.has(id), here = a && a.id === id, can = canExplore(G, id) && !done;
     d.className = 'tile' + (done || here || can ? '' : ' dim') + (can ? ' can' : '') + (id === selected ? ' sel' : '') + (t.type === 'locked' ? ' locked' : '');
     d.querySelector('.ck').textContent = done && t.type !== 'village' ? '✓' : '';
-    d.querySelector('.herom').textContent = (a ? a.id : r.heroAt) === id && !r.over ? '🧙' : '';
+    setHTML(d.querySelector('.herom'), (a ? a.id : r.heroAt) === id && !r.over ? spr('heros', '🧙') : '');
     const p = d.querySelector('.tprog');
     if (here){ p.hidden = false; p.firstChild.style.width = (tileProgress(a) * 100) + '%'; } else p.hidden = true;
     if (t.type === 'village') d.querySelector('.bang').hidden = !up;
@@ -661,7 +675,10 @@ function segBar(t, a, done){
 function renderScene(){
   const r = G.run, a = r.action, h = r.hero;
   const tId = a ? a.id : lastSceneTile, t = tId && TILE_MAP[tId];
-  $('sceneView').style.background = t && BIOMES[t.biome].scene ? BIOMES[t.biome].scene : 'linear-gradient(180deg,#2a2e39,#1a1c22)';
+  const grad = t && BIOMES[t.biome].scene ? BIOMES[t.biome].scene : 'linear-gradient(180deg,#2a2e39,#1a1c22)';
+  const bgImg = t && sceneBgOk[t.biome];
+  $('sceneView').style.background = bgImg ? `url(assets/sprites/${SCENE_BG[t.biome]}.png) center bottom / cover no-repeat, ${grad}` : grad;
+  $('sceneView').classList.toggle('has-bg', !!bgImg);
   const done = t && r.completed.has(t.id) && !a;
   setHTML($('scTitle'), t ? `<b>${t.name}</b> <span>· Niveau ${t.lvl}</span>${segBar(t, a, done)}<div class="segcap"><span>${a && a.phase === 'fight' ? 'VAGUE ' + (a.seg + 1) + '/' + a.segs.length : 'EXPLORATION'}</span><span>${done ? 'EXPLORÉ' : ''}</span></div>`
     : `<b>Aucune exploration</b> <span>· choisis une case sur la carte</span>`);
@@ -671,7 +688,7 @@ function renderScene(){
   if (key !== sceneKey){
     sceneKey = key;
     if (a && a.phase === 'fight' && a.enemies){
-      box.innerHTML = a.enemies.map((e, i) => `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${e.por}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`).join('');
+      box.innerHTML = a.enemies.map((e, i) => `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${spr(e.id, e.por)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`).join('');
     } else {
       let big = '⏳', txt = 'Le héros attend tes ordres.', bar = false;
       if (a){
@@ -850,7 +867,7 @@ function openMonster(id, lvl){
       <div class="drop uniq ${own ? 'got' : ''}" title="${tr.name} — ${tr.desc}">${tr.icon}<em>${own ? '✓' : '🏆'}</em><small>${Math.round(tr.chance*100)}%</small></div></div>
       <div class="note">🏆 ${tr.name} : ${tr.desc} — unique, permanent${own ? ' (obtenu)' : ''}.</div>`
     : `<div class="note">Bats-le une fois pour révéler ses butins.</div>`;
-  $('mbox').innerHTML = `<button class="x" data-close>×</button><div style="text-align:center;font-size:48px">${seen ? mm.por : '❔'}</div><h2>${seen ? mm.name : '???'}</h2><div class="sub">${RANK[mm.rank].label} · Niveau ${L}</div>
+  $('mbox').innerHTML = `<button class="x" data-close>×</button><div style="text-align:center;font-size:48px">${seen ? spr(id, mm.por) : '❔'}</div><h2>${seen ? mm.name : '???'}</h2><div class="sub">${RANK[mm.rank].label} · Niveau ${L}</div>
     <div class="divh"><span>STATS</span></div>${rows.map(([k,v]) => `<div class="row"><span class="k">${k}</span><b>${v}</b></div>`).join('')}
     ${seen ? '' : '<div class="note">Rencontre-le une fois pour révéler sa fiche.</div>'}
     <div class="divh"><span>BUTINS</span></div>${drops}`;

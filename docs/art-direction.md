@@ -19,7 +19,7 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 | Portrait du héros | 64 × 64 | ×2 |
 | Fonds de scène (par biome) | 320 × 180 | ×3 ou ×4 |
 
-- **Une seule palette pour tout le jeu.** Choisis-en une sur Lospec (par exemple *Resurrect 64* ou *Endesga 32*), télécharge le fichier `.hex` et place-le dans `docs/palette.hex`.
+- **Une seule palette pour tout le jeu : Endesga 64** (Lospec), dans `docs/palette.hex`. Choisie par mesure : sur les premiers rendus SD, erreur de couleur moyenne 21,7 contre 28,5 pour Resurrect 64 et 39,2 pour Endesga 32 (Resurrect manque de bruns naturels).
 - Lumière venant d'en haut à gauche, contour sombre d'un pixel (pas noir pur) et fond transparent.
 - Dans le CSS : `image-rendering: pixelated;`, avec des agrandissements en multiples entiers uniquement.
 
@@ -31,7 +31,7 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 4. **Exemple pour le héros** :
    `a wild-eyed eccentric old miner, pickaxe on his shoulder, messy white hair under a dented mining helmet with a lamp, leather apron, muddy boots, a small cracked glowing hourglass hanging from his belt, crooked grin`
 5. Génère 4 à 8 variantes, garde la meilleure et **note le prompt et la seed** dans le tableau ci-dessous.
-6. **Nettoyage automatique** : `python tools/pixelize.py brut.png assets/sprites/heros.png --size 64 --palette docs/palette.hex --bg auto`
+6. **Nettoyage automatique** : `python tools/sd_generate.py --build` (ou à la main `python tools/pixelize.py brut.png assets/sprites/heros.png --size 64 --palette docs/palette.hex --bg auto --outline`)
    Le script réduit l'image en vrais pixels, verrouille la palette et détoure le fond.
 7. **Retouche à la main** dans Aseprite, LibreSprite ou Pixelorama (gratuit) : contours, yeux, petits défauts. Sur du pixel art, SD produit souvent des « faux pixels », donc cette étape reste nécessaire.
 

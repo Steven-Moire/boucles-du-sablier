@@ -12,8 +12,12 @@ Jeu incrémental / idle à boucle temporelle, jouable dans le navigateur. Projet
 - Jouer en local : ouvrir `index.html` (ou `python -m http.server` puis http://localhost:8000).
 - Équilibrage : `node tools/sim.js` → affiche la trace d'une partie puis la boucle où le boss tombe sur 10 graines.
   **Cible actuelle : boss entre la 9e et la 13e boucle (~15-20 min en ×1).** Relancer après toute modif de chiffres.
-- Vérif visuelle : `python tools/screenshot.py` (Playwright) → `screenshots/`, et liste les erreurs JS.
-- Sprites : `python tools/pixelize.py <image SD> assets/sprites/<nom>.png --size 48 --palette docs/palette.hex --bg auto`.
+- Environnement Python (WSL) : `uv venv .venv && uv pip install -p .venv -r requirements-dev.txt && .venv/bin/playwright install chromium` (une fois : `sudo .venv/bin/playwright install-deps chromium`).
+- Vérif visuelle : `.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/`, et liste les erreurs JS.
+- Sprites : prompts et seeds retenues dans `tools/sprites.json`. Forge tourne sous Windows (API sur :7860) → lancer depuis Windows :
+  `python tools/sd_generate.py <nom> -n 6` (variantes brutes dans `sd_raw/`), noter la meilleure seed dans `sprites.json`, puis `python tools/sd_generate.py --build` (→ `assets/sprites/`).
+  À la main : `python tools/pixelize.py <image SD> assets/sprites/<nom>.png --size 48 --palette docs/palette.hex --bg auto --outline`.
+- Les sprites sont affichés par l'UI avec repli sur l'emoji si le fichier manque (`spr(clé, emoji)`).
 
 ## Règles de travail
 - Une mécanique à la fois, chaque étape doit rester jouable. Mettre à jour `docs/design.md` (décisions, formules, résultats de simu) à chaque changement de gameplay.
