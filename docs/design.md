@@ -74,7 +74,92 @@ Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données)
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
-## Équipement et forge à recettes — PROPOSITION v2 (étape 2, en attente de validation)
+## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
+
+### Décisions de Steven (2026-11-12)
+- Un objet se forge **une fois** puis s'**améliore** à la forge.
+- **Même structure de loot pour tous les monstres** (3 ou 4 butins selon le type), mais les élites ont un butin commun plus faible et un butin rare bien plus fréquent. **Chaque monstre lâche au moins un matériau**, en quantité aléatoire.
+- **Éléments par infusion** ; changer l'élément d'une arme déjà infusée coûte un peu moins cher.
+- **Permanence progressive** : au début, l'équipement ne survit pas à la boucle ; le village apprend à s'en souvenir emplacement par emplacement, puis il retient aussi les améliorations.
+- La **renommée** doit servir à quelque chose : piste des rangs du village et des **hauts faits**.
+
+### Butins par type de monstre
+Chaque victoire tire chaque ligne indépendamment. Si aucun matériau ne tombe, le monstre lâche **1 matériau commun** (garantie). L'or reste lâché comme aujourd'hui. Le trophée unique reste à part.
+
+| Type | Commun | Peu commun | Rare |
+|---|---|---|---|
+| Bête des Prés | 🟫 Cuir | 🦴 Os | 🦷 Défense |
+| Bête des Collines | 🐺 Fourrure | 🦴 Os | 🐾 Griffe |
+| Pierre | 🪨 Minerai | 🔹 Éclat | 💎 Cristal |
+| Boss | 🔹 Éclat | 💎 Cristal | ⏳ Sable du sablier |
+
+| Monstre | Rang | Commun | Peu commun | Rare |
+|---|---|---|---|---|
+| Mulot dentu | normal | Cuir 60 % ×1 | Os 20 % ×1 | Défense 2 % ×1 |
+| Sanglier | normal | Cuir 60 % ×1-2 | Os 30 % ×1 | Défense 4 % ×1 |
+| Sanglier alpha | élite | Cuir 40 % ×1-2 | Os 50 % ×1-2 | Défense 45 % ×1 |
+| Loup gris | normal | Fourrure 60 % ×1 | Os 25 % ×1 | Griffe 2 % ×1 |
+| Golem de pierre | normal | Minerai 60 % ×1 | Éclat 30 % ×1 | Cristal 3 % ×1 |
+| Ours ancien | élite | Fourrure 40 % ×1-3 | Os 50 % ×1-2 | Griffe 45 % ×1 |
+| Gardien du Sablier | boss | Éclat 100 % ×2-3 | Cristal 100 % ×1 | Sable 100 % ×2 |
+
+Stock attendu au moment du boss (victoires médianes du bot) : ~210 🟫, ~105 🐺, ~56 🪨 (en plus des filons), ~86 🦴, ~9 🦷, ~4 🐾, ~3 💎. Les communs alimentent surtout les améliorations, les rares rythment les recettes. Les coûts des tableaux ci-dessous seront recalés par la simulation une fois ce loot en place.
+
+### Mémoire du village : la permanence se débloque avec la renommée
+Au début, un objet forgé ne dure **qu'une boucle** : il faut le reforger (les matériaux, eux, sont gardés par le village). À chaque seuil de renommée, le forgeron **se souvient** d'un emplacement de plus. La renommée retrouve ainsi un rôle, cohérent avec le lore (« la renommée, c'est la mémoire que le village a de toi »).
+
+| Renommée | Rang du village | Le village se souvient… | Atteint vers (bot, boucle) |
+|---|---|---|---|
+| 0 | Hameau | de rien : l'équipement se perd à la fin de la boucle | 1 |
+| 40 | Village | de ton **arme** | 2-3 |
+| 100 | Bourg | de ton **armure** | 4 |
+| 150 | Ville | de ton **accessoire** | 5-6 |
+| 220 | Cité | de tes **améliorations** (avant, elles retombent à +0 à chaque boucle) | 8-9 |
+
+Les rangs pourront aussi débloquer d'autres bâtiments et des faveurs (étape 3 de la feuille de route) : ce tableau en est la première brique.
+
+### Éléments : infusion et réinfusion
+- Une arme a **un seul élément** à la fois ; on n'a qu'un exemplaire de chaque arme.
+- **Infuser** une arme neutre coûte le prix plein ; **réinfuser** une arme qui a déjà un élément coûte **15 % de moins** (arrondi), car la forge a déjà « ouvert » le métal.
+- Pour avoir à la fois un coutelas de feu et un coutelas de givre, il faudrait deux exemplaires : non prévu dans cette version, on change d'élément selon la zone visée.
+
+| Infusion | Prix plein | Réinfusion (−15 %) | Disponible |
+|---|---|---|---|
+| 🔥 Feu | 20 🪙 · 6 🪵 | 17 🪙 · 5 🪵 | dès la Forge |
+| ❄️ Givre | 40 🪙 · 4 🐺 · 2 🔹 | 34 🪙 · 3 🐺 · 2 🔹 | Loup et Golem vaincus |
+| ⚡ Foudre | 80 🪙 · 1 💎 · 3 🔹 | 68 🪙 · 1 💎 · 3 🔹 | Golem ×10 et Ours vaincus |
+
+Faiblesses et résistances : voir la v2 (Feu contre les bêtes des Prés et le loup ; Givre contre l'alpha et les golems ; Foudre contre l'ours et le Gardien).
+
+### Hauts faits (première liste)
+Chaque haut fait donne de la renommée une fois (donc de la mémoire), parfois un petit bonus. Ils demandent un compteur de victoires par monstre (`bestiary[id].kills`), utile aussi pour les recettes.
+| Haut fait | Condition | Récompense |
+|---|---|---|
+| Dératiseur | 50 mulots vaincus | +10 ⭐ |
+| Chasseur de meute | 100 loups vaincus | +15 ⭐ |
+| Casseur de cailloux | 50 golems vaincus | +15 ⭐, +5 % de minerai |
+| Roi déchu | Sanglier alpha vaincu 5 fois | +20 ⭐ |
+| Sans un regard en arrière | finir une boucle sans retraite ni repos à la source | +10 ⭐ |
+| Collectionneur | 3 trophées uniques | +15 ⭐ |
+| Maître forgeron | un objet à +5 | +25 ⭐ |
+| Élémentaliste | vaincre un monstre avec chacun des 3 éléments | +20 ⭐ |
+| Briseur de sablier | vaincre le Gardien | +50 ⭐ (en plus de l'actuel) |
+
+### Inchangé depuis la v2
+Types d'armes (rapide / équilibrée / lourde), liste des objets, amélioration +1 à +5 (niveau max = niveau du bâtiment Forge) : les coûts en matériaux seront recalés sur le nouveau loot. Cible de simulation inchangée : boss entre la 9e et la 13e boucle.
+
+### Sauvegarde
+Champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.mats = {}`, `meta.items = {}` (objets permanents, avec `lvl` et `elem`), `meta.equip`, `bestiary[id].kills = 0`, `meta.feats = {}`. Les objets non encore mémorisés vivent dans `run` (perdus en fin de boucle).
+
+### Découpage proposé (une mécanique à la fois, chacune jouable)
+1. Compteurs de victoires + nouveau loot (3 butins, garantie, quantités) + stock de matériaux affiché.
+2. Forge + équipement, non permanents, et mémoire du village par la renommée.
+3. Améliorations +1 à +5 (permanentes au rang Cité).
+4. Types d'armes.
+5. Éléments, infusion et réinfusion.
+6. Hauts faits.
+
+## Équipement et forge — PROPOSITION v2 (remplacée en partie par la v3 ci-dessus : loot, permanence, éléments)
 
 ### Retours de Steven (2026-11-12)
 - Un objet se forge **une fois**, puis s'**améliore à la forge**. Question ouverte : l'amélioration survit-elle d'une boucle à l'autre ?
