@@ -2,7 +2,7 @@
 
 Jeu incrémental à boucle temporelle, dans le navigateur. Le héros revit la même journée : il oublie tout à chaque boucle, mais le village, lui, se souvient.
 
-**Jouer :** `https://<ton-compte>.github.io/boucles-du-sablier/` (après activation de GitHub Pages)
+**Jouer :** https://steven-moire.github.io/boucles-du-sablier/
 
 ## Ce qu'il y a dans le prototype (v0.3)
 - Carte à cases façon PowerSeeker : 2 biomes, élites, boss, récolte, sources, trésor.
