@@ -1,8 +1,7 @@
-// Simulation headless : un bot joue les boucles avec le moteur extrait de index.html
-const fs = require('fs');
-const html = fs.readFileSync(process.argv[2] || "index.html", "utf8");
-const code = html.split('/*ENGINE_START*/')[1].split('/*ENGINE_END*/')[0];
-const E = new Function(code + '; return {createGame, explore, tick, newLoop, buy, upgradeState, isExplorable, TILES, TILE_MAP, UPGRADES};')();
+// Simulation headless : un bot joue les boucles avec le moteur pur (src/engine.js), sans DOM
+import * as engine from '../src/engine.js';
+import * as data from '../src/data.js';
+const E = {...data, ...engine};
 
 function runBot(seed, maxLoops = 60, verbose = false){
   let s = seed; const rng = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;

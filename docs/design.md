@@ -1,6 +1,6 @@
 # Les Boucles du Sablier — document de design
 
-Titre de travail. Prototype jouable (v0.3) : `index.html` (aussi publié sur https://claude.ai/artifact/Rru3ETP8yeJZAF8kKgF96M).
+Titre de travail. Prototype jouable (v0.3) : `index.html` + `src/` (aussi publié sur https://claude.ai/artifact/Rru3ETP8yeJZAF8kKgF96M).
 
 ## Pitch
 *Le village se souvient, la mine garde le passé, les mondes sont des époques.*
@@ -67,6 +67,12 @@ Stats au niveau L : `PV = (12 + 8(L−1)) × mult`, `puissance = (3 + 1,6(L−1)
 
 ## Équilibrage (bot, `node tools/sim.js`, 10 parties)
 Le boss tombe entre la 8e et la 13e boucle, soit environ 12 à 20 min de jeu en ×1. Cible à conserver : 9 à 13 boucles.
+
+## Architecture du code (étape 1 de la feuille de route, faite)
+Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données), `src/engine.js` (moteur pur, testable dans Node), `src/ui/*.js` (rendu et interactions). Le découpage est mécanique : aucune règle ni aucun chiffre n'a changé.
+- **Simulation** : `node tools/sim.js` importe `src/engine.js` et `src/data.js`. Sortie identique octet pour octet à celle de la v0.3 monolithique (boss aux boucles 9 13 10 12 9 12 8 9 12 9).
+- **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
+- **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
 ## Backlog
 Voir la feuille de route dans `CLAUDE.md`. Prochaines étapes : découper le code, ajouter l'équipement et la forge à recettes, donner un rôle à la renommée, puis la mine.

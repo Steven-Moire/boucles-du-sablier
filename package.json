@@ -1,0 +1,6 @@
+{
+  "name": "boucles-du-sablier",
+  "private": true,
+  "type": "module",
+  "description": "Modules ES natifs, aucun build. Le package.json sert seulement a Node (tools/sim.js)."
+}
