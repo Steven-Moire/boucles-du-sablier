@@ -120,6 +120,19 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 
 ## 4. Qualité du code (à faire avant 3a)
 
+**Fait le 19/11 (lot 0, commit 9ad320e)** : `eslint.config.js` (règles SonarQube, couches, cycles), `npm run lint` / `npm run check`, simu de référence (`tools/qa/check-sim.js`), captures déterministes (`tools/screenshot.py` + `tools/qa/compare_shots.py`), règles locales `.claude/rules/javascript/`, hook `js-lint-guard`, skill `/js-quality`. Le lint signale 71 problèmes.
+**Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
+**Ordre des lots restants** (un commit chacun) : Prettier → 1 hygiène → 2 arborescence par domaine + découpage de engine/data/style.css → 3 complexité UI → 4 complexité moteur et simu → 5 ternaires et templates → 6 chaînage optionnel → 7 Python de tools/.
+
+**Prompt de reprise (lot Prettier puis lot 1)** :
+```
+Lis docs/INDEX.md, CLAUDE.md, puis .claude/rules/javascript/ (les 5 fichiers) et la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (décisions et ordre des lots). Refactoring pur : AUCUN changement de comportement.
+Avant chaque lot : captures de référence (tools/screenshot.py sous WSL, copiées dans le scratchpad). Après chaque lot : npm run check (simu identique), captures comparées (tools/qa/compare_shots.py), aucune erreur JS.
+1. Lot Prettier, comme ruff format dans atlas : Prettier en devDependency à version exacte (publiée depuis plus de deux semaines), .prettierrc adapté au code actuel (guillemets simples, largeur 120), .prettierignore (grids.js généré, proto/, assets/), `prettier --check` ajouté à npm run lint, `npm run format` pour écrire ; eslint-config-prettier pour éviter les conflits. Un seul commit `style:` qui ne change que la forme ; vérifie que la simu reste identique.
+2. Lot 1 hygiène : import inutilisé (intro.js), blocs sur une ligne, affectations imbriquées de sim.js → fonction lcg(seed) (même suite de nombres), localStorage dans un module de sauvegarde qui renvoie {ok, error} (aucun catch vide), relance d'animation sans `void` (classe retirée sur animationend, getAnimations()), générateur à graine séparé pour les effets visuels (les éclats ne doivent plus consommer le hasard du jeu : la capture du combat doit devenir identique au pixel près d'un lancement à l'autre).
+Aligne aussi .claude/rules/everything-claude-code-guardrails.md sur le kebab-case. Commit par lot, demande-moi avant de pousser.
+```
+
 **État** : ~1 500 lignes, fichiers petits (le plus gros : `src/engine.js`, 263 lignes) mais lignes très denses. SonarQube for IDE signale surtout de la complexité cognitive au-delà de 15 (`consumeEvents` dans main.js : 41, `renderScene` dans scene.js : 61, `tileHTML` dans panel.js : 35, `fightStep` dans engine.js : 30, `runBot` dans sim.js : 27), des ternaires et templates imbriqués, des `a && a.b` au lieu de `a?.b`. HTML construit dans des chaînes JS, CSS dans un seul fichier de 226 lignes. Rien n'a été touché exprès pendant le gameplay (règle « zéro refactoring passant »).
 
 **Prompt à coller** :
