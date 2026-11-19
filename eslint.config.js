@@ -13,6 +13,9 @@ const ENGINE = ['src/**/*.engine.js'];
 const VIEWS = ['src/**/*.view.js'];
 const SHARED = ['src/shared/**/*.js'];
 const restrict = (group, message) => ({'no-restricted-imports': ['error', {patterns: [{group, message}]}]});
+// limites de taille par rôle (tableau de .claude/rules/javascript/coding-style.md) : on découpe, on ne relève jamais
+const COUNT = {skipBlankLines: true, skipComments: true};
+const maxLines = max => ({'max-lines': ['warn', {max, ...COUNT}]});
 // tout chemin qui ne finit pas par .data.js
 const restrictNonData = message => ({
   'no-restricted-imports': ['error', {patterns: [{regex: String.raw`^(?!.*\.data\.js$)`, message}]}],
@@ -42,8 +45,8 @@ export default [
       'prefer-const': 'error',
       eqeqeq: ['error', 'always'],
       'no-unused-vars': ['error', {argsIgnorePattern: '^_', caughtErrors: 'all'}],
-      'max-lines-per-function': ['warn', {max: 50, skipBlankLines: true, skipComments: true}],
-      'max-lines': ['warn', {max: 300, skipBlankLines: true, skipComments: true}],
+      'max-lines-per-function': ['warn', {max: 50, ...COUNT}],
+      'max-lines': ['warn', {max: 300, ...COUNT}],
       'max-depth': ['warn', 4],
       'import-x/no-cycle': 'error',
       'import-x/no-self-import': 'error',
@@ -71,6 +74,12 @@ export default [
   {files: SHARED, rules: restrict(['**/*.view.js'], "shared/ n'importe aucune vue.")},
   // outils Node (simu, vérifications)
   {files: ['tools/**/*.js', 'eslint.config.js'], languageOptions: {globals: globals.node}},
+  // taille par rôle : moteur 250, vue 200, point d'entrée 60, outils 200 ; fonctions des données 20 lignes
+  {files: ENGINE, rules: maxLines(250)},
+  {files: VIEWS, rules: maxLines(200)},
+  {files: ['src/app/main.js'], rules: maxLines(60)},
+  {files: ['tools/**/*.js'], rules: maxLines(200)},
+  {files: DATA, rules: {'max-lines-per-function': ['warn', {max: 20, ...COUNT}]}},
   // mise en forme : laissée à Prettier (npm run format), on coupe les règles ESLint qui la contrediraient
   prettierConfig,
 ];
