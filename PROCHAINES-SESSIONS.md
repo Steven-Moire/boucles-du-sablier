@@ -111,83 +111,53 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 **Fait le 19/11** (lot 0, commit 9ad320e, détails dans l'archive) : ESLint + règles SonarQube, `npm run check` (simu de référence), captures déterministes, règles `.claude/rules/javascript/`, skill `/js-quality`. Le lint signale 71 problèmes.
 **Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
 **Fait le 19/11 (suite)** : lot Prettier (commit 754ae90 ; `npm run format`, `prettier --check` dans `npm run lint`) et lot 1 hygiène (`src/rng.js` → `lcg(seed)`, `src/ui/save.js` → `{ok, error}`, `anim()` sans `void` dans `state.js`, `fxRandom` pour les effets visuels : la capture du combat est désormais identique au pixel près d'un lancement à l'autre). Lint : 71 → 51 problèmes (26 ternaires imbriqués, 8 cycles, 7 complexités, 6 templates imbriqués, 4 tailles). Reste un bruit de rendu sur le bouton « Passer » de l'intro (0,001 %, sans doute le chargement de la police), à surveiller.
-**Fait le 19/11 (lot 2)** : arborescence par domaine appliquée telle que validée ci-dessous (moteur, données, vues et CSS découpés, `shared/render.js` + `requestRender()`). Lint : 51 → 41 problèmes (0 cycle ; restent 26 ternaires imbriqués, 7 complexités, 6 templates imbriqués, 2 fonctions trop longues). Simu identique, captures identiques au pixel près. Bruit connu des captures : le **premier** lancement après un changement peut différer (combat 0,3 %, bouton « Passer » 0,001 %), l'ancien code fait pareil ; relancer avant de conclure.
+**Fait le 19/11 (lot 2)** : arborescence par domaine appliquée telle que validée ci-dessous (moteur, données, vues et CSS découpés, `shared/render.js` + `requestRender()`). Lint : 51 → 41 problèmes (0 cycle ; restent 26 ternaires imbriqués, 7 complexités, 6 templates imbriqués, 2 fonctions trop longues). Simu identique, captures identiques au pixel près. Bruit connu des captures : le **premier** lancement après un changement peut différer (combat 0,3 %, bouton « Passer » 0,001 %), l'ancien code fait pareil ; corrigé à la source en session A (en attendant, relancer avant de conclure).
 **Ordre des lots restants** (un commit chacun) : ~~2 arborescence par domaine~~ → 3 complexité UI → 4 complexité moteur et simu → 5 ternaires et templates → 6 chaînage optionnel → 7 Python de tools/ → 8 limites `max-lines` par suffixe dans `eslint.config.js` (`*.engine.js` 250, `*.view.js` 200, `main.js` 60, `tools/` 200, comme le tableau de `.claude/rules/javascript/coding-style.md` ; décidé le 19/11).
 
-**Lot 2 : arborescence cible VALIDÉE par Steven le 19/11** (ne pas la reproposer, l'appliquer). Les numéros de ligne renvoient à `src/style.css` tel qu'au commit f0ecec6.
-```
-index.html                      charge src/app/main.js + les CSS ci-dessous, liés DANS CET ORDRE (= ordre d'origine de style.css) :
-                                app/layout.css, shared/sprites.css, world/map.css, combat/scene.css, combat/scene-fx.css,
-                                app/panel.css, village/village.css, enemies/bestiary.css, modals/modal.css, shared/toast.css,
-                                mining/dig.css, world/explore-panel.css, intro/intro.css
-src/
-  app/                          assemblage de plusieurs domaines (un peu fourre-tout assumé : à auditer de temps en temps)
-    main.js                     boucle 50 ms, render(), onRender(() => {consumeEvents(); render()}), lancement de l'intro (~35 l.)
-                                importe aussi les vues qui posent leurs écouteurs au chargement (map, scene, layout, modal)
-    events.view.js              consumeEvents : table type → effet (ex-ui/main.js)
-    layout.view.js              renderTop + écouteurs vitesse/onglets de vue, renderTabs + écouteur, renderPane + écouteur #pane (ex-ui/panel.js)
-    layout.css                  style.css 1-234 (variables, reset, .bar, .app, barre du haut, minuteur, onglets) + .foot (1222-1237)
-    panel.css                   style.css 711-951 (onglets, .sec, .row, .btn, .note, .segs, .divh, .enemy, .log)
-  shared/                       briques du bas : n'importent AUCUNE vue
-    render.js                   NOUVEAU : onRender(fn) / requestRender() (remplace tous les import de main.js → supprime les 8 cycles)
-    state.js                    S, hadSave, saveMeta, loopFresh, anyUpgrade (ex-ui/state.js)
-    dom.js                      $, setHTML, anim, toast (ex-ui/state.js)
-    templates.js                spr (ex-state.js), segBar (ex-scene.js, utilisé par la scène ET le panneau)
-    format.js                   fmt, pct (ex-state.js), gotText (ex-digview.js, utilisé par events et modals)
-    save.js                     ← src/ui/save.js (tel quel)
-    rng.js                      ← src/rng.js (lcg) + fxRandom (ex-state.js)
-    sprites.css                 style.css 474-526 (.spr et variantes, toutes zones) — bloc déplacé plus haut dans la cascade
-    toast.css                   style.css 1188-1221
-  world/
-    world.data.js               BASE_LOOP_TIME, REST_RATE, BIOMES, TYPES, RES, TILES, tid, TILE_MAP, VILLAGE, neighbors
-    loop.engine.js              newMeta, createGame, startLoop, log, addRes, randInt, endLoop, newLoop, abandon
-    explore.engine.js           isExplorable, canExplore, buildSegments, explore, retreat, finishSegment, nextSegment,
-                                completeTile, segFill (ex-ui/map.js, calcul pur) — n'importe PAS combat/
-    tick.engine.js              tick, step (seuls à importer combat + explore : casse step ↔ fightStep ↔ nextSegment)
-    map.view.js                 ← ui/map.js sans segFill
-    map.css                     style.css 235-381
-    explore-panel.view.js       heroHTML, tileHTML, toolsHTML, logHTML, exploreHTML (ex-ui/panel.js, onglet Exploration)
-    explore-panel.css           style.css 1275-1297 (.tools)
-  hero/
-    hero.data.js                HERO_BASE, HERO_PER_LVL, xpNeeded, SKILLS, TOOLS, DEFAULT_TOOL
-    hero.engine.js              heroBase, heroAtLevel, skillUnlocked, actionTool, heroEvery, setTool
-  enemies/
-    enemies.data.js             MONSTERS, RANK, COMPOSITION (quel monstre donne quel matériau)
-    grids.generated.js          ← src/grids.js (sortie de tools/sprite_grids.py)
-    enemies.engine.js           monsterStats
-    bestiary.view.js            bestiaryHTML (ex-ui/panel.js)
-    bestiary.css                style.css 987-1045 (.mon, .tag, .troph)
-  mining/                       combat-minage, réutilisé plus tard par la mine (étape 4 de la feuille de route)
-    mining.data.js              STRATA, DIG, MATS
-    strata.engine.js            baseStrata, composition (ex-dig.js)
-    dig.engine.js               carveVein, pickTarget, aimDig, makeDig, dig, extract + leurs aides (ex-dig.js)
-    dig.view.js                 ← ui/digview.js sans gotText
-    dig.css                     style.css 1238-1274
-  combat/
-    combat.engine.js            strike, aimAt, firstAlive, fightStep, resolveDeaths, onKill
-    scene.view.js               ← ui/scene.js sans segBar, + préchargement SCENE_BG/sceneBgOk (ex-state.js)
-    scene.css                   style.css 382-473 + 527-598
-    scene-fx.css                style.css 599-710 (nombres flottants, compétences, retraite)
-  village/
-    village.data.js             UPGRADES
-    village.engine.js           canAfford, upgradeState, buy
-    village.view.js             villageHTML, costHTML (ex-ui/panel.js)
-    village.css                 style.css 952-986 + .mats (1298-1307)
-  intro/
-    intro.view.js               ← ui/intro.js
-    intro.css                   style.css 1308-1393
-  modals/
-    modal.view.js               écouteur #modal, closeModal, bouton de réinitialisation
-    loop-end.view.js            openLoopEnd, openBoss
-    monster.view.js             openMonster, compositionHTML
-    modal.css                   style.css 1046-1187
-```
-Supprimés : `src/data.js`, `src/engine.js`, `src/dig.js`, `src/rng.js`, `src/grids.js`, `src/style.css`, `src/ui/`.
-Règles du déplacement : fonctions déplacées telles quelles, mêmes noms (seul `segFill` change de couche). Tout `consumeEvents(); render()` ou `render()` d'une vue devient `requestRender()` (sans effet de bord : `G.events` est toujours vide à ces moments-là). `tools/sim.js` : seuls les imports changent (`import * as` de chaque module, réunis dans `E`). `eslint.config.js` : couches repérées par suffixe (`*.data.js` → seulement `*.data.js` ; `*.engine.js` → ni globals navigateur, ni `*.view.js`, `shared/`, `app/` ; vues → jamais `app/main.js` ; `shared/` → aucune vue) et `src/**/*.generated.js` ignoré. `tools/sprite_grids.py` : seulement le chemin de sortie (→ `src/enemies/grids.generated.js`) et les commentaires de chemin (+ celui de `tools/screenshot.py`). Si une capture diffère à cause des 3 blocs CSS déplacés (`.spr`, `.foot`, `.mats`), les remettre à leur place d'origine.
+**Décisions de Steven (19/11, après le lot 2)** : lots 3 à 8 confirmés ; le `onerror` en ligne (`spr()` dans `src/shared/templates.js`, image du héros dans `index.html`) se traite avec le lot 5 ; le bruit des captures se **corrige à la source** (session A), on ne le masque pas en relançant.
+Ordre des conversations : **A → B → C → D → E**, une conversation et un commit par ligne. Arborescence validée et prompt du lot 2 : `docs/archive/sessions-faites.md`.
 
-**Prompt de reprise (lot 2 : appliquer l'arborescence validée)** :
+Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
+
+**A. Captures fiables (avant le lot 3)** :
 ```
-Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/architecture.md et coding-style.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md : l'arborescence cible du lot 2 y est VALIDÉE, applique-la sans la reproposer. Refactoring pur : AUCUN changement de comportement. Ne lis que les fichiers que tu déplaces.
-Avant : captures de référence (tools/screenshot.py sous WSL, copiées dans le scratchpad). Après : npm run check:sim (identique), npm run lint (problèmes en baisse, prettier --check propre, 0 cycle), captures comparées (tools/qa/compare_shots.py : identiques, le combat compris), aucune erreur JS.
-Mets à jour au fil du travail CLAUDE.md (architecture et commandes), docs/INDEX.md, la section « ## Architecture du code » de docs/design.md, tools/sim.js, eslint.config.js et tools/sprite_grids.py (chemin). Commit, demande-moi avant de pousser.
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/testing.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (décisions du 19/11). Sujet : supprimer le bruit des captures à la source, sans toucher au jeu (src/ et index.html inchangés). Ne lis que tools/screenshot.py et tools/qa/compare_shots.py.
+Constat : au premier lancement après un changement, intro et intro2 diffèrent de 0,001 % sur le bouton « Passer » (zone 1190,14 → 1264,41) et combat de 0,3 % sur la scène (199,70 → 1199,755) ; les lancements suivants sont identiques, et l'ancien code fait pareil. Hypothèses : police Silkscreen chargée depuis Google Fonts (réseau), fond de scène bg_*.png appliqué seulement s'il est déjà chargé (sceneBgOk, classe has-bg sur #sceneView).
+1. Dans tools/screenshot.py, avant chaque capture : attendre document.fonts.ready, attendre que toutes les <img> soient complete ; pour le combat, attendre #sceneView.has-bg puis avancer l'horloge d'un tick pour qu'un rendu ait lieu. Vérifie d'abord dans le script ce qui est déjà attendu.
+2. Preuve : 5 lancements de suite comparés à une référence, 5 × « identique », y compris le premier juste après la modification (vide le cache si le navigateur en a un).
+3. Si la police reste instable : ne l'héberge pas toi-même (changement du jeu livré), propose-le-moi comme lot séparé.
+Mets à jour la ligne « bruit connu » de PROCHAINES-SESSIONS.md et .claude/rules/javascript/testing.md (une différence = une vraie régression). Commit test(qa), demande-moi avant de pousser.
+```
+
+**B. Lot 3 : complexité de l'UI** :
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/coding-style.md et sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Lot 3 : ramener la complexité cognitive à ≤ 15 et les fonctions à ≤ 50 lignes dans l'UI, refactoring pur. Ne lis que les fichiers cités.
+Cibles (npm run lint au commit a648497) : renderScene 61 et 109 lignes (src/combat/scene.view.js), consumeEvents 41 (src/app/events.view.js → table de gestionnaires {type: fonction}), tileHTML 35 et 66 lignes (src/world/explore-panel.view.js), renderMap 26 (src/world/map.view.js), villageHTML 19 (src/village/village.view.js).
+Corrections attendues : extraire des fonctions courtes (un morceau de gabarit = une fonction), retours anticipés, tables de correspondance. Les ternaires et templates imbriqués de ces fonctions peuvent tomber au passage ; le reste est pour le lot 5. Un gabarit utilisé par deux zones va dans src/shared/templates.js.
+Avant : captures de référence. Après : npm run check:sim identique, npm run lint en baisse sans nouvelle alerte, captures identiques (le combat compris), aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
+```
+
+**C. Lot 4 : complexité du moteur et de la simu** :
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/architecture.md, coding-style.md et sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Lot 4 : complexité cognitive ≤ 15, refactoring pur. Ne lis que les fichiers cités.
+Cibles : fightStep 30 (src/combat/combat.engine.js : attaque de base, compétences automatiques → table {clé: gestionnaire}, ennemis) et runBot 27 (tools/sim.js : choix de la case, boucle de jeu, achats).
+Piège : l'ordre des tirages de G.rng et G.mrng ne doit pas changer d'un seul appel (sinon la simu diverge) ; garder les sorties anticipées de fightStep (resolveDeaths, mort du héros) exactement aux mêmes endroits. Le moteur reste pur (aucun import de vue, shared/ ou app/).
+Après : npm run check:sim identique (sim.txt et sim-outils.txt), npm run lint en baisse, captures identiques, aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
+```
+
+**D. Lot 5 : ternaires, templates imbriqués et onerror en ligne** :
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/sonarqube.md et dom-security.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Lot 5, refactoring pur. Liste d'abord les alertes restantes avec npm run lint (sonarjs/no-nested-conditional, sonarjs/no-nested-template-literals) et ne lis que ces fichiers, plus src/shared/templates.js et index.html.
+Corrections attendues : ternaire imbriqué → petite fonction à retours anticipés ou table {clé: valeur}[k] ; template imbriqué → fonction qui renvoie le morceau (badge(n)).
+onerror en ligne (validé par Steven pour ce lot) : spr() dans src/shared/templates.js et l'image du héros dans index.html. Les remplacer par un seul écouteur délégué (l'événement error ne remonte pas : document.addEventListener('error', …, true), filtré sur img.spr) qui remplace l'image par son alt, comme aujourd'hui. Même rendu exigé quand un sprite manque : vérifie-le en renommant temporairement un sprite, capture, puis remets-le.
+Après : npm run check:sim identique, npm run lint sans ces deux règles, captures identiques, aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
+```
+
+**E. Lots 6 à 8 : chaînage optionnel, Python de tools/, max-lines** (un commit par lot, conversation à couper si le budget est atteint) :
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/sonarqube.md et coding-style.md, .claude/rules/python/sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Trois lots, un commit chacun, refactoring pur.
+Lot 6, chaînage optionnel (S6582, hors lint : getDiagnostics de VS Code sur src/ et tools/, ou recherche des motifs a && a.b) : a?.b?.c, en vérifiant chaque fois que la valeur ne sert pas telle quelle (a && a.x vaut null/false, a?.x vaut undefined : comparaisons, affichage, JSON de la sauvegarde).
+Lot 7, Python de tools/ : inventaire d'abord (complexité, docstrings, littéraux dupliqués, imbrication selon .claude/rules/python/sonarqube.md ; outils disponibles dans requirements-dev.txt), propose-moi la liste avant de corriger. Garde-fous : sprite_grids.py régénère src/enemies/grids.generated.js identique octet pour octet, screenshot.py et compare_shots.py donnent les mêmes résultats.
+Lot 8, max-lines par suffixe dans eslint.config.js, comme le tableau de coding-style.md : *.engine.js 250, *.view.js 200, app/main.js 60, tools/**/*.js 200 (et max-lines-per-function 20 pour *.data.js) ; lint propre sans relever de seuil (au lot 2, tous les fichiers étaient déjà sous leur limite).
+Après chaque lot : npm run check (lint + simu), captures identiques, aucune erreur JS. Demande-moi avant de pousser.
 ```
