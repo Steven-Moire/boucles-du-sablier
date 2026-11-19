@@ -1,6 +1,6 @@
 import {BIOMES, SKILLS, TILE_MAP} from '../data.js';
 import {actionTool, buildSegments, heroEvery, retreat, skillUnlocked} from '../engine.js';
-import {$, S, SCENE_BG, fmt, sceneBgOk, setHTML} from './state.js';
+import {$, S, SCENE_BG, fmt, fxRandom, sceneBgOk, setHTML} from './state.js';
 import {segFill} from './map.js';
 import {consumeEvents, render} from './main.js';
 import {digPortrait, drawDig, onDigClick} from './digview.js';
@@ -149,19 +149,13 @@ $('scEnemies').addEventListener('click', onDigClick);
 export function unitEl(key) {
   return key === 'hero' ? $('u-hero') : $('u-' + key);
 }
-export function anim(el, cls) {
-  if (!el) return;
-  el.classList.remove(cls);
-  void el.offsetWidth;
-  el.classList.add(cls);
-}
 export function floatNum(key, text, cls) {
   const el = unitEl(key);
   if (!el) return;
   const f = document.createElement('div');
   f.className = 'float ' + (cls || '');
   f.textContent = text;
-  f.style.marginLeft = Math.random() * 40 - 20 + 'px';
+  f.style.marginLeft = fxRandom() * 40 - 20 + 'px';
   el.appendChild(f);
   setTimeout(() => f.remove(), 1000);
 }

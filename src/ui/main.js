@@ -1,9 +1,9 @@
 import {MONSTERS, UPGRADES} from '../data.js';
 import {tick} from '../engine.js';
-import {$, S, hadSave, saveMeta, toast} from './state.js';
+import {$, S, anim, hadSave, saveMeta, toast} from './state.js';
 import {playIntro} from './intro.js';
 import {renderMap} from './map.js';
-import {anim, floatNum, renderScene, unitEl} from './scene.js';
+import {floatNum, renderScene, unitEl} from './scene.js';
 import {digParticles, gotText} from './digview.js';
 import {renderPane, renderTabs, renderTop} from './panel.js';
 import {openBoss, openLoopEnd} from './modals.js';

@@ -16,7 +16,7 @@ from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'screenshots'
-# même générateur congruentiel que tools/sim.js, graine fixe
+# même générateur congruentiel que src/rng.js (lcg), graine fixe
 SEEDED_RANDOM = """
 (() => { let s = 12345;
   Math.random = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296; })();

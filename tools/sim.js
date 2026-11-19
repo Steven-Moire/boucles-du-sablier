@@ -1,13 +1,12 @@
 // Simulation headless : un bot joue les boucles avec le moteur pur (src/engine.js), sans DOM
 import * as engine from '../src/engine.js';
 import * as data from '../src/data.js';
+import {lcg} from '../src/rng.js';
 const E = {...data, ...engine};
 
 function runBot(seed, maxLoops = 60, verbose = false, tool = null) {
-  let s = seed;
-  const rng = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
-  let ms = seed ^ 0x5bd1e995;
-  const mrng = () => (ms = (ms * 1664525 + 1013904223) % 4294967296) / 4294967296; // minage
+  const rng = lcg(seed);
+  const mrng = lcg(seed ^ 0x5bd1e995); // minage
   const G = E.createGame(null, rng, mrng);
   if (tool) E.setTool(G, tool); // --outils : le bot garde cet outil toute la partie
   let totalTime = 0,

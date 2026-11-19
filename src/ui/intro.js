@@ -1,4 +1,4 @@
-import {$, S} from './state.js';
+import {S, anim} from './state.js';
 
 // ---------- intro : 5 écrans au premier lancement (texte : docs/lore.md) ----------
 // image = assets/sprites/<key>.png (clé dans tools/sprites.json) ; si elle manque, le texte seul reste affiché
@@ -40,9 +40,7 @@ export function playIntro() {
     img.src = `assets/sprites/${sc.key}.png`;
     box.querySelector('.in-text').textContent = sc.text;
     box.querySelector('.in-dots').innerHTML = SCREENS.map((_, k) => `<i class="${k === i ? 'on' : ''}"></i>`).join('');
-    box.querySelector('.in-frame').classList.remove('in-fade');
-    void box.offsetWidth;
-    box.querySelector('.in-frame').classList.add('in-fade');
+    anim(box.querySelector('.in-frame'), 'in-fade');
   };
   const close = () => {
     box.remove();

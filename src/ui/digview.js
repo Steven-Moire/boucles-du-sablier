@@ -1,7 +1,7 @@
 import {GRIDS} from '../grids.js';
 import {COMPOSITION, MATS} from '../data.js';
 import {aimAt} from '../engine.js';
-import {S, spr} from './state.js';
+import {S, fxRandom, spr} from './state.js';
 
 // ---------- combat-minage : monstre dessiné pixel par pixel ----------
 const SCALE = 2; // agrandissement entier (pixel art)
@@ -111,7 +111,7 @@ export function digParticles(unit, id, w, idx, broken = []) {
       p = document.createElement('i');
     const bg = shattered.has(i) ? '#ffffff' : `rgb(${src.data[i * 4]},${src.data[i * 4 + 1]},${src.data[i * 4 + 2]})`;
     p.className = shattered.has(i) ? 'chip-px broke' : 'chip-px';
-    p.style.cssText = `left:${ox + x * SCALE}px;top:${oy + y * SCALE}px;background:${bg};--dx:${(Math.random() * 2 - 1) * 30}px`;
+    p.style.cssText = `left:${ox + x * SCALE}px;top:${oy + y * SCALE}px;background:${bg};--dx:${(fxRandom() * 2 - 1) * 30}px`;
     unit.appendChild(p);
     setTimeout(() => p.remove(), 700);
   }

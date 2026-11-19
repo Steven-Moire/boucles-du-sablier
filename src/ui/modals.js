@@ -2,7 +2,8 @@ import {COMPOSITION, MATS, MONSTERS, RANK, RES, STRATA, TILES} from '../data.js'
 import {composition} from '../dig.js';
 import {gotText} from './digview.js';
 import {createGame, monsterStats, newLoop} from '../engine.js';
-import {$, S, SAVE_KEY, anyUpgrade, pct, saveMeta, spr} from './state.js';
+import {$, S, anyUpgrade, pct, saveMeta, spr} from './state.js';
+import {clearMeta} from './save.js';
 import {render} from './main.js';
 import {playIntro} from './intro.js';
 
@@ -128,9 +129,7 @@ $('resetBtn').addEventListener('click', () => {
     }, 3000);
     return;
   }
-  try {
-    localStorage.removeItem(SAVE_KEY);
-  } catch (e) {}
+  clearMeta(); // si l'effacement échoue, la partie repart quand même de zéro à l'écran
   S.G = createGame(null);
   resetArm = false;
   $('resetBtn').textContent = 'Réinitialiser la sauvegarde';
