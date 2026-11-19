@@ -13,3 +13,5 @@ sd_raw/
 CLAUDE.local.md
 # archive source du prototype
 *.zip
+# vidages de plantage de Git Bash (grep.exe.stackdump…)
+*.stackdump
