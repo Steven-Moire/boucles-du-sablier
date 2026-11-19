@@ -1,0 +1,16 @@
+# Généré par tools/sprite_grids.py : jamais formaté ni édité à la main
+src/grids.js
+# Prototype d'origine, gardé tel quel pour comparaison
+proto/
+# Images et sprites
+assets/
+sd_raw/
+screenshots/
+# Références de la simu (comparées octet pour octet)
+tools/qa/ref/
+# Docs et notes écrites à la main (Prettier réalignerait les tableaux et changerait les listes)
+*.md
+# Outillage local et environnements
+.claude/
+.venv/
+package-lock.json

@@ -1,61 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Les Boucles du Sablier — prototype v0.3</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="src/style.css">
-</head>
-<body>
-<div class="app">
-  <div class="top">
-    <div class="title">Les Boucles du Sablier<small>prototype v0.3 — chemin, vrais combats, compétences, trophées, village</small></div>
-    <div class="res" id="res"></div>
-    <div class="speed" id="speed"></div>
-  </div>
-  <div class="timer">
-    <span class="lbl" id="loopLbl">⏳ BOUCLE 1</span>
-    <div class="bar time"><i id="timeBar"></i></div>
-    <span class="val" id="timeVal"></span>
-  </div>
-  <div class="main">
-    <div class="card left">
-      <div class="viewtabs" id="viewtabs"></div>
-      <div class="view mapview" id="mapView">
-        <div class="map" id="map"></div>
-        <div class="legend" id="legend"></div>
-      </div>
-      <div class="view scene" id="sceneView" hidden>
-        <div class="sc-head"><div class="sc-title" id="scTitle"></div></div>
-        <div class="sc-enemies" id="scEnemies"></div>
-        <div class="sc-bottom">
-          <div class="unit hero" id="u-hero">
-            <div class="por"><img class="spr" src="assets/sprites/heros.png" alt="🧙" onerror="this.outerHTML=this.alt"></div>
-            <div class="nm"><b id="heroLv">1</b> Héros</div>
-            <div class="bar hp"><i id="heroHpBar"></i><span id="heroHpTxt"></span></div>
-            <div class="swing"><i id="heroSwing"></i></div>
-          </div>
-          <div class="skills" id="scSkills"></div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Les Boucles du Sablier — prototype v0.3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="src/style.css" />
+  </head>
+  <body>
+    <div class="app">
+      <div class="top">
+        <div class="title">
+          Les Boucles du Sablier<small>prototype v0.3 — chemin, vrais combats, compétences, trophées, village</small>
         </div>
-        <button class="retreat" id="retreatBtn">BATTRE EN RETRAITE</button>
+        <div class="res" id="res"></div>
+        <div class="speed" id="speed"></div>
+      </div>
+      <div class="timer">
+        <span class="lbl" id="loopLbl">⏳ BOUCLE 1</span>
+        <div class="bar time"><i id="timeBar"></i></div>
+        <span class="val" id="timeVal"></span>
+      </div>
+      <div class="main">
+        <div class="card left">
+          <div class="viewtabs" id="viewtabs"></div>
+          <div class="view mapview" id="mapView">
+            <div class="map" id="map"></div>
+            <div class="legend" id="legend"></div>
+          </div>
+          <div class="view scene" id="sceneView" hidden>
+            <div class="sc-head"><div class="sc-title" id="scTitle"></div></div>
+            <div class="sc-enemies" id="scEnemies"></div>
+            <div class="sc-bottom">
+              <div class="unit hero" id="u-hero">
+                <div class="por">
+                  <img class="spr" src="assets/sprites/heros.png" alt="🧙" onerror="this.outerHTML = this.alt" />
+                </div>
+                <div class="nm"><b id="heroLv">1</b> Héros</div>
+                <div class="bar hp"><i id="heroHpBar"></i><span id="heroHpTxt"></span></div>
+                <div class="swing"><i id="heroSwing"></i></div>
+              </div>
+              <div class="skills" id="scSkills"></div>
+            </div>
+            <button class="retreat" id="retreatBtn">BATTRE EN RETRAITE</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="tabs" id="tabs"></div>
+          <div class="pane" id="pane"></div>
+        </div>
+      </div>
+      <div class="foot">
+        <span
+          >Clique une case pour voir sa fiche · double-clic sur une case dorée (ou déjà explorée) pour y aller
+          directement.</span
+        >
+        <button id="resetBtn">Réinitialiser la sauvegarde</button>
       </div>
     </div>
-    <div class="card">
-      <div class="tabs" id="tabs"></div>
-      <div class="pane" id="pane"></div>
-    </div>
-  </div>
-  <div class="foot">
-    <span>Clique une case pour voir sa fiche · double-clic sur une case dorée (ou déjà explorée) pour y aller directement.</span>
-    <button id="resetBtn">Réinitialiser la sauvegarde</button>
-  </div>
-</div>
-<div class="modal" id="modal" hidden><div class="mbox" id="mbox"></div></div>
-<div class="toasts" id="toasts"></div>
+    <div class="modal" id="modal" hidden><div class="mbox" id="mbox"></div></div>
+    <div class="toasts" id="toasts"></div>
 
-<script type="module" src="src/ui/main.js"></script>
-</body>
+    <script type="module" src="src/ui/main.js"></script>
+  </body>
 </html>

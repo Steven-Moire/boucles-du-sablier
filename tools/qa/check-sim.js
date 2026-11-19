@@ -16,22 +16,35 @@ const RUNS = [
 
 const runSim = args => execFileSync(process.execPath, [SIM, ...args], {cwd: ROOT, encoding: 'utf8'});
 
-function firstDiff(a, b){
-  const la = a.split('\n'), lb = b.split('\n');
+function firstDiff(a, b) {
+  const la = a.split('\n'),
+    lb = b.split('\n');
   const i = la.findIndex((line, k) => line !== lb[k]);
   const at = i < 0 ? la.length : i;
   return `ligne ${at + 1}\n  attendu : ${lb[at] ?? '(fin)'}\n  obtenu  : ${la[at] ?? '(fin)'}`;
 }
 
-function check(update){
+function check(update) {
   mkdirSync(REF_DIR, {recursive: true});
   let failed = 0;
-  for (const {name, args} of RUNS){
-    const out = runSim(args), ref = join(REF_DIR, name);
-    if (update){ writeFileSync(ref, out); console.log(`référence réécrite : ${name}`); continue; }
-    if (!existsSync(ref)){ console.error(`référence absente : ${name} (lancer avec --update)`); failed++; continue; }
+  for (const {name, args} of RUNS) {
+    const out = runSim(args),
+      ref = join(REF_DIR, name);
+    if (update) {
+      writeFileSync(ref, out);
+      console.log(`référence réécrite : ${name}`);
+      continue;
+    }
+    if (!existsSync(ref)) {
+      console.error(`référence absente : ${name} (lancer avec --update)`);
+      failed++;
+      continue;
+    }
     const expected = readFileSync(ref, 'utf8');
-    if (out === expected){ console.log(`identique : ${name}`); continue; }
+    if (out === expected) {
+      console.log(`identique : ${name}`);
+      continue;
+    }
     console.error(`DIFFÉRENT : ${name}, ${firstDiff(out, expected)}`);
     failed++;
   }
