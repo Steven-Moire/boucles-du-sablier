@@ -7,7 +7,9 @@ function loadMeta(){ try { const s = localStorage.getItem(SAVE_KEY); if (s){ con
 export function saveMeta(){ try { localStorage.setItem(SAVE_KEY, JSON.stringify(S.G.meta)); } catch(e){} }
 
 // état de l'interface partagé entre modules (un module ES ne peut pas réaffecter une variable importée)
-export const S = {G:createGame(loadMeta()), gameSpeed:1, tab:'explore', view:'map', selected:TILES[2].id, modalMode:null, backTimer:null, lastSceneTile:null};
+const savedMeta = loadMeta();
+export const hadSave = savedMeta !== null; // l'intro ne se joue qu'au tout premier lancement
+export const S = {G:createGame(savedMeta), gameSpeed:1, tab:'explore', view:'map', selected:TILES[2].id, modalMode:null, backTimer:null, lastSceneTile:null};
 export const $ = id => document.getElementById(id);
 export const fmt = n => Math.round(n).toLocaleString('fr-FR');
 export const pct = n => Math.round(n * 100) + ' %';

@@ -9,7 +9,8 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 - **Prochaine étape** : outils (pioche / marteau / coutelas) + forge + équipement non permanent + mémoire du village par la renommée.
 - **Lore décidé** : le mineur est « le Radoteur », vrai nom Anselme Tardif révélé par une scène (voir `lore.md`). Lieux confirmés : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret), aucune vraie commune ni lieu-dit de ces noms trouvés. **Texte final des 5 écrans de l'intro** écrit dans `lore.md`.
 - **Retenus provisoirement** (à ajuster en testant) : 5 vestiges dans les monstres, 6 répliques de déjà-vu par rang de renommée, carnet des vestiges (`lore.md`).
-- **Questions ouvertes** : trier les images de l'intro (30 images dans `sd_raw/intro_*`). Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md`.
+- **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/ui/intro.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ».
+- Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md`.
 
 ## docs/design.md — design et formules (long : lire par section)
 | Section (titre à chercher) | Contenu | Statut |
@@ -27,7 +28,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 Le mineur (Radoteur → Anselme Tardif, scène de la boulangère, pioche gravée), l'accroche et **le texte final des 5 écrans de l'intro**, les lieux (confirmés, vérifiés), **5 vestiges, 6 répliques de déjà-vu et le carnet des vestiges** (retenus provisoirement), les points de vigilance pour les noms, pourquoi le village se souvient et pas le héros, le Sablier et ses fragments, le ton (mélancolique mais drôle), le bestiaire comme carnet gardé par le village (à valider), la fin provisoire (réparer le Sablier). Le lore « monstres faits de temps sédimenté » et les vestiges sont dans `design.md` → `## Miner les ennemis` → `### Le lore qui va avec`.
 
 ## docs/art-direction.md — direction artistique (court)
-Pixel art façon Little Dig, le héros, tailles des sprites, palette Endesga 64, pipeline Stable Diffusion (Juggernaut XI + LoRA Pixel Art XL), suivi des assets (seeds dans `tools/sprites.json`).
+Pixel art façon Little Dig, le héros, tailles des sprites, palette Endesga 64, pipeline Stable Diffusion (Juggernaut XI + LoRA Pixel Art XL), retouche img2img / inpainting, suivi des assets (seeds dans `tools/sprites.json`, intro comprise).
 
 ## Ailleurs
 - `CLAUDE.md` : architecture du code, commandes, règles de travail, feuille de route.

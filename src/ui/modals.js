@@ -4,6 +4,7 @@ import {gotText} from './digview.js';
 import {createGame, monsterStats, newLoop} from '../engine.js';
 import {$, S, SAVE_KEY, anyUpgrade, pct, saveMeta, spr} from './state.js';
 import {render} from './main.js';
+import {playIntro} from './intro.js';
 
 // ---------- modales ----------
 let resetArm = false;
@@ -72,5 +73,6 @@ $('resetBtn').addEventListener('click', () => {
   if (!resetArm){ resetArm = true; $('resetBtn').textContent = 'Clique encore pour tout effacer'; setTimeout(() => { resetArm = false; $('resetBtn').textContent = 'Réinitialiser la sauvegarde'; }, 3000); return; }
   try { localStorage.removeItem(SAVE_KEY); } catch(e){}
   S.G = createGame(null); resetArm = false; $('resetBtn').textContent = 'Réinitialiser la sauvegarde'; S.selected = TILES[2].id; S.view = 'map'; S.lastSceneTile = null; closeModal();
+  playIntro(); // tout effacé = nouveau départ, l'intro se rejoue (on peut toujours la passer)
 });
 

@@ -1,7 +1,7 @@
 """Capture rapide du jeu dans Chromium (vérif visuelle après une modif).
 
   pip install playwright && playwright install chromium
-  python tools/screenshot.py            -> screenshots/map.png, screenshots/combat.png
+  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png
 """
 import asyncio
 import functools
@@ -34,7 +34,14 @@ async def main():
         errors = []
         pg.on('pageerror', lambda e: errors.append(str(e)))
         await pg.goto(f'http://127.0.0.1:{srv.server_port}/index.html')
-        await pg.wait_for_timeout(500)
+        await pg.wait_for_timeout(800)
+        # navigateur neuf = pas de sauvegarde : l'intro s'affiche, on la capture puis on la passe
+        await pg.screenshot(path=str(OUT / 'intro.png'))
+        await pg.click('#intro')
+        await pg.wait_for_timeout(700)
+        await pg.screenshot(path=str(OUT / 'intro2.png'))
+        await pg.click('.in-skip')
+        await pg.wait_for_timeout(300)
         await pg.screenshot(path=str(OUT / 'map.png'))
         await pg.click('#speed button[data-s="2"]')
         await pg.dblclick('.tile[data-id="4,5"]')

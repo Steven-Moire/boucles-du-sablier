@@ -9,7 +9,7 @@ Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHu
 - `src/data.js` : données (biomes, types de cases, cases, monstres, rangs, compétences, bâtiments, formules de base).
 - `src/engine.js` : moteur **pur** (aucun accès au DOM), importe `data.js`. `tools/sim.js` l'importe directement pour faire jouer un bot dans Node.
 - `src/dig.js` : combat-minage (pur) — strates, veines au hasard, creusage, extraction. `src/grids.js` : grilles de pixels des monstres, **générées** par `tools/sprite_grids.py` (ne pas éditer à la main). Hasards du minage sur `G.mrng`, séparé de `G.rng` (combats déterministes).
-- `src/ui/` : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`… —, sauvegarde, helpers), `map.js`, `scene.js`, `panel.js` (barre du haut + panneau de droite), `modals.js`, `digview.js` (monstre dessiné pixel par pixel, clic pour viser, éclats), `main.js` (événements, rendu, boucle principale ; point d'entrée).
+- `src/ui/` : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`… —, sauvegarde, helpers), `map.js`, `scene.js`, `panel.js` (barre du haut + panneau de droite), `modals.js`, `intro.js` (5 écrans au premier lancement), `digview.js` (monstre dessiné pixel par pixel, clic pour viser, éclats), `main.js` (événements, rendu, boucle principale ; point d'entrée).
   Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
 - `package.json` : seulement `"type": "module"` pour Node (pas de dépendances).
 - **Docs : lire `docs/INDEX.md` d'abord** (résumé de tout + où se trouve chaque sujet), puis seulement la section utile. Design complet et formules : `docs/design.md` (long, lire par section). Direction artistique : `docs/art-direction.md`. Lore (brouillon) : `docs/lore.md`.
