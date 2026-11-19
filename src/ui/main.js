@@ -3,6 +3,7 @@ import {tick} from '../engine.js';
 import {$, S, saveMeta, toast} from './state.js';
 import {renderMap} from './map.js';
 import {anim, floatNum, renderScene, unitEl} from './scene.js';
+import {digParticles, gotText} from './digview.js';
 import {renderPane, renderTabs, renderTop} from './panel.js';
 import {openBoss, openLoopEnd} from './modals.js';
 
@@ -20,6 +21,8 @@ export function consumeEvents(){
     else if (ev.type === 'explore'){ clearTimeout(S.backTimer); S.lastSceneTile = ev.id; S.view = 'scene'; }
     else if (ev.type === 'tileDone' || ev.type === 'retreat'){ clearTimeout(S.backTimer); S.backTimer = setTimeout(() => { if (!S.G.run.action){ S.view = 'map'; render(); } }, 900); }
     else if (ev.type === 'level' && fx) floatNum('hero', 'NIVEAU ' + ev.lvl, 'f-lv');
+    else if (ev.type === 'dig' && fx) digParticles(unitEl(ev.tgt), ev.id, ev.w, ev.idx);
+    else if (ev.type === 'kill' && fx && gotText(ev.got)) floatNum(ev.tgt, gotText(ev.got), 'f-loot');
     else if (ev.type === 'trophy'){ const tr = MONSTERS[ev.id].trophy; toast('🏆 TROPHÉE UNIQUE', `${tr.icon} ${tr.name} — ${tr.desc} (permanent)`); saveMeta(); }
     else if (ev.type === 'unlock'){ const u = UPGRADES[ev.key]; toast('❗ NOUVEAU BÂTIMENT', `${u.icon} ${u.name} est disponible au village.`); }
     else if (ev.type === 'loopEnd'){ saveMeta(); if (S.modalMode !== 'boss') openLoopEnd(); }

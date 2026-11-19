@@ -1,8 +1,9 @@
 import {BIOMES, SKILLS, TILE_MAP} from '../data.js';
 import {buildSegments, retreat, skillUnlocked} from '../engine.js';
-import {$, S, SCENE_BG, fmt, sceneBgOk, setHTML, spr} from './state.js';
+import {$, S, SCENE_BG, fmt, sceneBgOk, setHTML} from './state.js';
 import {segFill} from './map.js';
 import {consumeEvents, render} from './main.js';
+import {digPortrait, drawDig, onDigClick} from './digview.js';
 
 // ---------- scène de combat ----------
 let sceneKey = '';
@@ -34,7 +35,7 @@ export function renderScene(){
   if (key !== sceneKey){
     sceneKey = key;
     if (a && a.phase === 'fight' && a.enemies){
-      box.innerHTML = a.enemies.map((e, i) => `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${spr(e.id, e.por)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`).join('');
+      box.innerHTML = a.enemies.map((e, i) => `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${digPortrait(e, i)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`).join('');
     } else {
       let big = '⏳', txt = 'Le héros attend tes ordres.', bar = false;
       if (a){
@@ -53,6 +54,7 @@ export function renderScene(){
       u.querySelector('.bar span').textContent = Math.max(0, Math.ceil(e.hp));
       u.querySelector('.swing i').style.width = (Math.max(0, e.t) / e.speed * 100) + '%';
       u.classList.toggle('dead', e.hp <= 0);
+      const cv = u.querySelector('canvas.dig'); if (cv) drawDig(cv, e, performance.now() / 1000);
     });
   } else if (a && $('phaseBar')) $('phaseBar').style.width = ((a.phase === 'rest' ? h.hp / h.maxHp : Math.min(1, a.t / a.dur)) * 100) + '%';
   // héros
@@ -76,6 +78,7 @@ export function renderScene(){
 }
 $('retreatBtn').addEventListener('click', () => { retreat(S.G); consumeEvents(); render(); });
 $('sceneView').addEventListener('click', e => { const b = e.target.closest('[data-view]'); if (b){ S.view = b.dataset.view; render(); } });
+$('scEnemies').addEventListener('click', onDigClick);
 
 export function unitEl(key){ return key === 'hero' ? $('u-hero') : $('u-' + key); }
 export function anim(el, cls){ if (!el) return; el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls); }

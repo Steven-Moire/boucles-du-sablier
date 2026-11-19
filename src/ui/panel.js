@@ -1,4 +1,4 @@
-import {BIOMES, MONSTERS, RANK, RES, TILES, TILE_MAP, TYPES, UPGRADES, xpNeeded} from '../data.js';
+import {BIOMES, MATS, MONSTERS, RANK, RES, TILES, TILE_MAP, TYPES, UPGRADES, xpNeeded} from '../data.js';
 import {abandon, buy, canExplore, explore, heroAtLevel, heroBase, isExplorable, startLoop, upgradeState} from '../engine.js';
 import {$, S, anyUpgrade, fmt, loopFresh, pct, saveMeta, setHTML} from './state.js';
 import {segBar} from './scene.js';
@@ -85,6 +85,9 @@ function villageHTML(){
       ${s.unlocked && !s.maxed ? `<div class="cost">${costHTML(s.cost)}</div><button class="btn small gold" data-buy="${k}" ${s.ok ? '' : 'disabled'}>AMÉLIORER</button>` : s.maxed ? '<div class="cost">Niveau maximum</div>' : ''}
     </div></div>`;
   }
+  const mats = Object.keys(MATS).filter(k => m.mats[k]);
+  h += `<div class="sec"><h3>MATÉRIAUX EXTRAITS</h3>${mats.length ? `<div class="mats">${mats.map(k => `<span title="${MATS[k].name}">${MATS[k].icon} <b>${fmt(m.mats[k])}</b> ${MATS[k].name}</span>`).join('')}</div>`
+    : '<div class="note" style="margin:0;text-align:left">Creuse les monstres : ce que tu extrais, le village le garde. La forge s\'en servira bientôt.</div>'}</div>`;
   h += `<div class="sec bld lock"><div class="ic">🗺️</div><div><span class="nm">Cartographe</span><div class="ds">Bientôt : programmer sa route à l'avance sur les cases connues (mode idle).</div></div></div>`;
   h += `<div class="sec"><h3>HÉROS DE LA PROCHAINE BOUCLE</h3><div class="stats" style="margin:0">
     <div>PV <b>${h1.maxHp}</b></div><div>Puissance <b>${h1.pow.toFixed(1)}</b></div><div>Armure <b>${h1.arm.toFixed(1)}</b></div>

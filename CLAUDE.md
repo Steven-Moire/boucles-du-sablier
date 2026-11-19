@@ -8,14 +8,15 @@ Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHu
 - `index.html` : squelette HTML, charge `src/style.css` et `src/ui/main.js` (`<script type="module">`).
 - `src/data.js` : données (biomes, types de cases, cases, monstres, rangs, compétences, bâtiments, formules de base).
 - `src/engine.js` : moteur **pur** (aucun accès au DOM), importe `data.js`. `tools/sim.js` l'importe directement pour faire jouer un bot dans Node.
-- `src/ui/` : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`… —, sauvegarde, helpers), `map.js`, `scene.js`, `panel.js` (barre du haut + panneau de droite), `modals.js`, `main.js` (événements, rendu, boucle principale ; point d'entrée).
+- `src/dig.js` : combat-minage (pur) — strates, veines au hasard, creusage, extraction. `src/grids.js` : grilles de pixels des monstres, **générées** par `tools/sprite_grids.py` (ne pas éditer à la main). Hasards du minage sur `G.mrng`, séparé de `G.rng` (combats déterministes).
+- `src/ui/` : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`… —, sauvegarde, helpers), `map.js`, `scene.js`, `panel.js` (barre du haut + panneau de droite), `modals.js`, `digview.js` (monstre dessiné pixel par pixel, clic pour viser, éclats), `main.js` (événements, rendu, boucle principale ; point d'entrée).
   Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
 - `package.json` : seulement `"type": "module"` pour Node (pas de dépendances).
 - Design complet et formules : `docs/design.md`. Direction artistique : `docs/art-direction.md`. Lore (brouillon) : `docs/lore.md`.
 
 ## Commandes
 - Jouer en local : `python -m http.server` puis http://localhost:8000 (les modules ES ne se chargent **pas** en ouvrant `index.html` en `file://`).
-- Équilibrage : `node tools/sim.js` → affiche la trace d'une partie puis la boucle où le boss tombe sur 10 graines.
+- Équilibrage : `node tools/sim.js` → affiche la trace d'une partie, la boucle où le boss tombe sur 10 graines, puis les matériaux extraits au boss (médiane).
   **Cible actuelle : boss entre la 9e et la 13e boucle (~15-20 min en ×1).** Relancer après toute modif de chiffres.
 - Environnement Python (WSL) : `uv venv .venv && uv pip install -p .venv -r requirements-dev.txt && .venv/bin/playwright install chromium` (une fois : `sudo .venv/bin/playwright install-deps chromium`).
 - Vérif visuelle : `.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/`, et liste les erreurs JS.
@@ -23,6 +24,7 @@ Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHu
   `python tools/sd_generate.py <nom> -n 6` (variantes brutes dans `sd_raw/`), noter la meilleure seed dans `sprites.json`, puis `python tools/sd_generate.py --build` (→ `assets/sprites/`).
   À la main : `python tools/pixelize.py <image SD> assets/sprites/<nom>.png --size 48 --palette docs/palette.hex --bg auto --outline`.
 - Les sprites sont affichés par l'UI avec repli sur l'emoji si le fichier manque (`spr(clé, emoji)`).
+- Après tout changement d'un sprite de monstre : `python tools/sprite_grids.py` (régénère `src/grids.js`), puis relancer la simu.
 
 ## Règles de travail
 - Une mécanique à la fois, chaque étape doit rester jouable. Mettre à jour `docs/design.md` (décisions, formules, résultats de simu) à chaque changement de gameplay.

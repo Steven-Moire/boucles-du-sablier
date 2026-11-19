@@ -80,6 +80,36 @@ export const MONSTERS = {
 };
 export const RANK = {normal:{label:'Monstre', xp:1, renown:2}, elite:{label:'Élite', xp:3, renown:10}, boss:{label:'Boss', xp:5, renown:50}};
 
+// ======================= COMBAT-MINAGE =======================
+// Chaque monstre est sa grille de pixels (src/grids.js). Les dégâts creusent ; on garde ce qu'on extrait.
+// Matériaux extraits (gardés par le village, comme l'or).
+export const MATS = {
+  cuir:{icon:'🟫', name:'Cuir'}, fourrure:{icon:'🐺', name:'Fourrure'}, pierre:{icon:'🧱', name:'Pierre'},
+  os:{icon:'🦴', name:'Os'}, eclat:{icon:'🔹', name:'Éclat'},
+  defense:{icon:'🦷', name:'Défense'}, griffe:{icon:'🐾', name:'Griffe'}, cristal:{icon:'💎', name:'Cristal'},
+  braise:{icon:'🔥', name:'Braise'}, givre:{icon:'❄️', name:'Givre'}, etincelle:{icon:'⚡', name:'Étincelle'},
+  sable:{icon:'⏳', name:'Sable du sablier'},
+};
+// strates : vie d'un pixel, et nombre de pixels extraits pour 1 unité de matériau
+export const STRATA = {
+  croute:{hp:1, label:'Croûte'}, commun:{hp:1, yield:450, label:'Surface'}, peu:{hp:2, yield:300, label:'Profondeur'},
+  rare:{hp:3, yield:220, label:'Cœur'}, veine:{hp:2, yield:100, label:'Veine'},
+};
+// effondrement : part de la vie totale des pixels à creuser pour abattre le monstre (calée sur ses PV) ;
+// peu : part des pixels profonds en strate « profondeur » ; core : part en cœur selon le rang (le rare vient surtout des élites)
+export const DIG = {collapse:.3, peu:.1, core:{normal:.005, elite:.08, boss:.1}};
+// composition : matériau de chaque strate ; veine.sprite = les veines brillantes du sprite,
+// sinon veine.frac = part des pixels en veine, tracée au hasard à chaque apparition
+export const COMPOSITION = {
+  mulot:         {commun:'cuir', peu:'os', rare:'defense'},
+  sanglier:      {commun:'cuir', peu:'os', rare:'defense', veine:{mat:'braise', frac:.03}},
+  sanglier_alpha:{commun:'cuir', peu:'os', rare:'defense', veine:{mat:'braise', frac:.06}},
+  loup:          {commun:'fourrure', peu:'os', rare:'griffe', veine:{mat:'givre', frac:.03}},
+  golem:         {commun:'pierre', peu:'eclat', rare:'cristal', veine:{mat:'etincelle', sprite:true}},
+  ours:          {commun:'fourrure', peu:'os', rare:'griffe', veine:{mat:'givre', frac:.06}},
+  gardien:       {commun:'eclat', peu:'cristal', rare:'sable', veine:{mat:'etincelle', sprite:true}},
+};
+
 
 // compétences actives : se déclenchent seules dès que leur recharge est pleine
 export const SKILLS = {

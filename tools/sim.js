@@ -5,7 +5,8 @@ const E = {...data, ...engine};
 
 function runBot(seed, maxLoops = 60, verbose = false){
   let s = seed; const rng = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
-  const G = E.createGame(null, rng);
+  let ms = seed ^ 0x5bd1e995; const mrng = () => (ms = (ms * 1664525 + 1013904223) % 4294967296) / 4294967296;   // minage
+  const G = E.createGame(null, rng, mrng);
   let totalTime = 0, bossLoop = null;
   for (let loop = 1; loop <= maxLoops; loop++){
     // boucle : explorer la case accessible de plus bas niveau (récolte en dernier choix)
@@ -33,8 +34,10 @@ function runBot(seed, maxLoops = 60, verbose = false){
     }
     E.newLoop(G);
   }
-  return {bossLoop, totalTime: Math.round(totalTime)};
+  return {bossLoop, totalTime: Math.round(totalTime), mats:{...G.meta.mats}};
 }
 runBot(42, 60, true);
 const res = [1,2,3,4,5,6,7,8,9,10].map(s => runBot(s * 7919));
 console.log('\nBoss vaincu à la boucle :', res.map(r => r.bossLoop).join(' '), '| temps de jeu ×1 (min) :', res.map(r => (r.totalTime/60).toFixed(0)).join(' '));
+const med = a => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
+console.log('Matériaux extraits au boss (médiane) :', Object.keys(E.MATS).map(k => `${E.MATS[k].icon} ${med(res.map(r => r.mats[k] || 0))}`).join('  '));

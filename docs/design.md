@@ -74,7 +74,7 @@ Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données)
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
-## Miner les ennemis — PROPOSITION (pivot « game changer », 2026-11-19)
+## Miner les ennemis (pivot « game changer », 2026-11-19 — étape 1 faite)
 
 ### Pourquoi
 Retour de Steven après avoir fini la v0.3 : le jeu est plat, il manque de lore, et il est loin de **Little Dig**. L'idée de départ n'était pas d'avoir une mine à part, mais de **miner les ennemis**. Les combats à barre de PV deviennent donc une extraction : chaque monstre est une petite roche vivante, faite de pixels.
@@ -111,6 +111,43 @@ Prototype jouable, à part du jeu : `proto/mine-ennemi.html` (en ligne : `/proto
 2. **Outils** pioche / marteau / coutelas (forge et équipement non permanents + mémoire par renommée, v3).
 3. **Vestiges et lore** : vestiges enfouis, souvenirs débloqués au village, villageois aux déjà-vu.
 4. **Éléments** comme effets de minage, puis améliorations et hauts faits.
+
+### Étape 1 faite : combat-minage dans le jeu (2026-11-19)
+Décisions de Steven : « on garde ce qu'on extrait » validé ; il faut un **tableau de composition** ; plus tard, des **améliorations pour viser** (ou non) certains éléments ; les **éléments se récupèrent** pour forger armes et armures (une sorte de mini-jeu, puisqu'une arme ne se forge qu'une fois) ; un peu plus d'**aléatoire** quand on ne clique pas.
+
+Règles en place :
+- Chaque monstre est sa grille de pixels (`src/grids.js`, généré par `tools/sprite_grids.py` depuis les sprites). Les dégâts creusent (`src/dig.js`) ; la mort suit toujours les **PV** (formules inchangées), la grille est calée pour qu'à la mort ~30 % de sa vie de pixels soit creusée.
+- **Pioche** pour l'instant : tunnel de ~2 px depuis la surface la plus proche jusqu'au point visé, puis cratère qui s'élargit. **Clic sur un ennemi** = nouveau point visé.
+- **Aléatoire à chaque apparition** : veine élémentaire tracée au hasard (2-3 branches) et cible par défaut tirée au hasard (cœur 45 %, veine 35 %, n'importe où 20 %).
+- **Extraction à la mort** : pixels creusés / rendement de la strate ; la fraction restante est une chance d'une unité de plus.
+- Les hasards du minage passent par un générateur à part (`G.mrng`) : **les combats de la simulation sont identiques à la v0.3** au chiffre près.
+- Sauvegarde : `meta.mats` (stock de matériaux) et `bestiary[id].kills` (compteur de victoires) ajoutés avec valeur par défaut, `meta.v` reste 1. Vérifié avec une sauvegarde v0.3.
+- UI : monstre dessiné pixel par pixel (veines teintées, cœur qui scintille une fois mis à nu, viseur doré), éclats de pixels, butin flottant, matériaux au village, au bilan de boucle et **composition dans la fiche du bestiaire** (matériaux révélés à la première victoire).
+
+Strates : vie par pixel 1 (croûte, surface), 2 (profondeur, veine), 3 (cœur). Rendement (pixels pour 1 unité) : surface 450, profondeur 300, cœur 220, veine 100. Profondeur = 10 % des pixels les plus profonds ; cœur = 0,5 % (normal), 8 % (élite), 10 % (boss).
+
+#### Tableau de composition (part des pixels)
+| Monstre | Rang | Pixels | Croûte | Surface | Profondeur | Cœur | Veine |
+|---|---|---|---|---|---|---|---|
+| Mulot dentu | Monstre | 1292 | 18 % | 71 % 🟫 Cuir | 10 % 🦴 Os | 0,5 % 🦷 Défense | — |
+| Sanglier | Monstre | 1556 | 13 % | 73 % 🟫 Cuir | 10 % 🦴 Os | 0,5 % 🦷 Défense | 3 % 🔥 Braise (au hasard) |
+| Sanglier alpha | Élite | 2531 | 14 % | 62 % 🟫 Cuir | 10 % 🦴 Os | 8 % 🦷 Défense | 6 % 🔥 Braise (au hasard) |
+| Loup gris | Monstre | 1462 | 23 % | 64 % 🐺 Fourrure | 10 % 🦴 Os | 0,5 % 🐾 Griffe | 3 % ❄️ Givre (au hasard) |
+| Golem de pierre | Monstre | 1318 | 21 % | 62 % 🧱 Pierre | 10 % 🔹 Éclat | 0,5 % 💎 Cristal | 7 % ⚡ Étincelle (veines du sprite) |
+| Ours ancien | Élite | 1976 | 17 % | 59 % 🐺 Fourrure | 10 % 🦴 Os | 8 % 🐾 Griffe | 6 % ❄️ Givre (au hasard) |
+| Gardien du Sablier | Boss | 2951 | 11 % | 66 % 🔹 Éclat | 10 % 💎 Cristal | 10 % ⏳ Sable du sablier | 3 % ⚡ Étincelle (veines du sprite) |
+
+Le golem de pierre donne de la 🧱 Pierre et non du 🪨 Minerai : le minerai des filons reste l'unique source pour la Forge et l'Horloge, l'équilibrage du village ne bouge pas.
+
+#### Simulation (`node tools/sim.js`, 10 parties)
+Boss aux boucles 9 13 10 12 9 12 8 9 12 9 (identique à la v0.3). Matériaux extraits au moment du boss (médiane) :
+🟫 208 · 🐺 96 · 🧱 29 · 🦴 118 · 🔹 22 · 🦷 11 · 🐾 6 · 💎 1 · 🔥 26 · ❄️ 31 · ⚡ 48 · ⏳ 1.
+C'est l'ordre de grandeur visé par la v3 (communs abondants, rares rythmés par les élites). Les essences (🔥 ❄️ ⚡) serviront à forger les armes élémentaires.
+
+#### Pour plus tard
+- Améliorations de **visée** : lampe de prospection (révèle le cœur), priorité automatique (veine / cœur / rien), ou au contraire « laisser le hasard ».
+- Outils marteau et coutelas (le prototype `proto/mine-ennemi.html` les a déjà).
+- Sprites plus grands en combat (×3) si le minage manque de lisibilité.
 
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 

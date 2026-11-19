@@ -1,4 +1,6 @@
-import {MONSTERS, RANK, RES, TILES} from '../data.js';
+import {COMPOSITION, MATS, MONSTERS, RANK, RES, STRATA, TILES} from '../data.js';
+import {composition} from '../dig.js';
+import {gotText} from './digview.js';
 import {createGame, monsterStats, newLoop} from '../engine.js';
 import {$, S, SAVE_KEY, anyUpgrade, pct, saveMeta, spr} from './state.js';
 import {render} from './main.js';
@@ -16,8 +18,22 @@ export function openMonster(id, lvl){
   $('mbox').innerHTML = `<button class="x" data-close>×</button><div style="text-align:center;font-size:48px">${seen ? spr(id, mm.por) : '❔'}</div><h2>${seen ? mm.name : '???'}</h2><div class="sub">${RANK[mm.rank].label} · Niveau ${L}</div>
     <div class="divh"><span>STATS</span></div>${rows.map(([k,v]) => `<div class="row"><span class="k">${k}</span><b>${v}</b></div>`).join('')}
     ${seen ? '' : '<div class="note">Rencontre-le une fois pour révéler sa fiche.</div>'}
+    ${seen ? compositionHTML(id, b.killed) : ''}
     <div class="divh"><span>BUTINS</span></div>${drops}`;
   S.modalMode = 'monster'; $('modal').hidden = false;
+}
+// Composition d'un monstre : part de chaque strate et matériau extrait (révélé à la première victoire)
+function compositionHTML(id, killed){
+  const c = composition(id); if (!c) return '';
+  const comp = COMPOSITION[id], order = ['croute', 'commun', 'peu', 'rare', 'veine'];
+  const mat = s => {
+    if (s === 'croute') return '—';
+    if (!killed) return '???';
+    const k = s === 'veine' ? comp.veine.mat : comp[s];
+    return `${MATS[k].icon} ${MATS[k].name}`;
+  };
+  const rows = order.filter(s => c.parts[s]).map(s => `<div class="row"><span class="k">${STRATA[s].label}${s === 'veine' && !comp.veine.sprite ? ' (tracée au hasard)' : ''}</span><span>${Math.max(1, Math.round(c.parts[s] / c.count * 100))} % · <b>${mat(s)}</b></span></div>`).join('');
+  return `<div class="divh"><span>COMPOSITION</span></div>${rows}<div class="note">${c.count} pixels. Le monstre s'effondre quand ~30 % est creusé : vise le cœur ou les veines (clic) pour en tirer le meilleur.</div>`;
 }
 export function openLoopEnd(){
   const o = S.G.run.over, g = o.gains;
@@ -30,7 +46,7 @@ export function openLoopEnd(){
     <div class="divh"><span>CE QUE LE VILLAGE RETIENT</span></div>
     <div class="gains">
       <div>⭐ +${g.renown}<span>Renommée</span></div><div>🪙 +${g.gold}<span>Or</span></div>
-      <div>🪵 +${g.wood} · 🪨 +${g.ore}<span>Matériaux</span></div><div>🗺️ +${g.tiles} · 📖 +${g.monsters} · 🏆 +${g.trophies}<span>Cases · fiches · trophées</span></div>
+      <div>🪵 +${g.wood} · 🪨 +${g.ore}<span>Matériaux</span></div>${gotText(g.mats) ? `<div style="grid-column:1/-1">${gotText(g.mats)}<span>Extrait des monstres</span></div>` : ''}<div>🗺️ +${g.tiles} · 📖 +${g.monsters} · 🏆 +${g.trophies}<span>Cases · fiches · trophées</span></div>
     </div>
     <div class="note">Le héros oublie son niveau. Toi, tu gardes la carte, le bestiaire, les trophées et le village.</div>
     ${anyUpgrade() ? '<button class="btn" data-newloop data-go="village">❗ AMÉLIORER LE VILLAGE D\'ABORD</button><button class="btn small" data-newloop>NOUVELLE BOUCLE ⟳</button>'

@@ -1,5 +1,6 @@
 // Moteur pur : aucun accès au DOM. rng injectable, émet des G.events que l'UI consomme.
-import {BASE_LOOP_TIME, HERO_BASE, HERO_PER_LVL, MONSTERS, RANK, RES, REST_RATE, SKILLS, TILE_MAP, UPGRADES, VILLAGE, neighbors, xpNeeded} from './data.js';
+import {BASE_LOOP_TIME, HERO_BASE, HERO_PER_LVL, MATS, MONSTERS, RANK, RES, REST_RATE, SKILLS, TILE_MAP, UPGRADES, VILLAGE, neighbors, xpNeeded} from './data.js';
+import {aimDig, dig, extract, makeDig} from './dig.js';
 
 export function monsterStats(id, L){
   const m = MONSTERS[id];
@@ -11,7 +12,7 @@ export function monsterStats(id, L){
 
 // ======================= MOTEUR =======================
 export function newMeta(){
-  const m = {v:1, loop:1, renown:0, gold:0, wood:0, ore:0, upgrades:{}, discovered:{}, everCompleted:{}, bestiary:{}, chests:{}, trophies:{}, bossKilled:false};
+  const m = {v:1, loop:1, renown:0, gold:0, wood:0, ore:0, upgrades:{}, discovered:{}, everCompleted:{}, bestiary:{}, chests:{}, trophies:{}, mats:{}, bossKilled:false};
   m.discovered[VILLAGE] = true; neighbors(VILLAGE).forEach(n => m.discovered[n] = true);
   return m;
 }
@@ -26,9 +27,10 @@ export function heroAtLevel(base, lvl){
     pow:base.pow + HERO_PER_LVL.pow*(lvl-1), arm:base.arm + HERO_PER_LVL.arm*(lvl-1)};
 }
 export function skillUnlocked(meta, k){ const u = SKILLS[k].unlock; return !u || (meta.upgrades[u.upg] || 0) >= u.lvl; }
-export function createGame(meta, rng){
-  meta = meta || newMeta(); meta.trophies = meta.trophies || {};
-  const G = {meta, rng: rng || Math.random, run:null, events:[]};
+// mrng : hasards du minage (veines, cible, extraction), séparés de rng pour que les combats ne changent pas
+export function createGame(meta, rng, mrng){
+  meta = meta || newMeta(); meta.trophies = meta.trophies || {}; meta.mats = meta.mats || {};
+  const G = {meta, rng: rng || Math.random, mrng: mrng || Math.random, run:null, events:[]};
   startLoop(G);
   return G;
 }
@@ -37,7 +39,7 @@ export function startLoop(G){
   const hero = heroAtLevel(base, 1); hero.hp = hero.maxHp; hero.xp = 0;
   const skillT = {}; for (const k in SKILLS) skillT[k] = 0;
   G.run = {hero, base, skillT, timeMax:base.loopTime, timeLeft:base.loopTime, completed:new Set([VILLAGE]), heroAt:VILLAGE,
-    action:null, over:null, log:[], gains:{renown:0, gold:0, wood:0, ore:0, tiles:0, monsters:0, kills:0, trophies:0}, maxTile:0};
+    action:null, over:null, log:[], gains:{renown:0, gold:0, wood:0, ore:0, tiles:0, monsters:0, kills:0, trophies:0, mats:{}}, maxTile:0};
   log(G, `Boucle ${G.meta.loop} : le héros se réveille au village.`, 'b');
 }
 export function log(G, text, cls){ G.run.log.unshift({text, cls}); if (G.run.log.length > 50) G.run.log.pop(); }
@@ -118,7 +120,7 @@ export function nextSegment(G){
   if (a.seg >= a.segs.length){ completeTile(G); return; }
   const s = a.segs[a.seg];
   if (s.kind === 'fight'){
-    a.enemies = s.mons.map(id => { const e = monsterStats(id, t.lvl); e.hp = e.maxHp; e.t = -G.rng() * .4; return e; });
+    a.enemies = s.mons.map(id => { const e = monsterStats(id, t.lvl); e.hp = e.maxHp; e.t = -G.rng() * .4; e.dig = makeDig(e, G.mrng); return e; });
     a.heroT = 0; a.phase = 'fight';
     for (const e of a.enemies){
       const b = G.meta.bestiary[e.id] || (G.meta.bestiary[e.id] = {seen:false, killed:false});
@@ -136,6 +138,12 @@ export function strike(G, src, att, tgtKey, def, mult, sure){
   const crit = G.rng() < att.crit;
   const dmg = Math.max(1, Math.round((att.pow * mult - def.arm) * (crit ? 1.5 : 1)));
   def.hp -= dmg; G.events.push({type:'hit', src, tgt:tgtKey, dmg, crit, skill:mult !== 1});
+  if (def.dig){ const idx = dig(def.dig, dmg); if (idx.length) G.events.push({type:'dig', tgt:tgtKey, idx, id:def.id, w:def.dig.w}); }
+}
+// le joueur vise un point (coordonnées dans la grille du sprite) sur l'ennemi i
+export function aimAt(G, i, x, y){
+  const a = G.run.action, e = a && a.phase === 'fight' && a.enemies && a.enemies[i];
+  if (e && e.hp > 0 && e.dig) aimDig(e.dig, {x, y});
 }
 export const firstAlive = a => a.enemies.findIndex(e => e.hp > 0);
 export function fightStep(G, dt){
@@ -185,9 +193,15 @@ export function onKill(G, e, i){
   const xp = 4 * e.lvl * rk.xp; h.xp += xp;
   let msg = `${e.name} vaincu : +${xp} XP`;
   for (const d of m.drops){ if (G.rng() < d.chance){ const n = randInt(G, d.min, d.max); addRes(G, d.res, n); msg += `, +${n} ${RES[d.res].icon}`; } }
+  const got = e.dig ? extract(e.id, e.dig, G.mrng) : {};
+  for (const k in got){
+    G.meta.mats[k] = (G.meta.mats[k] || 0) + got[k]; G.run.gains.mats[k] = (G.run.gains.mats[k] || 0) + got[k];
+    msg += `, +${got[k]} ${MATS[k].icon}`;
+  }
   log(G, msg, 'g');
-  G.events.push({type:'kill', tgt:'e' + i});
+  G.events.push({type:'kill', tgt:'e' + i, got});
   const b = G.meta.bestiary[e.id];
+  b.kills = (b.kills || 0) + 1;
   if (!b.killed){ b.killed = true; addRes(G, 'renown', rk.renown); log(G, `Première victoire contre ${e.name} : +${rk.renown} ⭐`, 'g'); }
   if (!G.meta.trophies[e.id] && G.rng() < m.trophy.chance){
     G.meta.trophies[e.id] = true; G.run.gains.trophies++;

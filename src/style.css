@@ -193,3 +193,11 @@ button{font-family:inherit;cursor:pointer}
 @keyframes tin{from{transform:translateX(30px);opacity:0}}
 .foot{margin-top:14px;display:flex;justify-content:space-between;color:var(--muted);font-size:12px;flex-wrap:wrap;gap:8px}
 .foot button{background:none;border:0;color:var(--muted);text-decoration:underline}
+
+/* combat-minage */
+.unit canvas.dig{display:block;margin:0 auto;image-rendering:pixelated;cursor:crosshair;filter:drop-shadow(0 3px 0 rgba(0,0,0,.35))}
+.unit .chip-px{position:absolute;width:4px;height:4px;pointer-events:none;animation:chipfall .7s ease-in forwards;z-index:2}
+@keyframes chipfall{0%{transform:translate(0,0)}30%{transform:translate(calc(var(--dx) * .5),-14px)}100%{transform:translate(var(--dx),40px);opacity:0}}
+.float.f-loot{color:#9fe3ff;font-size:15px}
+.mats{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
+.mats b{color:var(--text)}
