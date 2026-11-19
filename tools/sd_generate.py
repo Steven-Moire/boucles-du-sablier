@@ -57,7 +57,7 @@ def generate(spec, name, n, url, seed0=None, profile=None):
     cfg = spec['profiles'][profile] if profile else spec['model']
     lora = f" <lora:{cfg['lora']}>" if cfg.get('lora') else ''
     w, h = a.get('gen', spec['gen_size'])
-    style = spec['style_bg'] if a['kind'] == 'bg' else spec['style_sprite']
+    style = spec.get('style_' + a['kind'], spec['style_sprite'])  # style_bg, style_icon, sinon style_sprite
     base = seed0 if seed0 is not None else a.get('seed_base', 1000)
     for i in range(n):
         seed = base + i
@@ -66,7 +66,7 @@ def generate(spec, name, n, url, seed0=None, profile=None):
         if dst.exists():
             print('déjà là', dst.relative_to(ROOT)); continue
         payload = {
-            'prompt': f"{cfg.get('prefix', '')}{style}, {a['prompt']}{lora}", 'negative_prompt': spec['negative'],
+            'prompt': f"{cfg.get('prefix', '')}{style}, {a['prompt']}{lora}", 'negative_prompt': spec['negative'] + (', ' + a['negative_extra'] if a.get('negative_extra') else ''),
             'seed': seed, 'width': w, 'height': h, 'steps': cfg['steps'], 'cfg_scale': cfg['cfg'],
             'sampler_name': cfg['sampler'], 'scheduler': cfg.get('scheduler', 'Automatic'),
             'override_settings': {'sd_model_checkpoint': cfg['checkpoint']},

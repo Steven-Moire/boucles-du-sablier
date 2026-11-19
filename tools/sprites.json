@@ -36,15 +36,18 @@
   ],
   "style_sprite": "pixel art, 16-bit game sprite, clean crisp pixels, limited color palette, soft shading, light from top-left, centered, full body, single character, plain flat white background",
   "style_bg": "pixel art, 16-bit game background, side view landscape, clean crisp pixels, limited color palette, soft warm light, no characters",
+  "style_icon": "pixel art, 16-bit game item icon, clean crisp pixels, limited color palette, bold simple shapes, thick readable silhouette, soft shading, light from top-left, centered, single object, plain flat white background",
   "negative": "blurry, gradient background, text, watermark, signature, jpeg artifacts, anti-aliasing, 3d render, photo, realistic, multiple characters, frame, border, cropped, ground, floor, cast shadow, pedestal, base, platform, scenery, props, pillars",
   "assets": {
     "heros": {
       "kind": "sprite",
       "size": 64,
       "seed_base": 1100,
-      "prompt": "a wild-eyed eccentric old miner, (dented yellow mining helmet with headlamp:1.4), (pickaxe resting on his shoulder:1.4), messy white hair sticking out, leather apron, muddy boots, (small cracked glowing hourglass hanging from his belt:1.2), crooked grin",
+      "prompt": "a wild-eyed eccentric old miner, (dented yellow mining helmet with a small headlamp:1.3), (carrying a heavy iron pickaxe resting over his shoulder:1.5), (the curved double-pointed iron pick head behind his head:1.3), wooden pickaxe handle held in one hand, messy white hair sticking out, leather apron, muddy boots, (small cracked glowing hourglass hanging from his belt:1.2), crooked grin",
       "seed_v1": 1100,
-      "seed": "pxl_1101"
+      "seed": "pxl_1202",
+      "negative_extra": "staff, walking stick, cane, lantern, torch, lamp on a pole, shovel, hammer, axe",
+      "seed_base_v3": 1200
     },
     "mulot": {
       "kind": "sprite",
@@ -218,6 +221,69 @@
       ],
       "denoise": 0.9,
       "prompt": "(a small glowing hourglass standing on a wooden dresser:1.4), golden sand inside, cracked glass, soft warm glow, dim bedroom"
+    },
+    "tile_combat": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11000,
+      "seed": "pxl_11002",
+      "prompt": "two crossed steel swords with brown leather grips"
+    },
+    "tile_elite": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11100,
+      "seed": "pxl_11100",
+      "prompt": "a horned beast skull with dark eye sockets, menacing lair emblem"
+    },
+    "tile_boss": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11200,
+      "seed": "pxl_11202",
+      "prompt": "a golden royal crown with red gems"
+    },
+    "tile_wood": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11300,
+      "seed": "pxl_11300",
+      "prompt": "a small round leafy green tree with a brown trunk"
+    },
+    "tile_ore": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11400,
+      "seed": "pxl_11401",
+      "prompt": "a grey boulder with shiny gold ore veins and nuggets"
+    },
+    "tile_spring": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11500,
+      "seed": "pxl_11502",
+      "prompt": "a big glossy blue water droplet"
+    },
+    "tile_chest": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11600,
+      "seed": "pxl_11602",
+      "prompt": "a closed wooden treasure chest with gold metal trim and a lock"
+    },
+    "tile_village": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11700,
+      "seed": "pxl_11702",
+      "prompt": "a small cozy wooden cottage with a red roof and a chimney"
+    },
+    "tile_puits": {
+      "kind": "icon",
+      "size": 32,
+      "seed_base": 11800,
+      "seed": "pxl_11803",
+      "prompt": "an old round stone well with a small wooden roof and a bucket"
     }
   }
 }
