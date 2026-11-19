@@ -34,11 +34,16 @@ export function aimAt(G, i, x, y) {
   if (e && e.hp > 0 && e.dig) aimDig(e.dig, {x, y});
 }
 export const firstAlive = a => a.enemies.findIndex(e => e.hp > 0);
+// un pas de combat : attaque de base, compétences automatiques, puis ennemis ; s'arrête dès que le combat finit
 export function fightStep(G, dt) {
-  const r = G.run,
-    a = r.action,
-    h = r.hero;
-  // attaque de base
+  if (heroAttacks(G, dt)) return;
+  if (autoSkills(G, dt)) return;
+  enemiesAttack(G, dt);
+}
+// attaque de base du héros ; true si la vague est vaincue
+function heroAttacks(G, dt) {
+  const a = G.run.action,
+    h = G.run.hero;
   a.heroT += dt;
   const every = heroEvery(G);
   while (a.heroT >= every) {
@@ -46,45 +51,70 @@ export function fightStep(G, dt) {
     const i = firstAlive(a);
     if (i < 0) break;
     strike(G, 'hero', h, 'e' + i, a.enemies[i], 1, false);
-    if (resolveDeaths(G)) return;
+    if (resolveDeaths(G)) return true;
   }
-  // compétences automatiques
+  return false;
+}
+// effet de chaque compétence automatique, une fois son temps de recharge écoulé
+const SKILL_EFFECTS = {
+  coup(G, h, a) {
+    const i = firstAlive(a);
+    if (i >= 0) strike(G, 'hero', h, 'e' + i, a.enemies[i], 2.5, true);
+  },
+  tourbillon(G, h, a) {
+    a.enemies.forEach((e, i) => {
+      if (e.hp > 0) strike(G, 'hero', h, 'e' + i, e, 1.2, true);
+    });
+  },
+  souffle(G, h) {
+    const n = Math.round(h.maxHp * 0.25);
+    h.hp = Math.min(h.maxHp, h.hp + n);
+    G.events.push({type: 'heal', tgt: 'hero', n});
+  },
+};
+// avance la recharge de la compétence k ; true si elle part maintenant
+function skillReady(G, k, dt) {
+  const r = G.run,
+    h = r.hero;
+  if (!skillUnlocked(G.meta, k)) return false;
+  r.skillT[k] = Math.min(SKILLS[k].cd, r.skillT[k] + dt);
+  if (r.skillT[k] < SKILLS[k].cd) return false;
+  return !(k === 'souffle' && h.hp > h.maxHp * 0.5); // souffle attend d'être sous 50 %
+}
+// compétences automatiques ; true si la vague est vaincue
+function autoSkills(G, dt) {
+  const r = G.run;
   for (const k in SKILLS) {
-    if (!skillUnlocked(G.meta, k)) continue;
-    r.skillT[k] = Math.min(SKILLS[k].cd, r.skillT[k] + dt);
-    if (r.skillT[k] < SKILLS[k].cd) continue;
-    if (k === 'souffle' && h.hp > h.maxHp * 0.5) continue; // attend d'être sous 50 %
+    if (!skillReady(G, k, dt)) continue;
     r.skillT[k] = 0;
     G.events.push({type: 'skill', key: k});
-    if (k === 'coup') {
-      const i = firstAlive(a);
-      if (i >= 0) strike(G, 'hero', h, 'e' + i, a.enemies[i], 2.5, true);
-    } else if (k === 'tourbillon')
-      a.enemies.forEach((e, i) => {
-        if (e.hp > 0) strike(G, 'hero', h, 'e' + i, e, 1.2, true);
-      });
-    else if (k === 'souffle') {
-      const n = Math.round(h.maxHp * 0.25);
-      h.hp = Math.min(h.maxHp, h.hp + n);
-      G.events.push({type: 'heal', tgt: 'hero', n});
-    }
-    if (resolveDeaths(G)) return;
+    SKILL_EFFECTS[k]?.(G, r.hero, r.action);
+    if (resolveDeaths(G)) return true;
   }
-  // ennemis
+  return false;
+}
+// coups des ennemis encore en vie ; s'arrête à la mort du héros
+function enemiesAttack(G, dt) {
+  const a = G.run.action;
   for (let i = 0; i < a.enemies.length; i++) {
-    const e = a.enemies[i];
-    if (e.hp <= 0) continue;
-    e.t += dt;
-    while (e.t >= e.speed) {
-      e.t -= e.speed;
-      strike(G, 'e' + i, e, 'hero', h, 1, false);
-      if (h.hp <= 0) {
-        h.hp = 0;
-        endLoop(G, 'death', e.name);
-        return;
-      }
+    if (enemyAttacks(G, a.enemies[i], i, dt)) return;
+  }
+}
+// coups de l'ennemi i pendant dt ; true si le héros meurt (fin de la boucle)
+function enemyAttacks(G, e, i, dt) {
+  const h = G.run.hero;
+  if (e.hp <= 0) return false;
+  e.t += dt;
+  while (e.t >= e.speed) {
+    e.t -= e.speed;
+    strike(G, 'e' + i, e, 'hero', h, 1, false);
+    if (h.hp <= 0) {
+      h.hp = 0;
+      endLoop(G, 'death', e.name);
+      return true;
     }
   }
+  return false;
 }
 export function resolveDeaths(G) {
   const a = G.run.action;

@@ -160,3 +160,15 @@ Cibles (npm run lint au commit a648497) : renderScene 61 et 109 lignes (src/comb
 Corrections attendues : extraire des fonctions courtes (un morceau de gabarit = une fonction), retours anticipés, tables de correspondance. Les ternaires et templates imbriqués de ces fonctions peuvent tomber au passage ; le reste est pour le lot 5. Un gabarit utilisé par deux zones va dans src/shared/templates.js.
 Avant : captures de référence avec le tools/screenshot.py actuel (pas de captures d'avant 14ce5f3). Après : npm run check:sim identique, npm run lint en baisse sans nouvelle alerte, captures identiques (le combat compris), aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
 ```
+
+## Qualité du code — lot 4 du 19/11 (session C, faite)
+
+**Fait le 19/11 (lot 4)** : complexité du moteur et de la simu, refactoring pur. `fightStep` (30, `src/combat/combat.engine.js`) → trois étapes à sortie anticipée (`heroAttacks`, `autoSkills`, `enemiesAttack`) ; compétences automatiques en table `SKILL_EFFECTS` {coup, tourbillon, souffle}, recharge et condition du souffle (sous 50 %) dans `skillReady` ; coups d'un ennemi dans `enemyAttacks`. Ordre des tirages de `G.rng` / `G.mrng` et sorties anticipées (`resolveDeaths`, mort du héros) inchangés. `runBot` (27, `tools/sim.js`) → `pickTile`, `playLoop` (le temps reste additionné tick par tick sur le total, pour ne pas changer l'arrondi flottant), `logLoop`, `buyAll`. Lint : 15 → 13 problèmes, plus aucune complexité. Simu identique (`sim.txt`, `sim-outils.txt`), 5 captures identiques, aucune erreur JS.
+
+**C. Lot 4 : complexité du moteur et de la simu** :
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/architecture.md, coding-style.md et sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Lot 4 : complexité cognitive ≤ 15, refactoring pur. Ne lis que les fichiers cités.
+Cibles : fightStep 30 (src/combat/combat.engine.js : attaque de base, compétences automatiques → table {clé: gestionnaire}, ennemis) et runBot 27 (tools/sim.js : choix de la case, boucle de jeu, achats).
+Piège : l'ordre des tirages de G.rng et G.mrng ne doit pas changer d'un seul appel (sinon la simu diverge) ; garder les sorties anticipées de fightStep (resolveDeaths, mort du héros) exactement aux mêmes endroits. Le moteur reste pur (aucun import de vue, shared/ ou app/).
+Après : npm run check:sim identique (sim.txt et sim-outils.txt), npm run lint en baisse, captures identiques, aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
+```

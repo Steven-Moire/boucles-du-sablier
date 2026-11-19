@@ -31,6 +31,53 @@ const E = {
   ...village,
 };
 
+const isHarvest = t => t.type === 'wood' || t.type === 'ore';
+// case à explorer : la case accessible non faite de plus bas niveau (récolte en dernier choix), sinon farmer la plus haute
+function pickTile(G) {
+  const fresh = E.TILES.filter(t => E.isExplorable(G, t.id) && !G.run.completed.has(t.id)).sort(
+    (a, b) => isHarvest(a) - isHarvest(b) || a.lvl - b.lvl,
+  );
+  if (fresh.length) return fresh[0];
+  const farm = E.TILES.filter(t => E.isExplorable(G, t.id) && t.waves).sort((a, b) => b.lvl - a.lvl);
+  return farm[0] ?? null;
+}
+// joue une boucle jusqu'à sa fin ; renvoie le temps de jeu total (ajouté tick par tick, comme avant)
+function playLoop(G, totalTime) {
+  let time = totalTime;
+  while (!G.run.over) {
+    if (!G.run.action) {
+      const tile = pickTile(G);
+      if (!tile) {
+        G.run.over = {reason: 'stuck', gains: G.run.gains};
+        break;
+      }
+      E.explore(G, tile.id);
+    }
+    const before = G.run.timeLeft;
+    E.tick(G, 0.5);
+    G.events.length = 0;
+    time += before - G.run.timeLeft;
+  }
+  G.events.length = 0;
+  return time;
+}
+function logLoop(G, loop) {
+  const o = G.run.over,
+    h = G.run.hero;
+  console.log(
+    `B${String(loop).padStart(2)} ${o.reason.padEnd(6)} lvl${h.lvl} cases:${G.run.completed.size - 1} maxNiv:${G.run.maxTile} ⭐${G.meta.renown} 🪙${G.meta.gold} 🪵${G.meta.wood} 🪨${G.meta.ore} upg:${JSON.stringify(G.meta.upgrades)} 🏆${Object.keys(G.meta.trophies).length}`,
+  );
+}
+// achats : le moins cher d'abord, en boucle
+function buyAll(G) {
+  for (;;) {
+    const ks = Object.keys(E.UPGRADES)
+      .filter(k => E.upgradeState(G, k).ok)
+      .sort((a, b) => E.upgradeState(G, a).cost.gold - E.upgradeState(G, b).cost.gold);
+    if (!ks.length) return;
+    E.buy(G, ks[0]);
+  }
+}
 function runBot(seed, maxLoops = 60, verbose = false, tool = null) {
   const rng = lcg(seed);
   const mrng = lcg(seed ^ 0x5bd1e995); // minage
@@ -39,45 +86,11 @@ function runBot(seed, maxLoops = 60, verbose = false, tool = null) {
   let totalTime = 0,
     bossLoop = null;
   for (let loop = 1; loop <= maxLoops; loop++) {
-    // boucle : explorer la case accessible de plus bas niveau (récolte en dernier choix)
-    while (!G.run.over) {
-      if (!G.run.action) {
-        let opts = E.TILES.filter(t => E.isExplorable(G, t.id) && !G.run.completed.has(t.id)).sort(
-          (a, b) => (a.type === 'wood' || a.type === 'ore') - (b.type === 'wood' || b.type === 'ore') || a.lvl - b.lvl,
-        );
-        if (!opts.length) opts = E.TILES.filter(t => E.isExplorable(G, t.id) && t.waves).sort((a, b) => b.lvl - a.lvl); // farm
-        if (!opts.length) {
-          G.run.over = {reason: 'stuck', gains: G.run.gains};
-          break;
-        }
-        E.explore(G, opts[0].id);
-      }
-      const before = G.run.timeLeft;
-      E.tick(G, 0.5);
-      G.events.length = 0;
-      totalTime += before - G.run.timeLeft;
-    }
-    G.events.length = 0;
-    const o = G.run.over,
-      h = G.run.hero;
-    if (G.meta.bossKilled && !bossLoop) bossLoop = loop;
-    if (verbose)
-      console.log(
-        `B${String(loop).padStart(2)} ${o.reason.padEnd(6)} lvl${h.lvl} cases:${G.run.completed.size - 1} maxNiv:${G.run.maxTile} ⭐${G.meta.renown} 🪙${G.meta.gold} 🪵${G.meta.wood} 🪨${G.meta.ore} upg:${JSON.stringify(G.meta.upgrades)} 🏆${Object.keys(G.meta.trophies).length}`,
-      );
+    totalTime = playLoop(G, totalTime);
+    if (G.meta.bossKilled) bossLoop = loop;
+    if (verbose) logLoop(G, loop);
     if (bossLoop) break;
-    // achats : le moins cher d'abord, en boucle
-    let bought = true;
-    while (bought) {
-      bought = false;
-      const ks = Object.keys(E.UPGRADES)
-        .filter(k => E.upgradeState(G, k).ok)
-        .sort((a, b) => E.upgradeState(G, a).cost.gold - E.upgradeState(G, b).cost.gold);
-      if (ks.length) {
-        E.buy(G, ks[0]);
-        bought = true;
-      }
-    }
+    buyAll(G);
     E.newLoop(G);
   }
   return {bossLoop, totalTime: Math.round(totalTime), mats: {...G.meta.mats}};
