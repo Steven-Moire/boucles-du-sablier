@@ -23,6 +23,25 @@ export function anim(el, cls) {
   el.addEventListener('animationend', done);
 }
 
+// ---------- sprites manquants ----------
+const isSprite = el => el instanceof HTMLImageElement && el.classList.contains('spr');
+const toEmoji = img => img.replaceWith(img.alt);
+// Un sprite introuvable (img.spr) est remplacé par son emoji (alt). L'événement error ne remonte pas :
+// écouteur posé en phase de capture sur document. Les images déjà en échec au moment de l'appel
+// (celle du héros dans index.html, chargée avant les modules) sont remplacées tout de suite.
+export function watchSprites() {
+  document.addEventListener(
+    'error',
+    e => {
+      if (isSprite(e.target)) toEmoji(e.target);
+    },
+    true,
+  );
+  for (const img of document.querySelectorAll('img.spr')) {
+    if (img.complete && img.naturalWidth === 0) toEmoji(img);
+  }
+}
+
 // ---------- toasts ----------
 export function toast(title, text) {
   const d = document.createElement('div');

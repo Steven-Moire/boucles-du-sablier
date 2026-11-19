@@ -78,8 +78,10 @@ $('tabs').addEventListener('click', e => {
   }
 });
 
+// gabarit de chaque onglet ; tout autre onglet affiche le bestiaire
+const PANES = {explore: exploreHTML, village: villageHTML};
 export function renderPane() {
-  setHTML($('pane'), S.tab === 'explore' ? exploreHTML() : S.tab === 'village' ? villageHTML() : bestiaryHTML());
+  setHTML($('pane'), (PANES[S.tab] || bestiaryHTML)());
 }
 $('pane').addEventListener('click', e => {
   const b = e.target.closest('button');

@@ -3,6 +3,19 @@ import {TILES} from '../world/world.data.js';
 import {MONSTERS, RANK} from './enemies.data.js';
 import {S} from '../shared/state.js';
 
+const trophyTag = hasTrophy => (hasTrophy ? '<span class="tag t">🏆</span> ' : '');
+const killTag = killed => (killed ? '<span class="tag k">VAINCU</span>' : '<span class="tag ">RENCONTRÉ</span>');
+// ligne d'un monstre déjà rencontré (ouvre sa fiche)
+const seenMonHTML = (id, mm, killed, hasTrophy) =>
+  `<button class="mon" data-mon="${id}"><span>${mm.por} <b>${mm.name}</b> <span class="tag">${RANK[mm.rank].label}</span></span><span>${trophyTag(hasTrophy)}${killTag(killed)}</span></button>`;
+const unknownMonHTML = mm =>
+  `<div class="mon unk"><span>???</span><span class="tag">${RANK[mm.rank].label}</span></div>`;
+// où trouver un trophée pas encore obtenu : révélé à la première victoire sur son monstre
+function trophySource(mm, b) {
+  if (b && b.killed) return `Sur ${mm.name} · ${Math.round(mm.trophy.chance * 100)} %`;
+  return 'Source inconnue';
+}
+
 export function bestiaryHTML() {
   const m = S.G.meta,
     total = TILES.filter(t => t.type !== 'village').length,
@@ -14,10 +27,7 @@ export function bestiaryHTML() {
   for (const id in MONSTERS) {
     const b = m.bestiary[id],
       mm = MONSTERS[id];
-    h +=
-      b && b.seen
-        ? `<button class="mon" data-mon="${id}"><span>${mm.por} <b>${mm.name}</b> <span class="tag">${RANK[mm.rank].label}</span></span><span>${m.trophies[id] ? '<span class="tag t">🏆</span> ' : ''}<span class="tag ${b.killed ? 'k' : ''}">${b.killed ? 'VAINCU' : 'RENCONTRÉ'}</span></span></button>`
-        : `<div class="mon unk"><span>???</span><span class="tag">${RANK[mm.rank].label}</span></div>`;
+    h += b && b.seen ? seenMonHTML(id, mm, b.killed, m.trophies[id]) : unknownMonHTML(mm);
   }
   h += `<div class="note">Une fiche se révèle à la première rencontre, les butins à la première victoire.</div></div>`;
   const nT = Object.keys(m.trophies).length,
@@ -31,7 +41,7 @@ export function bestiaryHTML() {
           tr = mm.trophy;
         return own
           ? `<div class="troph own"><b>${tr.icon} ${tr.name}</b><span>${tr.desc}</span></div>`
-          : `<div class="troph"><b>🔒 ???</b><span>${b && b.killed ? `Sur ${mm.name} · ${Math.round(tr.chance * 100)} %` : 'Source inconnue'}</span></div>`;
+          : `<div class="troph"><b>🔒 ???</b><span>${trophySource(mm, b)}</span></div>`;
       })
       .join('') +
     `</div><div class="note">Butins uniques : un seul exemplaire par monstre, bonus permanent sur tous les héros futurs.</div></div>`;

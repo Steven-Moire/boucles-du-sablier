@@ -2,8 +2,8 @@
 import {buildSegments, segFill} from '../world/explore.engine.js';
 
 // sprite pixel art (assets/sprites/<clé>.png) ; si l'image manque, l'emoji (alt) prend sa place
-export const spr = (key, emoji) =>
-  `<img class="spr" src="assets/sprites/${key}.png" alt="${emoji}" onerror="this.outerHTML=this.alt">`;
+// (écouteur délégué watchSprites() de shared/dom.js)
+export const spr = (key, emoji) => `<img class="spr" src="assets/sprites/${key}.png" alt="${emoji}">`;
 // barre des segments d'une case (scène de combat et panneau de droite)
 export function segBar(t, a, done) {
   const n = buildSegments(t).length;

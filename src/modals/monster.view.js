@@ -9,6 +9,16 @@ import {pct} from '../shared/format.js';
 import {spr} from '../shared/templates.js';
 
 // ---------- fiche d'un monstre ----------
+const dropQty = d => (d.min === d.max ? d.min : d.min + '~' + d.max);
+const dropHTML = d =>
+  `<div class="drop">${RES[d.res].icon}<em>${dropQty(d)}</em><small>${Math.round(d.chance * 100)}%</small></div>`;
+// butins révélés (après une victoire) : butins communs puis le trophée unique
+function dropsHTML(mm, own) {
+  const tr = mm.trophy;
+  return `<div class="drops">${mm.drops.map(dropHTML).join('')}
+      <div class="drop uniq ${own ? 'got' : ''}" title="${tr.name} — ${tr.desc}">${tr.icon}<em>${own ? '✓' : '🏆'}</em><small>${Math.round(tr.chance * 100)}%</small></div></div>
+      <div class="note">🏆 ${tr.name} : ${tr.desc} — unique, permanent${own ? ' (obtenu)' : ''}.</div>`;
+}
 export function openMonster(id, lvl) {
   const mm = MONSTERS[id],
     b = S.G.meta.bestiary[id] || {},
@@ -16,7 +26,6 @@ export function openMonster(id, lvl) {
   const s = monsterStats(id, L),
     seen = b.seen,
     q = v => (seen ? v : '???'),
-    tr = mm.trophy,
     own = S.G.meta.trophies[id];
   const rows = [
     ['Santé', q(s.maxHp)],
@@ -26,11 +35,7 @@ export function openMonster(id, lvl) {
     ['Critique', q(pct(s.crit))],
     ['Attaque toutes les', q(s.speed + ' s')],
   ];
-  const drops = b.killed
-    ? `<div class="drops">${mm.drops.map(d => `<div class="drop">${RES[d.res].icon}<em>${d.min === d.max ? d.min : d.min + '~' + d.max}</em><small>${Math.round(d.chance * 100)}%</small></div>`).join('')}
-      <div class="drop uniq ${own ? 'got' : ''}" title="${tr.name} — ${tr.desc}">${tr.icon}<em>${own ? '✓' : '🏆'}</em><small>${Math.round(tr.chance * 100)}%</small></div></div>
-      <div class="note">🏆 ${tr.name} : ${tr.desc} — unique, permanent${own ? ' (obtenu)' : ''}.</div>`
-    : `<div class="note">Bats-le une fois pour révéler ses butins.</div>`;
+  const drops = b.killed ? dropsHTML(mm, own) : `<div class="note">Bats-le une fois pour révéler ses butins.</div>`;
   $('mbox').innerHTML =
     `<button class="x" data-close>×</button><div style="text-align:center;font-size:48px">${seen ? spr(id, mm.por) : '❔'}</div><h2>${seen ? mm.name : '???'}</h2><div class="sub">${RANK[mm.rank].label} · Niveau ${L}</div>
     <div class="divh"><span>STATS</span></div>${rows.map(([k, v]) => `<div class="row"><span class="k">${k}</span><b>${v}</b></div>`).join('')}

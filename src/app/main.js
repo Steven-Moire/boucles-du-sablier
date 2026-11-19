@@ -2,6 +2,7 @@
 import {tick} from '../world/tick.engine.js';
 import {S, hadSave, saveMeta} from '../shared/state.js';
 import {onRender} from '../shared/render.js';
+import {watchSprites} from '../shared/dom.js';
 import {playIntro} from '../intro/intro.view.js';
 import {renderScene} from '../combat/scene.view.js';
 import {renderMap} from '../world/map.view.js';
@@ -9,6 +10,7 @@ import {renderPane, renderTabs, renderTop} from './layout.view.js';
 import {consumeEvents} from './events.view.js';
 import '../modals/modal.view.js'; // écouteurs de la fenêtre modale et du bouton de réinitialisation
 
+watchSprites(); // avant le premier rendu : les sprites manquants deviennent leur emoji
 function render() {
   renderTop();
   renderTabs();

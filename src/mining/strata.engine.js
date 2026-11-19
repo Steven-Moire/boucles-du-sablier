@@ -5,6 +5,13 @@ import {DIG} from './mining.data.js';
 
 const BASE = {}; // strates de base par monstre (calculées une fois)
 
+// classe du k-ième pixel trié par profondeur : cœur, puis profondeur, puis surface
+function layerOf(k, nRare, nPeu) {
+  if (k < nRare) return 'rare';
+  if (k < nRare + nPeu) return 'peu';
+  return 'commun';
+}
+
 // Strates d'un monstre : croûte (contour), veine brillante du sprite, puis par profondeur :
 // les plus profonds = cœur (rare), les 30 % suivants = profondeur (peu commun), le reste = surface (commun).
 export function baseStrata(id) {
@@ -40,7 +47,7 @@ export function baseStrata(id) {
   const nRare = Math.round(count * DIG.core[MONSTERS[id].rank]),
     nPeu = Math.round(count * DIG.peu);
   deep.forEach((p, k) => {
-    cls[p.i] = k < nRare ? 'rare' : k < nRare + nPeu ? 'peu' : 'commun';
+    cls[p.i] = layerOf(k, nRare, nPeu);
   });
   BASE[id] = {w: g.w, h: g.h, cls, count, cx, cy};
   return BASE[id];

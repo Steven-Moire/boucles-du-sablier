@@ -108,22 +108,14 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 
 ## 4. Qualité du code (à faire avant 3a)
 
-**État au 19/11** (lots 0, Prettier, 1, 2, 3 et 4 faits ; comptes rendus et prompts A, B et C dans `docs/archive/sessions-faites.md`) : ESLint + règles SonarQube, `npm run check` (lint + simu de référence), captures déterministes **sans bruit connu : une différence = une vraie régression**, 5 captures de référence (`village.png` comprise ; tous les bâtiments y sont verrouillés, relire à la main les branches « débloqué » et « niveau max »). Lint : **13 problèmes** (plus aucune complexité ; 11 ternaires imbriqués ; 3 templates imbriqués, dont `logHTML`).
+**État au 19/11** (lots 0, Prettier, 1, 2, 3, 4 et 5 faits ; comptes rendus et prompts A à D dans `docs/archive/sessions-faites.md`) : ESLint + règles SonarQube, `npm run check` (lint + simu de référence), captures déterministes **sans bruit connu : une différence = une vraie régression**, 5 captures de référence (`village.png` comprise ; tous les bâtiments y sont verrouillés, relire à la main les branches « débloqué » et « niveau max »). Lint : **0 problème** (lot 5 : plus de ternaire ni de template imbriqué ; `onerror` en ligne remplacé par l'écouteur délégué `watchSprites()` de `src/shared/dom.js`). Reste S6582 (chaînage optionnel, hors lint) au lot 6.
 **Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
 **Ordre des lots restants** (un commit chacun) : 4 complexité moteur et simu → 5 ternaires et templates → 6 chaînage optionnel → 7 Python de tools/ → 8 limites `max-lines` par suffixe dans `eslint.config.js` (`*.engine.js` 250, `*.view.js` 200, `main.js` 60, `tools/` 200, comme le tableau de `.claude/rules/javascript/coding-style.md` ; décidé le 19/11).
 
 **Décisions de Steven (19/11, après le lot 2)** : lots 3 à 8 confirmés ; le `onerror` en ligne (`spr()` dans `src/shared/templates.js`, image du héros dans `index.html`) se traite avec le lot 5 ; le bruit des captures se **corrige à la source** (session A), on ne le masque pas en relançant.
-Ordre des conversations : **D → E → F**, une conversation et un commit par ligne (A, B et C faites, archivées).
+Ordre des conversations : **E → F**, une conversation et un commit par ligne (A à D faites, archivées).
 
 Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, version 14ce5f3 ou plus récente : les captures de l'ancien script ne sont plus comparables, le combat avait un tick de moins ; copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
-
-**D. Lot 5 : ternaires, templates imbriqués et onerror en ligne** :
-```
-Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/sonarqube.md et dom-security.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Lot 5, refactoring pur. Liste d'abord les alertes restantes avec npm run lint (sonarjs/no-nested-conditional, sonarjs/no-nested-template-literals) et ne lis que ces fichiers, plus src/shared/templates.js et index.html.
-Corrections attendues : ternaire imbriqué → petite fonction à retours anticipés ou table {clé: valeur}[k] ; template imbriqué → fonction qui renvoie le morceau (badge(n)).
-onerror en ligne (validé par Steven pour ce lot) : spr() dans src/shared/templates.js et l'image du héros dans index.html. Les remplacer par un seul écouteur délégué (l'événement error ne remonte pas : document.addEventListener('error', …, true), filtré sur img.spr) qui remplace l'image par son alt, comme aujourd'hui. Même rendu exigé quand un sprite manque : vérifie-le en renommant temporairement un sprite, capture, puis remets-le.
-Après : npm run check:sim identique, npm run lint sans ces deux règles, captures identiques, aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
-```
 
 **E. Lots 6 à 8 : chaînage optionnel, Python de tools/, max-lines** (un commit par lot, conversation à couper si le budget est atteint) :
 ```

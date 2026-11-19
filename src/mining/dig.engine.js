@@ -46,12 +46,17 @@ function carveVein(d, len, r) {
   }
 }
 
+function targetPool(roll, solid, of) {
+  if (roll < 0.45) return of('rare');
+  if (roll < 0.8) return of('veine');
+  return solid;
+}
 // Point visé sans clic du joueur : cœur (45 %), veine (35 %) ou n'importe où (20 %).
 function pickTarget(d, r) {
   const solid = solidOf(d),
     roll = r();
   const of = c => solid.filter(i => d.cls[i] === c);
-  let pool = roll < 0.45 ? of('rare') : roll < 0.8 ? of('veine') : solid;
+  let pool = targetPool(roll, solid, of);
   if (!pool.length) pool = solid;
   const i = pool[rand(r, pool.length)];
   return {x: i % d.w, y: Math.floor(i / d.w)};

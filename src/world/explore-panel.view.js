@@ -124,8 +124,9 @@ function toolsHTML() {
     .join('')}</div>
     <div class="note">${TOOLS[cur].desc}${busy}</div>`;
 }
+const logLine = l => `<div class="${l.cls || ''}">${l.text}</div>`;
 function logHTML() {
-  return `<div class="sec"><h3>JOURNAL</h3><div class="log">${S.G.run.log.map(l => `<div class="${l.cls || ''}">${l.text}</div>`).join('')}</div></div>`;
+  return `<div class="sec"><h3>JOURNAL</h3><div class="log">${S.G.run.log.map(logLine).join('')}</div></div>`;
 }
 export function exploreHTML() {
   return (
