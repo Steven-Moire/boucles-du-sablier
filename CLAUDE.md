@@ -14,7 +14,7 @@ Modules ES natifs, aucune dépendance livrée au joueur, aucun build. Déployé 
   - `app/` : assemblage de plusieurs domaines — `main.js` (boucle, rendu, point d'entrée), `events.view.js` (consomme `G.events`), `layout.view.js` (barre du haut, onglets, panneau de droite).
   Hasards du minage sur `G.mrng`, séparé de `G.rng` (combats déterministes). Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
 - `package.json` : `"type": "module"` pour Node, scripts de vérification, et `devDependencies` de lint seulement (ESLint + règles SonarQube, versions exactes, jamais importées par `src/`). `eslint.config.js` : bonnes pratiques, règles SonarQube, séparation des couches (le moteur n'a pas les globals navigateur), cycles d'imports interdits.
-- `tools/qa/` : `check-sim.js` (simu comparée octet pour octet aux références de `tools/qa/ref/`), `compare_shots.py` (captures comparées pixel par pixel).
+- `tools/qa/` : `check-sim.js` (simu comparée octet pour octet aux références de `tools/qa/ref/`), `compare_shots.py` (captures comparées pixel par pixel), `check-tools.sh` (sorties et empreintes des scripts Python de `tools/`, à lancer avant / après une modif : `bash tools/qa/check-tools.sh <étiquette>` sous WSL).
 - **Docs : lire `docs/INDEX.md` d'abord** (résumé de tout + où se trouve chaque sujet), puis seulement la section utile. Design complet et formules : `docs/design.md` (long, lire par section). Direction artistique : `docs/art-direction.md`. Lore (brouillon) : `docs/lore.md`.
 - **Conversations courtes** : une conversation par sujet (gameplay, graphismes, lore…). Un hook prévient quand le contexte devient lourd (150 k tokens, puis tous les 150 k) : proposer alors un plan découpé en conversations dédiées.
 

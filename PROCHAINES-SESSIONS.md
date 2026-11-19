@@ -127,7 +127,7 @@ Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun cha
 Lis docs/INDEX.md, CLAUDE.md et la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Pas de changement du jeu.
 1. Versions installées dans le .venv WSL (pip freeze), versions disponibles sur PyPI (pip index versions) : propose-moi les épingles (== exact, versions du .venv sauf raison contraire) avant d'écrire.
 2. requirements-dev.txt mis à jour, .venv réinstallé depuis le fichier.
-3. Vérifie : captures identiques aux références prises avant, aucune erreur JS, sorties de sd_generate.py --build et de pixelize identiques (méthode de la session G), npm run check. Mets à jour CLAUDE.md si la commande d'installation change, commit, demande-moi avant de pousser.
+3. Vérifie : captures identiques aux références prises avant, aucune erreur JS, sorties de sd_generate.py --build et de pixelize identiques (`bash tools/qa/check-tools.sh avant` puis `apres` sous WSL), npm run check. Mets à jour CLAUDE.md si la commande d'installation change, commit, demande-moi avant de pousser.
 ```
 
 **F. Polices dans le dépôt (avant la publication GitHub Pages puis itch.io)** : décidé le 19/11. Aujourd'hui Silkscreen et Inter viennent de Google Fonts : le jeu dépend du réseau (jeu téléchargé depuis itch, joué hors ligne) et envoie l'IP du joueur à Google (RGPD).
