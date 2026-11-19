@@ -5,6 +5,7 @@
 Affiche, pour chaque image, la part de pixels différents et la zone qui a changé.
 Code de sortie 1 si une image manque ou diffère de plus de --tol % de ses pixels (0 par défaut).
 """
+
 import sys
 from pathlib import Path
 
@@ -33,7 +34,7 @@ def main() -> int:
     if '--tol' in args:
         k = args.index('--tol')
         tol = float(args[k + 1]) / 100
-        del args[k:k + 2]
+        del args[k : k + 2]
     if not args:
         print(__doc__)
         return 2
@@ -47,7 +48,9 @@ def main() -> int:
             failed += 1
             continue
         part, box = compare(ref, got)
-        print(f'{ref.name} : identique' if box is None else f'{ref.name} : {part:.3%} des pixels différents, zone {box}')
+        print(
+            f'{ref.name} : identique' if box is None else f'{ref.name} : {part:.3%} des pixels différents, zone {box}'
+        )
         failed += part > tol
     return 1 if failed else 0
 

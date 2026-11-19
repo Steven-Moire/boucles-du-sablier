@@ -9,6 +9,7 @@ animations CSS attendues avant chaque capture, rendu de Chromium figé (CHROMIUM
 lancements sur le même code donnent les mêmes images, au pixel près, le premier compris (comparer
 avec tools/qa/compare_shots.py) : une différence est une vraie régression.
 """
+
 import asyncio
 import functools
 import http.server
@@ -60,6 +61,7 @@ async def shoot(pg, name):
 
 def serve():
     """Les modules ES ne se chargent pas en file:// : on sert le dossier en HTTP sur un port libre."""
+
     class Quiet(http.server.SimpleHTTPRequestHandler):
         """Serveur de fichiers qui n'écrit rien sur la console."""
 

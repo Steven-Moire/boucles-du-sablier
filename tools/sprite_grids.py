@@ -11,6 +11,7 @@ Encodage d'une grille : une chaîne de w × h caractères, ligne par ligne :
 
 Dépendance : pillow
 """
+
 import colorsys
 import json
 from collections import deque
@@ -20,10 +21,10 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parent.parent
 MONSTERS = ['mulot', 'sanglier', 'sanglier_alpha', 'loup', 'golem', 'ours', 'gardien']
-DARK = .2          # luminosité sous laquelle un pixel est un contour (croûte)
-VEIN_SAT = .7      # saturation et luminosité minimales d'une veine brillante
-VEIN_HUES = ((165, 250), (38, 60))   # cyan / bleu, or
-NEIGHBORS = ((1, 0), (-1, 0), (0, 1), (0, -1))   # 4-voisinage
+DARK = 0.2  # luminosité sous laquelle un pixel est un contour (croûte)
+VEIN_SAT = 0.7  # saturation et luminosité minimales d'une veine brillante
+VEIN_HUES = ((165, 250), (38, 60))  # cyan / bleu, or
+NEIGHBORS = ((1, 0), (-1, 0), (0, 1), (0, -1))  # 4-voisinage
 
 
 def is_vein(r, g, b):
@@ -86,9 +87,11 @@ def main():
     """Écrit src/enemies/grids.generated.js et affiche la taille de chaque grille."""
     grids = {m: grid(ROOT / 'assets' / 'sprites' / f'{m}.png') for m in MONSTERS}
     body = ',\n'.join(f'  {m}: {json.dumps(g)}' for m, g in grids.items())
-    js = ('// Généré par tools/sprite_grids.py depuis assets/sprites/ — ne pas éditer à la main.\n'
-          "// '.' vide · 'c' croûte · 'v' veine brillante · sinon chr(48 + profondeur)\n"
-          f'export const GRIDS = {{\n{body}\n}};\n')
+    js = (
+        '// Généré par tools/sprite_grids.py depuis assets/sprites/ — ne pas éditer à la main.\n'
+        "// '.' vide · 'c' croûte · 'v' veine brillante · sinon chr(48 + profondeur)\n"
+        f'export const GRIDS = {{\n{body}\n}};\n'
+    )
     (ROOT / 'src' / 'enemies' / 'grids.generated.js').write_text(js, encoding='utf-8')
     for m, g in grids.items():
         print(m, g['w'], 'x', g['h'], 'opaques', sum(c != '.' for c in g['cells']))

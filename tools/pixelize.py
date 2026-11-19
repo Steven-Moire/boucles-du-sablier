@@ -11,6 +11,7 @@ Exemples :
 
 Dépendance : pip install pillow
 """
+
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,7 +19,7 @@ from pathlib import Path
 from PIL import Image, ImageEnhance, ImageFilter
 
 RGBA = 'RGBA'
-BG_STEP = 18   # écart de couleur maximal entre deux voisins du fond (pas du remplissage)
+BG_STEP = 18  # écart de couleur maximal entre deux voisins du fond (pas du remplissage)
 
 
 def load_palette(path):
@@ -27,7 +28,7 @@ def load_palette(path):
     for line in Path(path).read_text().splitlines():
         line = line.strip().lstrip('#')
         if len(line) == 6:
-            cols.append(tuple(int(line[i:i + 2], 16) for i in (0, 2, 4)))
+            cols.append(tuple(int(line[i : i + 2], 16) for i in (0, 2, 4)))
     if not cols:
         raise SystemExit(f'Palette vide : {path}')
     return cols
@@ -35,17 +36,22 @@ def load_palette(path):
 
 def lab(c):
     """sRGB (0-255) -> CIELAB (D65) : distance perceptuelle, garde les bruns bruns au lieu de les griser."""
+
     def lin(v):
         """Composante sRGB (0-255) -> linéaire (0-1)."""
         v /= 255
-        return v / 12.92 if v <= .04045 else ((v + .055) / 1.055) ** 2.4
+        return v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
 
     def f(t):
         """Fonction de compression de CIELAB."""
-        return t ** (1 / 3) if t > .008856 else 7.787 * t + 16 / 116
+        return t ** (1 / 3) if t > 0.008856 else 7.787 * t + 16 / 116
 
     r, g, b = (lin(v) for v in c)
-    x, y, z = (r * .4124 + g * .3576 + b * .1805) / .95047, r * .2126 + g * .7152 + b * .0722, (r * .0193 + g * .1192 + b * .9505) / 1.08883
+    x, y, z = (
+        (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047,
+        r * 0.2126 + g * 0.7152 + b * 0.0722,
+        (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883,
+    )
     fx, fy, fz = f(x), f(y), f(z)
     return 116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)
 
@@ -113,7 +119,7 @@ def is_hole(fill, region, rows):
     if len(region) < fill.w * fill.h // 800:
         return False
     ok = [dist(fill.px[rx, ry], rows[ry]) <= 30 for rx, ry in region if ry in rows]
-    return bool(ok) and sum(ok) > .9 * len(region)
+    return bool(ok) and sum(ok) > 0.9 * len(region)
 
 
 def fill_holes(fill, bg):
@@ -145,7 +151,7 @@ def remove_bg(img, tol, work=384):
     px = small.load()
     edge = border(w, h)
     colors = [px[x, y] for x, y in edge]
-    ref = tuple(sorted(c[i] for c in colors)[len(colors) // 2] for i in range(3))   # médiane des bords
+    ref = tuple(sorted(c[i] for c in colors)[len(colors) // 2] for i in range(3))  # médiane des bords
     fill = Fill(px, w, h, ref, tol)
     bg = bytearray(w * h)
     stack = [(x, y) for x, y in edge if fill.near_ref(px[x, y])]
@@ -181,13 +187,13 @@ def pixelize(src, dst, size, palette=None, colors=16, bg=None, tol=120, preview=
     scale = inner / max(w, h)
     nw, nh = max(1, round(w * scale)), max(1, round(h * scale))
     small = img.convert('RGBa').resize((nw, nh), Image.Resampling.BOX).convert(RGBA)
-    alpha = small.getchannel('A').point(lambda a: 255 if a > 128 else 0)   # alpha binaire
-    rgb = ImageEnhance.Color(small.convert('RGB')).enhance(sat)   # pixel art = couleurs franches, évite le gris
+    alpha = small.getchannel('A').point(lambda a: 255 if a > 128 else 0)  # alpha binaire
+    rgb = ImageEnhance.Color(small.convert('RGB')).enhance(sat)  # pixel art = couleurs franches, évite le gris
     q = rgb.quantize(colors=colors, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE)
     if palette:
         cols = load_palette(palette)
-        flat = q.getpalette()[:colors * 3]
-        mapped = [c for i in range(0, len(flat), 3) for c in nearest(tuple(flat[i:i + 3]), cols)]
+        flat = q.getpalette()[: colors * 3]
+        mapped = [c for i in range(0, len(flat), 3) for c in nearest(tuple(flat[i : i + 3]), cols)]
         q.putpalette(mapped + [0] * (768 - len(mapped)))
     out = q.convert(RGBA)
     out.putalpha(alpha)
@@ -209,13 +215,20 @@ if __name__ == '__main__':
     p.add_argument('dst')
     p.add_argument('--size', type=int, default=64, help='taille cible du côté le plus long, en pixels (32, 48, 64…)')
     p.add_argument('--palette', help='fichier .hex (une couleur par ligne), ex. palette Lospec')
-    p.add_argument('--colors', type=int, default=16, help='nombre de couleurs (aplats) avant verrouillage sur la palette')
+    p.add_argument(
+        '--colors', type=int, default=16, help='nombre de couleurs (aplats) avant verrouillage sur la palette'
+    )
     p.add_argument('--bg', choices=['auto'], help='auto : détoure le fond connecté aux bords')
     p.add_argument('--tol', type=int, default=120, help='tolérance du détourage')
     p.add_argument('--no-crop', action='store_true', help='ne pas recadrer sur le sujet')
-    p.add_argument('--outline', action='store_true', help='contour sombre d\'un pixel (couleur la plus sombre de la palette)')
+    p.add_argument(
+        '--outline', action='store_true', help="contour sombre d'un pixel (couleur la plus sombre de la palette)"
+    )
     p.add_argument('--sat', type=float, default=1.35, help='saturation avant verrouillage palette (1 = inchangée)')
     p.add_argument('--preview', type=int, default=1, help='agrandissement xN (1 = taille réelle, à garder pour le jeu)')
     a = p.parse_args()
-    print('écrit', a.dst, pixelize(a.src, a.dst, a.size, a.palette, a.colors, a.bg, a.tol, a.preview,
-                                   not a.no_crop, a.outline, a.sat))
+    print(
+        'écrit',
+        a.dst,
+        pixelize(a.src, a.dst, a.size, a.palette, a.colors, a.bg, a.tol, a.preview, not a.no_crop, a.outline, a.sat),
+    )
