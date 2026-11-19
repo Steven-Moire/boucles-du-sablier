@@ -1,7 +1,10 @@
 """Capture rapide du jeu dans Chromium (vérif visuelle après une modif).
 
   pip install playwright && playwright install chromium
-  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, village.png
+  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, village.png,
+                                           proto.png (prototype du minage)
+
+Hors ligne : seul le serveur local répond, toute requête vers un autre domaine est listée à la fin.
 
 Captures déterministes : horloge de Playwright en pause (le temps du jeu n'avance que par run_for),
 Math.random remplacé par un générateur à graine fixe avant le chargement du jeu, polices, images et
@@ -39,7 +42,12 @@ CHROMIUM_ARGS = [
     '--disable-threaded-animation',
     '--disable-threaded-scrolling',
     '--disable-checker-imaging',
+    # hors ligne : aucun nom de domaine ne se résout, seul le serveur local (127.0.0.1) répond. Le jeu
+    # est livré sans ressource externe ; une police ou un script d'un CDN ajouté par erreur échoue ici
+    # et apparaît dans « requêtes externes » au lieu de passer inaperçu.
+    '--host-resolver-rules=MAP * ~NOTFOUND, EXCLUDE 127.0.0.1',
 ]
+LOCAL = 'http://127.0.0.1:'
 # attend les polices (Silkscreen, Inter : assets/fonts/), toutes les <img> du document, puis la fin
 # des animations CSS finies (fondu de l'intro) : elles suivent le temps réel, pas l'horloge de Playwright
 WAIT_ASSETS = """
@@ -74,21 +82,28 @@ def serve():
     return srv
 
 
+async def open_page(b, port, path, errors, external):
+    """Ouvre une page du dépôt : hasard à graine fixe, horloge en pause, erreurs JS et requêtes externes notées."""
+    pg = await b.new_page(viewport={'width': 1280, 'height': 900})
+    pg.on('pageerror', lambda e: errors.append(f'{path} : {e}'))
+    pg.on('request', lambda r: None if r.url.startswith(LOCAL) else external.append(f'{path} : {r.url}'))
+    await pg.add_init_script(SEEDED_RANDOM)
+    await pg.clock.install(time=0)
+    # installée seule, l'horloge suit le temps réel : un lancement lent (cache froid) jouait des
+    # ticks de plus. En pause, le temps du jeu n'avance que par run_for.
+    await pg.clock.pause_at(0)
+    await pg.goto(f'{LOCAL}{port}/{path}', wait_until='networkidle')
+    return pg
+
+
 async def main():
-    """Joue l'intro, la carte, un combat et le village, capture chaque écran et liste les erreurs JS."""
+    """Joue l'intro, la carte, un combat et le village, capture le prototype, liste erreurs JS et requêtes externes."""
     OUT.mkdir(exist_ok=True)
     srv = serve()
     async with async_playwright() as p:
         b = await p.chromium.launch(args=CHROMIUM_ARGS)
-        pg = await b.new_page(viewport={'width': 1280, 'height': 900})
-        errors = []
-        pg.on('pageerror', lambda e: errors.append(str(e)))
-        await pg.add_init_script(SEEDED_RANDOM)
-        await pg.clock.install(time=0)
-        # installée seule, l'horloge suit le temps réel : un lancement lent (cache froid) jouait des
-        # ticks de plus. En pause, le temps du jeu n'avance que par run_for.
-        await pg.clock.pause_at(0)
-        await pg.goto(f'http://127.0.0.1:{srv.server_port}/index.html', wait_until='networkidle')
+        errors, external = [], []
+        pg = await open_page(b, srv.server_port, 'index.html', errors, external)
         await pg.clock.run_for(800)
         # navigateur neuf = pas de sauvegarde : l'intro s'affiche, on la capture puis on la passe
         await shoot(pg, 'intro')
@@ -109,9 +124,14 @@ async def main():
         await pg.click('#tabs button[data-t="village"]')
         await pg.clock.run_for(TICK_MS)
         await shoot(pg, 'village')
+        # prototype du minage (proto/), dans sa propre page : les captures du jeu ne bougent pas
+        pg = await open_page(b, srv.server_port, 'proto/mine-ennemi.html', errors, external)
+        await pg.clock.run_for(800)
+        await shoot(pg, 'proto')
         await b.close()
         srv.shutdown()
         print('erreurs JS :', errors or 'aucune')
+        print('requêtes externes :', external or 'aucune')
 
 
 if __name__ == '__main__':
