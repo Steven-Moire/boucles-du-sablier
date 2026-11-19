@@ -12,7 +12,8 @@ Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHu
 - `src/ui/` : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`… —, sauvegarde, helpers), `map.js`, `scene.js`, `panel.js` (barre du haut + panneau de droite), `modals.js`, `digview.js` (monstre dessiné pixel par pixel, clic pour viser, éclats), `main.js` (événements, rendu, boucle principale ; point d'entrée).
   Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
 - `package.json` : seulement `"type": "module"` pour Node (pas de dépendances).
-- Design complet et formules : `docs/design.md`. Direction artistique : `docs/art-direction.md`. Lore (brouillon) : `docs/lore.md`.
+- **Docs : lire `docs/INDEX.md` d'abord** (résumé de tout + où se trouve chaque sujet), puis seulement la section utile. Design complet et formules : `docs/design.md` (long, lire par section). Direction artistique : `docs/art-direction.md`. Lore (brouillon) : `docs/lore.md`.
+- **Conversations courtes** : une conversation par sujet (gameplay, graphismes, lore…). Un hook prévient quand le contexte devient lourd (150 k tokens, puis tous les 150 k) : proposer alors un plan découpé en conversations dédiées.
 
 ## Commandes
 - Jouer en local : `python -m http.server` puis http://localhost:8000 (les modules ES ne se chargent **pas** en ouvrant `index.html` en `file://`).
