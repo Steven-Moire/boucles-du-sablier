@@ -34,6 +34,7 @@ Modules ES natifs, aucune dépendance livrée au joueur, aucun build. Déployé 
 
 ## Règles de travail
 - Une mécanique à la fois, chaque étape doit rester jouable. Mettre à jour `docs/design.md` (décisions, formules, résultats de simu) à chaque changement de gameplay.
+- **`PROCHAINES-SESSIONS.md` ne contient que ce qui reste à faire.** Quand une session se termine, dans le même commit que son travail : déplacer son prompt et son compte rendu (« Fait le … ») dans `docs/archive/sessions-faites.md`, et ne laisser à sa place qu'une ligne d'état courte (ce qui est fait, chiffres utiles pour la suite, décisions encore en vigueur).
 - Garder la séparation moteur / UI : le moteur reçoit un `rng` injectable (simu déterministe) et émet des `G.events` que l'UI consomme (animations, toasts).
 - Sauvegarde : `localStorage` clé `boucles-sablier-v01`, objet `meta` versionné (`meta.v`). Tout nouveau champ doit avoir une valeur par défaut au chargement (migration douce), ne jamais casser une sauvegarde existante.
 - Pas de build tant que ce n'est pas nécessaire : modules ES natifs, compatibles GitHub Pages sans outil. Le moteur et les données n'importent jamais une vue, ni `src/shared/`, ni `src/app/` (vérifié par `npm run lint`).
