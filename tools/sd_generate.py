@@ -26,6 +26,7 @@ OUT = ROOT / 'assets' / 'sprites'
 
 
 def post(url, payload):
+    """Envoie une requête JSON à l'API de Forge et renvoie sa réponse décodée."""
     req = urllib.request.Request(url, json.dumps(payload).encode(), {'Content-Type': 'application/json'})
     with urllib.request.urlopen(req, timeout=600) as r:
         return json.load(r)
@@ -53,6 +54,7 @@ def img2img_fields(a):
 
 
 def generate(spec, name, n, url, seed0=None, profile=None):
+    """Génère n variantes brutes d'un asset (seeds consécutives) dans sd_raw/<nom>/, sans écraser l'existant."""
     a = spec['assets'][name]
     cfg = spec['profiles'][profile] if profile else spec['model']
     lora = f" <lora:{cfg['lora']}>" if cfg.get('lora') else ''
@@ -64,7 +66,8 @@ def generate(spec, name, n, url, seed0=None, profile=None):
         tag = profile or cfg.get('name')
         dst = RAW / name / (f'{tag}_{seed}.png' if tag else f'{seed}.png')
         if dst.exists():
-            print('déjà là', dst.relative_to(ROOT)); continue
+            print('déjà là', dst.relative_to(ROOT))
+            continue
         payload = {
             'prompt': f"{cfg.get('prefix', '')}{style}, {a['prompt']}{lora}", 'negative_prompt': spec['negative'] + (', ' + a['negative_extra'] if a.get('negative_extra') else ''),
             'seed': seed, 'width': w, 'height': h, 'steps': cfg['steps'], 'cfg_scale': cfg['cfg'],
@@ -82,6 +85,7 @@ def generate(spec, name, n, url, seed0=None, profile=None):
 
 
 def build(spec):
+    """Pixelise la seed retenue de chaque asset de sprites.json vers assets/sprites/."""
     sys.path.insert(0, str(ROOT / 'tools'))
     from pixelize import pixelize
     for name, a in spec['assets'].items():
@@ -89,7 +93,8 @@ def build(spec):
             continue
         src = RAW / name / f"{a['seed']}.png"
         if not src.exists():
-            print('manquant', src.relative_to(ROOT)); continue
+            print('manquant', src.relative_to(ROOT))
+            continue
         dst = OUT / f'{name}.png'
         sprite = a['kind'] != 'bg'
         px = spec.get('pixelize', {})

@@ -108,23 +108,18 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 
 ## 4. Qualité du code (à faire avant 3a)
 
-**État au 19/11** (lots 0, Prettier, 1, 2, 3, 4 et 5 faits ; comptes rendus et prompts A à D dans `docs/archive/sessions-faites.md`) : ESLint + règles SonarQube, `npm run check` (lint + simu de référence), captures déterministes **sans bruit connu : une différence = une vraie régression**, 5 captures de référence (`village.png` comprise ; tous les bâtiments y sont verrouillés, relire à la main les branches « débloqué » et « niveau max »). Lint : **0 problème** (lot 5 : plus de ternaire ni de template imbriqué ; `onerror` en ligne remplacé par l'écouteur délégué `watchSprites()` de `src/shared/dom.js`). Reste S6582 (chaînage optionnel, hors lint) au lot 6.
+**État au 19/11** (lots 0 à 8 faits ; comptes rendus et prompts A à E dans `docs/archive/sessions-faites.md`) : ESLint + règles SonarQube, limites de taille par suffixe, `npm run check` (lint + simu de référence), captures déterministes **sans bruit connu : une différence = une vraie régression**, 5 captures de référence (`village.png` comprise ; tous les bâtiments y sont verrouillés, relire à la main les branches « débloqué » et « niveau max »). Lint : **0 problème**, chaînage optionnel fait (lot 6), Python de `tools/` propre (lot 7).
 **Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
-**Ordre des lots restants** (un commit chacun) : 4 complexité moteur et simu → 5 ternaires et templates → 6 chaînage optionnel → 7 Python de tools/ → 8 limites `max-lines` par suffixe dans `eslint.config.js` (`*.engine.js` 250, `*.view.js` 200, `main.js` 60, `tools/` 200, comme le tableau de `.claude/rules/javascript/coding-style.md` ; décidé le 19/11).
+**Lots** : tous faits (0 à 8). Reste à décider : configuration ruff (G).
 
 **Décisions de Steven (19/11, après le lot 2)** : lots 3 à 8 confirmés ; le `onerror` en ligne (`spr()` dans `src/shared/templates.js`, image du héros dans `index.html`) se traite avec le lot 5 ; le bruit des captures se **corrige à la source** (session A), on ne le masque pas en relançant.
-Ordre des conversations : **E → F**, une conversation et un commit par ligne (A à D faites, archivées).
+Ordre des conversations : **F**, puis **G** si Steven la valide (A à E faites, archivées).
 
 Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, version 14ce5f3 ou plus récente : les captures de l'ancien script ne sont plus comparables, le combat avait un tick de moins ; copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
 
-**E. Lots 6 à 8 : chaînage optionnel, Python de tools/, max-lines** (un commit par lot, conversation à couper si le budget est atteint) :
-```
-Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/sonarqube.md et coding-style.md, .claude/rules/python/sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Trois lots, un commit chacun, refactoring pur.
-Lot 6, chaînage optionnel (S6582, hors lint : getDiagnostics de VS Code sur src/ et tools/, ou recherche des motifs a && a.b) : a?.b?.c, en vérifiant chaque fois que la valeur ne sert pas telle quelle (a && a.x vaut null/false, a?.x vaut undefined : comparaisons, affichage, JSON de la sauvegarde).
-Lot 7, Python de tools/ : inventaire d'abord (complexité, docstrings, littéraux dupliqués, imbrication selon .claude/rules/python/sonarqube.md ; outils disponibles dans requirements-dev.txt ; déjà repéré : ruff I001, imports non triés en tête de tools/screenshot.py), propose-moi la liste avant de corriger. Garde-fous : sprite_grids.py régénère src/enemies/grids.generated.js identique octet pour octet, screenshot.py et compare_shots.py donnent les mêmes résultats.
-Lot 8, max-lines par suffixe dans eslint.config.js, comme le tableau de coding-style.md : *.engine.js 250, *.view.js 200, app/main.js 60, tools/**/*.js 200 (et max-lines-per-function 20 pour *.data.js) ; lint propre sans relever de seuil (au lot 2, tous les fichiers étaient déjà sous leur limite).
-Après chaque lot : npm run check (lint + simu), captures identiques, aucune erreur JS. Demande-moi avant de pousser.
-```
+**E. Lots 6 à 8** : faits le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). Lint à 0 problème avec les limites `max-lines` par suffixe ; un seul `a && a.b` gardé volontairement (`explore-panel.view.js`, `a && a.tool !== cur`) ; Python de `tools/` propre pour ruff (hors E501 et PLR2004).
+
+**G. Configuration ruff pour `tools/`** (à décider, idée du 19/11) : `ruff.toml` avec `line-length = 120` comme Prettier et les règles du lot 7 (`D1`, `I`, `C901`, `E`, `F`, `W`, `B`, `SIM`, `UP`), puis `ruff format` pour la mise en forme (jamais à la main), branché sur `npm run lint` ; un commit de mise en forme seul, sorties des scripts identiques (même méthode qu'au lot 7).
 
 **F. Polices dans le dépôt (avant la publication GitHub Pages puis itch.io)** : décidé le 19/11. Aujourd'hui Silkscreen et Inter viennent de Google Fonts : le jeu dépend du réseau (jeu téléchargé depuis itch, joué hors ligne) et envoie l'IP du joueur à Google (RGPD).
 ```

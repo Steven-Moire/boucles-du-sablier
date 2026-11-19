@@ -14,6 +14,7 @@ import functools
 import http.server
 import threading
 from pathlib import Path
+
 from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -60,8 +61,11 @@ async def shoot(pg, name):
 def serve():
     """Les modules ES ne se chargent pas en file:// : on sert le dossier en HTTP sur un port libre."""
     class Quiet(http.server.SimpleHTTPRequestHandler):
+        """Serveur de fichiers qui n'écrit rien sur la console."""
+
         def log_message(self, *args):
-            pass
+            """Journal des requêtes coupé : seules les erreurs JS comptent."""
+
     handler = functools.partial(Quiet, directory=str(ROOT))
     srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), handler)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
@@ -69,6 +73,7 @@ def serve():
 
 
 async def main():
+    """Joue l'intro, la carte, un combat et le village, capture chaque écran et liste les erreurs JS."""
     OUT.mkdir(exist_ok=True)
     srv = serve()
     async with async_playwright() as p:
@@ -106,4 +111,6 @@ async def main():
         srv.shutdown()
         print('erreurs JS :', errors or 'aucune')
 
-asyncio.run(main())
+
+if __name__ == '__main__':
+    asyncio.run(main())

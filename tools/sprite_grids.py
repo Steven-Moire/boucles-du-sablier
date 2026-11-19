@@ -23,6 +23,7 @@ MONSTERS = ['mulot', 'sanglier', 'sanglier_alpha', 'loup', 'golem', 'ours', 'gar
 DARK = .2          # luminosité sous laquelle un pixel est un contour (croûte)
 VEIN_SAT = .7      # saturation et luminosité minimales d'une veine brillante
 VEIN_HUES = ((165, 250), (38, 60))   # cyan / bleu, or
+NEIGHBORS = ((1, 0), (-1, 0), (0, 1), (0, -1))   # 4-voisinage
 
 
 def is_vein(r, g, b):
@@ -32,44 +33,57 @@ def is_vein(r, g, b):
     return s >= VEIN_SAT and v >= VEIN_SAT and any(a < h < b for a, b in VEIN_HUES)
 
 
+def is_edge(solid, x, y):
+    """Pixel qui touche le vide ou le bord de l'image : profondeur 1."""
+    h, w = len(solid), len(solid[0])
+    return any(not (0 <= x + dx < w and 0 <= y + dy < h) or not solid[y + dy][x + dx] for dx, dy in NEIGHBORS)
+
+
+def depths(solid):
+    """Profondeur de chaque pixel opaque : distance au vide en 4-voisinage (parcours en largeur)."""
+    h, w = len(solid), len(solid[0])
+    depth = [[0] * w for _ in range(h)]
+    q = deque()
+    for y in range(h):
+        for x in range(w):
+            if solid[y][x] and is_edge(solid, x, y):
+                depth[y][x] = 1
+                q.append((x, y))
+    while q:
+        x, y = q.popleft()
+        for dx, dy in NEIGHBORS:
+            nx, ny = x + dx, y + dy
+            if 0 <= nx < w and 0 <= ny < h and solid[ny][nx] and not depth[ny][nx]:
+                depth[ny][nx] = depth[y][x] + 1
+                q.append((nx, ny))
+    return depth
+
+
+def cell(rgba, is_solid, depth):
+    """Caractère d'un pixel : vide, croûte, veine brillante ou profondeur."""
+    if not is_solid:
+        return '.'
+    r, g, b, _ = rgba
+    if colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)[2] < DARK:
+        return 'c'
+    if is_vein(r, g, b):
+        return 'v'
+    return chr(48 + min(depth, 40))
+
+
 def grid(path):
     """Grille encodée d'un sprite (voir l'en-tête du module)."""
     im = Image.open(path).convert('RGBA')
     w, h = im.size
     px = im.load()
     solid = [[px[x, y][3] >= 128 for x in range(w)] for y in range(h)]
-    depth = [[0] * w for _ in range(h)]
-    q = deque()
-    for y in range(h):
-        for x in range(w):
-            if solid[y][x] and any(not (0 <= x + dx < w and 0 <= y + dy < h) or not solid[y + dy][x + dx]
-                                   for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
-                depth[y][x] = 1
-                q.append((x, y))
-    while q:
-        x, y = q.popleft()
-        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < w and 0 <= ny < h and solid[ny][nx] and not depth[ny][nx]:
-                depth[ny][nx] = depth[y][x] + 1
-                q.append((nx, ny))
-    out = []
-    for y in range(h):
-        for x in range(w):
-            if not solid[y][x]:
-                out.append('.')
-                continue
-            r, g, b, _ = px[x, y]
-            if colorsys.rgb_to_hsv(r / 255, g / 255, b / 255)[2] < DARK:
-                out.append('c')
-            elif is_vein(r, g, b):
-                out.append('v')
-            else:
-                out.append(chr(48 + min(depth[y][x], 40)))
-    return {'w': w, 'h': h, 'cells': ''.join(out)}
+    depth = depths(solid)
+    cells = ''.join(cell(px[x, y], solid[y][x], depth[y][x]) for y in range(h) for x in range(w))
+    return {'w': w, 'h': h, 'cells': cells}
 
 
 def main():
+    """Écrit src/enemies/grids.generated.js et affiche la taille de chaque grille."""
     grids = {m: grid(ROOT / 'assets' / 'sprites' / f'{m}.png') for m in MONSTERS}
     body = ',\n'.join(f'  {m}: {json.dumps(g)}' for m, g in grids.items())
     js = ('// Généré par tools/sprite_grids.py depuis assets/sprites/ — ne pas éditer à la main.\n'
