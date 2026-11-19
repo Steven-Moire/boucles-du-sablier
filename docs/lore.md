@@ -9,13 +9,15 @@ Depuis, la journée recommence.
 ## L'intro : texte final des 5 écrans (2026-11-19)
 Une image par écran (`sd_raw/intro_*`, clé dans `tools/sprites.json`), un clic pour passer.
 1. **`intro_hameau`** — « Au pied des Collines grises, le hameau des Heurelles vit de sa mine, Grésille. On y compte mal les jours, mais on y creuse bien. »
-2. **`intro_veine`** — « Le Radoteur creuse plus profond que tout le monde. Il suit une veine qui brille et parle à sa pioche, qui a le bon goût de ne jamais répondre. »
+2. **`intro_veine`** — « On l'appelle le Radoteur : depuis trente ans, il ne parle que de sa veine. Il creuse plus profond que tout le monde, et parle à sa pioche, qui a le bon goût de ne jamais répondre. »
 3. **`intro_chambre`** — « Un matin, la roche cède sur une chambre oubliée. Au milieu, un Sablier plus vieux que le village. »
-4. **`intro_fele`** — « Un coup de pioche de trop. Le verre se fend, et le sable se met à fuir. »
+4. **`intro_fele`** — « Un coup de pioche de trop. Le verre se fend, et le sable s'envole jusqu'au hameau. »
+
+Ce que l'intro pose, et ce qu'elle laisse au jeu (décidé le 2026-11-19) : l'écran 2 explique le surnom (il date d'**avant** la boucle, d'où l'ironie), l'écran 4 montre le déclencheur et le sable qui retombe sur le village (pourquoi ils se souviennent). Pourquoi lui oublie tout (voir plus bas) se découvre en jouant. Texte retenu, à ajuster en testant.
 5. **`intro_reveil`** — « Le lendemain, c'était hier. Le Radoteur ne s'en souvient pas. Le village, un peu. »
 
 ## Pourquoi le village se souvient, et pas le héros
-Le sable qui s'échappe de la fissure retombe sur le hameau. À chaque boucle, les habitants gardent un peu plus de souvenirs, flous mais tenaces, du mineur et de ce qu'il a fait. Lui, en revanche, se réveille chaque matin l'esprit « rembobiné ».
+Le sable qui s'échappe de la fissure retombe sur le hameau. À chaque boucle, les habitants gardent un peu plus de souvenirs, flous mais tenaces, du mineur et de ce qu'il a fait. Lui, en revanche, se réveille chaque matin l'esprit « rembobiné » : il était le plus près de la fissure quand elle a cédé, c'est donc lui que le temps a le plus rembobiné.
 → C'est ce qui justifie la mécanique : **la renommée, c'est la mémoire que le village a de toi.** Plus les gens se souviennent, plus ils t'aident : l'entraîneur reprend là où vous en étiez, le forgeron garde tes plans.
 → C'est aussi une inversion des histoires de boucle classiques (Majora's Mask, Outer Wilds), où c'est le héros qui se souvient.
 
@@ -40,8 +42,8 @@ Répartition proposée par le conseil (2 voix sur 3 pour chacun), confirmée tel
 Accroche possible : « Aux Heurelles, on compte mal les jours ; à Grésille, on les creuse ; et sous la lune de Griselune, ils s'entassent. »
 **Vérification (recherche web, 2026-11-19)** : aucune commune ni aucun lieu-dit trouvé sous ces trois noms. Les homonymes les plus proches, sans risque de confusion : Les Hérolles (lieu-dit de Coulonges, Vienne), Grézillé (commune déléguée de Gennes-Val-de-Loire, Maine-et-Loire), le quartier des Grésilles à Dijon (au pluriel, avec un « s »), Griselles (communes de Côte-d'Or et du Loiret). Il n'existe pas d'annuaire complet des lieux-dits : un micro-toponyme cadastral reste possible, mais rien d'assez connu pour gêner.
 
-## Vestiges et déjà-vu : propositions du conseil (2026-11-19, à choisir par Steven)
-Conseil à quatre voix (Claude, conteur, joueur, sceptique). Ce qui suit est la synthèse ; rien n'est en jeu.
+## Vestiges et déjà-vu (proposés par le conseil, retenus provisoirement le 2026-11-19)
+Conseil à quatre voix (Claude, conteur, joueur, sceptique). Steven garde tout pour l'instant, **carnet des vestiges compris**, et ajustera en testant. Rien n'est encore en jeu.
 
 ### 5 vestiges cachés dans les monstres
 Règle du sceptique, adoptée par la synthèse : **des objets banals et un peu drôles, un seul qui fait mal** ; un vestige est un reste d'une journée passée, pas un message adressé au joueur ; le lien avec Anselme reste suggéré, jamais expliqué.
@@ -77,6 +79,6 @@ Rangs : Hameau (0) → Village (40) → Bourg (100) → Ville (200) → Cité (3
 Mélancolique mais drôle. Le mineur est un peu fou à force de revivre la même journée : il parle à sa pioche et numérote les mulots. Les villageois ont des déjà-vu de plus en plus précis (« On s'est déjà parlé, non ? Tu vas encore me demander du minerai… »).
 
 ## Questions ouvertes
-- Choisir parmi les vestiges et répliques proposés par le conseil (voir plus haut).
+- Vestiges, répliques et carnet retenus provisoirement : à revoir une fois en jeu.
 - Le héros se souvient-il un peu, par exemple via le bestiaire présenté comme « son carnet » ?
 - La fin : réparer le Sablier, ou apprendre à vivre avec la boucle ?
