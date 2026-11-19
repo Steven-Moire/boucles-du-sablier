@@ -33,6 +33,7 @@ Modules ES natifs, aucune dépendance livrée au joueur, aucun build, aucune res
 - Après tout changement d'un sprite de monstre : `python tools/sprite_grids.py` (régénère `src/enemies/grids.generated.js`), puis relancer la simu.
 
 ## Règles de travail
+- **Règle absolue : Python toujours dans un environnement virtuel.** Toute dépendance Python s'installe dans un venv depuis un fichier épinglé (`==` exact, `requirements-dev.txt`), jamais par `pip install` dans un Python global (Windows ou WSL), même pour un essai : pour tester une autre version, venv jetable dans le scratchpad. Aucune exception sans accord explicite de Steven. Écart encore ouvert : sous Windows, `sd_generate.py` et le `ruff` de `npm run lint` utilisent le Python global ; à corriger par la session I de `PROCHAINES-SESSIONS.md`, ne rien y ajouter d'ici là.
 - Une mécanique à la fois, chaque étape doit rester jouable. Mettre à jour `docs/design.md` (décisions, formules, résultats de simu) à chaque changement de gameplay.
 - **`PROCHAINES-SESSIONS.md` ne contient que ce qui reste à faire.** Quand une session se termine, dans le même commit que son travail : déplacer son prompt et son compte rendu (« Fait le … ») dans `docs/archive/sessions-faites.md`, et ne laisser à sa place qu'une ligne d'état courte (ce qui est fait, chiffres utiles pour la suite, décisions encore en vigueur).
 - Garder la séparation moteur / UI : le moteur reçoit un `rng` injectable (simu déterministe) et émet des `G.events` que l'UI consomme (animations, toasts).
