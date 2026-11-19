@@ -1,7 +1,7 @@
 """Capture rapide du jeu dans Chromium (vérif visuelle après une modif).
 
   pip install playwright && playwright install chromium
-  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png
+  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, village.png
 
 Captures déterministes : horloge de Playwright en pause (le temps du jeu n'avance que par run_for),
 Math.random remplacé par un générateur à graine fixe avant le chargement du jeu, polices, images et
@@ -98,6 +98,10 @@ async def main():
         await pg.wait_for_selector('#sceneView.has-bg', state='attached')
         await pg.clock.run_for(TICK_MS)
         await shoot(pg, 'combat')
+        # onglet Village du panneau de droite (après le combat : les captures d'avant ne bougent pas)
+        await pg.click('#tabs button[data-t="village"]')
+        await pg.clock.run_for(TICK_MS)
+        await shoot(pg, 'village')
         await b.close()
         srv.shutdown()
         print('erreurs JS :', errors or 'aucune')
