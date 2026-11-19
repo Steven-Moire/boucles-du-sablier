@@ -31,6 +31,27 @@ def post(url, payload):
         return json.load(r)
 
 
+def b64png(img):
+    """Encode une image PIL en PNG base64 pour l'API."""
+    import io
+    buf = io.BytesIO()
+    img.save(buf, format='PNG')
+    return base64.b64encode(buf.getvalue()).decode()
+
+
+def img2img_fields(a):
+    """Champs img2img : 'init' (chemin sous sd_raw/), 'denoise', et 'mask' [x0, y0, x1, y1] optionnel (inpainting)."""
+    from PIL import Image, ImageDraw
+    init = Image.open(RAW / a['init']).convert('RGB')
+    fields = {'init_images': [b64png(init)], 'denoising_strength': a.get('denoise', 0.6)}
+    if a.get('mask'):
+        mask = Image.new('L', init.size, 0)
+        ImageDraw.Draw(mask).rectangle(a['mask'], fill=255)
+        fields.update({'mask': b64png(mask), 'mask_blur': 6, 'inpainting_fill': 1,
+                       'inpaint_full_res': True, 'inpaint_full_res_padding': 48})
+    return fields
+
+
 def generate(spec, name, n, url, seed0=None, profile=None):
     a = spec['assets'][name]
     cfg = spec['profiles'][profile] if profile else spec['model']
@@ -50,7 +71,11 @@ def generate(spec, name, n, url, seed0=None, profile=None):
             'sampler_name': cfg['sampler'], 'scheduler': cfg.get('scheduler', 'Automatic'),
             'override_settings': {'sd_model_checkpoint': cfg['checkpoint']},
         }
-        img = post(url.rstrip('/') + '/sdapi/v1/txt2img', payload)['images'][0]
+        endpoint = 'txt2img'
+        if a.get('init'):
+            payload.update(img2img_fields(a))
+            endpoint = 'img2img'
+        img = post(url.rstrip('/') + f'/sdapi/v1/{endpoint}', payload)['images'][0]
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(base64.b64decode(img.split(',', 1)[-1]))
         print('écrit', dst.relative_to(ROOT))
@@ -60,7 +85,7 @@ def build(spec):
     sys.path.insert(0, str(ROOT / 'tools'))
     from pixelize import pixelize
     for name, a in spec['assets'].items():
-        if a.get('seed') is None:
+        if a.get('seed') is None or a.get('build') is False:
             continue
         src = RAW / name / f"{a['seed']}.png"
         if not src.exists():

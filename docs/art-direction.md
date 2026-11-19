@@ -33,7 +33,8 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 5. Génère 4 à 8 variantes, garde la meilleure et **note le prompt et la seed** dans le tableau ci-dessous.
 6. **Nettoyage automatique** : `python tools/sd_generate.py --build` (ou à la main `python tools/pixelize.py brut.png assets/sprites/heros.png --size 64 --palette docs/palette.hex --bg auto --outline`)
    Le script réduit l'image en vrais pixels, verrouille la palette et détoure le fond.
-7. **Retouche à la main** dans Aseprite, LibreSprite ou Pixelorama (gratuit) : contours, yeux, petits défauts. Sur du pixel art, SD produit souvent des « faux pixels », donc cette étape reste nécessaire.
+7. **Retouche par img2img / inpainting** (sans quitter le pipeline) : dans `sprites.json`, un asset peut avoir `init` (image de départ sous `sd_raw/`), `denoise` (0 à 1) et `mask` (rectangle `[x0, y0, x1, y1]` à redessiner, le reste ne bouge pas). Un asset avec `"build": false` sert seulement de base et n'est pas pixelisé.
+8. **Retouche à la main** dans Aseprite, LibreSprite ou Pixelorama (gratuit) : contours, yeux, petits défauts. Sur du pixel art, SD produit souvent des « faux pixels », donc cette étape reste nécessaire.
 
 ## Assets prioritaires
 1. Portrait du héros (le mineur fou)
@@ -58,3 +59,8 @@ Limites connues : le héros tient une lampe-bâton plutôt qu'une pioche, petite
 | Gardien du Sablier | `assets/sprites/gardien.png` | gardien de pierre et d'or | pxl_8103 | v2 (Juggernaut + Pixel Art XL) |
 | Fond Prés de l'Aube | `assets/sprites/bg_pres.png` | prairie à l'aube, ciel rose | 9000 | v1 (Turbo) |
 | Fond Collines grises | `assets/sprites/bg_collines.png` | collines rocheuses, falaises | 9500 | v1 (Turbo) |
+| Intro 1 — hameau | `assets/sprites/intro_hameau.png` | hameau minier au pied des collines grises, aube | pxl_9602 | v2 |
+| Intro 2 — veine | `assets/sprites/intro_veine.png` | mineur à la lanterne dans une galerie dorée | v1_turbo_9701 | v1 (Turbo) |
+| Intro 3 — chambre | `assets/sprites/intro_chambre.png` | chambre oubliée, Sablier au centre | pxl_9801 | v2 |
+| Intro 4 — fêlure | `assets/sprites/intro_fele.png` | img2img de la chambre (65 %) : pioche au sol, sable qui déborde | pxl_9950 | v2 (img2img) |
+| Intro 5 — réveil | `assets/sprites/intro_reveil_sablier.png` | chambre au matin (base v1_turbo_10002) + sablier discret sur la commode (inpainting) | v1_turbo_10103 | v1 (Turbo, inpainting) |
