@@ -7,7 +7,8 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 - **Combat-minage (fait)** : les monstres sont des grilles de pixels qu'on creuse ; on garde ce qu'on extrait (cuir, os, défense, fourrure, griffe, pierre, éclat, cristal, essences 🔥 ❄️ ⚡, sable). Pioche seule pour l'instant, clic pour viser.
 - **Équilibrage** : boss entre la 9e et la 13e boucle (`node tools/sim.js`), inchangé depuis la v0.3.
 - **Prochaine étape** : outils (pioche / marteau / coutelas) + forge + équipement non permanent + mémoire du village par la renommée.
-- **Questions ouvertes** : noms du hameau et du mineur (conseil fait le 2026-11-19, en attente de Steven), intro (images en cours).
+- **Lore décidé** : le mineur est « le Radoteur », vrai nom Anselme Tardif révélé par une scène (voir `lore.md`). Lieux proposés : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret), à confirmer.
+- **Questions ouvertes** : confirmation des lieux, intro (images générées dans `sd_raw/intro_*`, à trier).
 
 ## docs/design.md — design et formules (long : lire par section)
 | Section (titre à chercher) | Contenu | Statut |
@@ -22,7 +23,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 | `## Backlog` | Renvoi vers la feuille de route | à jour |
 
 ## docs/lore.md — lore (court)
-L'accroche (le mineur fêle le Sablier), pourquoi le village se souvient et pas le héros, le Sablier et ses fragments, le ton (mélancolique mais drôle), questions ouvertes (noms, fin). Le lore « monstres faits de temps sédimenté » et les vestiges sont dans `design.md` → `## Miner les ennemis` → `### Le lore qui va avec`.
+Le mineur (Radoteur → Anselme Tardif, scène de la boulangère, pioche gravée), les lieux, les points de vigilance pour les noms, l'accroche (le mineur fêle le Sablier), pourquoi le village se souvient et pas le héros, le Sablier et ses fragments, le ton (mélancolique mais drôle), questions ouvertes (noms, fin). Le lore « monstres faits de temps sédimenté » et les vestiges sont dans `design.md` → `## Miner les ennemis` → `### Le lore qui va avec`.
 
 ## docs/art-direction.md — direction artistique (court)
 Pixel art façon Little Dig, le héros, tailles des sprites, palette Endesga 64, pipeline Stable Diffusion (Juggernaut XI + LoRA Pixel Art XL), suivi des assets (seeds dans `tools/sprites.json`).
