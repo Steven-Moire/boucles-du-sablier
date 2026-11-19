@@ -9,45 +9,68 @@ import {digParticles} from '../mining/dig.view.js';
 import {openBoss, openLoopEnd} from '../modals/loop-end.view.js';
 
 // ---------- événements & boucle principale ----------
+function hitClass(ev) {
+  if (ev.crit) return 'f-crit';
+  return ev.skill ? 'f-sk' : '';
+}
+// retour à la carte peu après la fin d'une case, si le héros n'est pas reparti
+function backToMapSoon() {
+  clearTimeout(S.backTimer);
+  S.backTimer = setTimeout(() => {
+    if (!S.G.run.action) {
+      S.view = 'map';
+      requestRender();
+    }
+  }, 900);
+}
+// effets visuels : seulement quand la scène de combat est affichée
+const FX_HANDLERS = {
+  hit: ev => {
+    floatNum(ev.tgt, '-' + ev.dmg + (ev.crit ? '!' : ''), hitClass(ev));
+    anim(unitEl(ev.src), ev.src === 'hero' ? 'atk-u' : 'atk-d');
+    anim(unitEl(ev.tgt), 'shake');
+  },
+  miss: ev => floatNum(ev.tgt, ev.tgt === 'hero' ? 'esquive' : 'raté', 'f-miss'),
+  heal: ev => floatNum(ev.tgt, '+' + ev.n, 'f-heal'),
+  skill: ev => anim($('sk-' + ev.key), 'fire'),
+  level: ev => floatNum('hero', 'NIVEAU ' + ev.lvl, 'f-lv'),
+  dig: ev => digParticles(unitEl(ev.tgt), ev.id, ev.w, ev.idx, ev.broken),
+  kill: ev => {
+    if (gotText(ev.got)) floatNum(ev.tgt, gotText(ev.got), 'f-loot');
+  },
+};
+// navigation, annonces et sauvegarde : quelle que soit la vue
+const HANDLERS = {
+  explore: ev => {
+    clearTimeout(S.backTimer);
+    S.lastSceneTile = ev.id;
+    S.view = 'scene';
+  },
+  tileDone: backToMapSoon,
+  retreat: backToMapSoon,
+  trophy: ev => {
+    const tr = MONSTERS[ev.id].trophy;
+    toast('🏆 TROPHÉE UNIQUE', `${tr.icon} ${tr.name} — ${tr.desc} (permanent)`);
+    saveMeta();
+  },
+  unlock: ev => {
+    const u = UPGRADES[ev.key];
+    toast('❗ NOUVEAU BÂTIMENT', `${u.icon} ${u.name} est disponible au village.`);
+  },
+  loopEnd: () => {
+    saveMeta();
+    if (S.modalMode !== 'boss') openLoopEnd();
+  },
+  boss: () => {
+    saveMeta();
+    openBoss();
+  },
+};
 export function consumeEvents() {
   const fx = S.view === 'scene';
   for (const ev of S.G.events) {
-    if (ev.type === 'hit' && fx) {
-      floatNum(ev.tgt, '-' + ev.dmg + (ev.crit ? '!' : ''), ev.crit ? 'f-crit' : ev.skill ? 'f-sk' : '');
-      anim(unitEl(ev.src), ev.src === 'hero' ? 'atk-u' : 'atk-d');
-      anim(unitEl(ev.tgt), 'shake');
-    } else if (ev.type === 'miss' && fx) floatNum(ev.tgt, ev.tgt === 'hero' ? 'esquive' : 'raté', 'f-miss');
-    else if (ev.type === 'heal' && fx) floatNum(ev.tgt, '+' + ev.n, 'f-heal');
-    else if (ev.type === 'skill' && fx) anim($('sk-' + ev.key), 'fire');
-    else if (ev.type === 'explore') {
-      clearTimeout(S.backTimer);
-      S.lastSceneTile = ev.id;
-      S.view = 'scene';
-    } else if (ev.type === 'tileDone' || ev.type === 'retreat') {
-      clearTimeout(S.backTimer);
-      S.backTimer = setTimeout(() => {
-        if (!S.G.run.action) {
-          S.view = 'map';
-          requestRender();
-        }
-      }, 900);
-    } else if (ev.type === 'level' && fx) floatNum('hero', 'NIVEAU ' + ev.lvl, 'f-lv');
-    else if (ev.type === 'dig' && fx) digParticles(unitEl(ev.tgt), ev.id, ev.w, ev.idx, ev.broken);
-    else if (ev.type === 'kill' && fx && gotText(ev.got)) floatNum(ev.tgt, gotText(ev.got), 'f-loot');
-    else if (ev.type === 'trophy') {
-      const tr = MONSTERS[ev.id].trophy;
-      toast('🏆 TROPHÉE UNIQUE', `${tr.icon} ${tr.name} — ${tr.desc} (permanent)`);
-      saveMeta();
-    } else if (ev.type === 'unlock') {
-      const u = UPGRADES[ev.key];
-      toast('❗ NOUVEAU BÂTIMENT', `${u.icon} ${u.name} est disponible au village.`);
-    } else if (ev.type === 'loopEnd') {
-      saveMeta();
-      if (S.modalMode !== 'boss') openLoopEnd();
-    } else if (ev.type === 'boss') {
-      saveMeta();
-      openBoss();
-    }
+    const handler = (fx && FX_HANDLERS[ev.type]) || HANDLERS[ev.type];
+    if (handler) handler(ev);
   }
   S.G.events.length = 0;
 }

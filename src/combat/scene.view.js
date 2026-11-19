@@ -22,100 +22,119 @@ for (const b in SCENE_BG) {
   };
   im.src = `assets/sprites/${SCENE_BG[b]}.png`;
 }
-export function renderScene() {
-  const r = S.G.run,
-    a = r.action,
-    h = r.hero;
-  const tId = a ? a.id : S.lastSceneTile,
-    t = tId && TILE_MAP[tId];
-  const grad = t && BIOMES[t.biome].scene ? BIOMES[t.biome].scene : 'linear-gradient(180deg,#2a2e39,#1a1c22)';
-  const bgImg = t && sceneBgOk[t.biome];
-  $('sceneView').style.background = bgImg
+const DEFAULT_SCENE_BG = 'linear-gradient(180deg,#2a2e39,#1a1c22)';
+const PHASE_ICON = {walk: '🚶', rest: '💧', chest: '🎁'};
+const PHASE_TEXT = {
+  walk: 'En route…',
+  harvest: 'Récolte en cours',
+  rest: 'Repos à la source : +10 % PV / s',
+  chest: "Fouille de l'autel",
+};
+const PHASE_BAR_HTML = '<div class="bar thin"><i id="phaseBar" style="background:var(--gold)"></i></div>';
+const MAP_BUTTON_HTML = '<button class="btn small" data-view="map" style="margin-top:12px">VOIR LA CARTE</button>';
+const isFight = a => !!a && a.phase === 'fight';
+const hasEnemies = a => isFight(a) && !!a.enemies;
+
+function sceneTile(a) {
+  const tId = a ? a.id : S.lastSceneTile;
+  return tId && TILE_MAP[tId];
+}
+function renderSceneBg(t) {
+  const grad = t && BIOMES[t.biome].scene ? BIOMES[t.biome].scene : DEFAULT_SCENE_BG;
+  const hasBg = !!t && !!sceneBgOk[t.biome];
+  const view = $('sceneView');
+  view.style.background = hasBg
     ? `url(assets/sprites/${SCENE_BG[t.biome]}.png) center bottom / cover no-repeat, ${grad}`
     : grad;
-  $('sceneView').classList.toggle('has-bg', !!bgImg);
-  const done = t && r.completed.has(t.id) && !a;
-  setHTML(
-    $('scTitle'),
-    t
-      ? `<b>${t.name}</b> <span>· Niveau ${t.lvl}</span>${segBar(t, a, done)}<div class="segcap"><span>${a && a.phase === 'fight' ? 'VAGUE ' + (a.seg + 1) + '/' + a.segs.length : 'EXPLORATION'}</span><span>${done ? 'EXPLORÉ' : ''}</span></div>`
-      : `<b>Aucune exploration</b> <span>· choisis une case sur la carte</span>`,
-  );
-  // ennemis / message
-  const key = a ? `${a.id}|${a.seg}|${a.phase}` : 'idle|' + (r.over ? 'over' : done ? 'done' : 'wait');
-  const box = $('scEnemies');
-  if (key !== sceneKey) {
-    sceneKey = key;
-    if (a && a.phase === 'fight' && a.enemies) {
-      box.innerHTML = a.enemies
-        .map(
-          (e, i) =>
-            `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${digPortrait(e, i)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`,
-        )
-        .join('');
-    } else {
-      let big = '⏳',
-        txt = 'Le héros attend tes ordres.',
-        bar = false;
-      if (a) {
-        big =
-          {walk: '🚶', harvest: a.segs[a.seg] && a.segs[a.seg].res === 'ore' ? '⛏️' : '🪓', rest: '💧', chest: '🎁'}[
-            a.phase
-          ] || '…';
-        txt =
-          {
-            walk: 'En route…',
-            harvest: 'Récolte en cours',
-            rest: 'Repos à la source : +10 % PV / s',
-            chest: "Fouille de l'autel",
-          }[a.phase] || '';
-        bar = a.phase !== 'walk';
-      } else if (r.over) {
-        big = '⌛';
-        txt = 'La boucle se referme…';
-      } else if (done) {
-        big = '✅';
-        txt = 'Zone explorée. Choisis la suite sur la carte.';
-      }
-      box.innerHTML = `<div class="sc-msg"><div class="big">${big}</div><div>${txt}</div>${bar ? '<div class="bar thin"><i id="phaseBar" style="background:var(--gold)"></i></div>' : ''}${!a ? '<button class="btn small" data-view="map" style="margin-top:12px">VOIR LA CARTE</button>' : ''}</div>`;
-    }
+  view.classList.toggle('has-bg', hasBg);
+}
+function waveCaption(a) {
+  return isFight(a) ? 'VAGUE ' + (a.seg + 1) + '/' + a.segs.length : 'EXPLORATION';
+}
+function sceneTitleHTML(t, a, done) {
+  if (!t) return `<b>Aucune exploration</b> <span>· choisis une case sur la carte</span>`;
+  return `<b>${t.name}</b> <span>· Niveau ${t.lvl}</span>${segBar(t, a, done)}<div class="segcap"><span>${waveCaption(a)}</span><span>${done ? 'EXPLORÉ' : ''}</span></div>`;
+}
+function idleState(r, done) {
+  if (r.over) return 'over';
+  return done ? 'done' : 'wait';
+}
+function sceneKeyOf(r, a, done) {
+  return a ? `${a.id}|${a.seg}|${a.phase}` : 'idle|' + idleState(r, done);
+}
+function enemyUnitHTML(e, i) {
+  return `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${digPortrait(e, i)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`;
+}
+function phaseIcon(a) {
+  if (a.phase === 'harvest') return a.segs[a.seg] && a.segs[a.seg].res === 'ore' ? '⛏️' : '🪓';
+  return PHASE_ICON[a.phase] || '…';
+}
+// message affiché quand il n'y a pas d'ennemis : {big, txt, bar}
+function sceneMessage(r, a, done) {
+  if (a) return {big: phaseIcon(a), txt: PHASE_TEXT[a.phase] || '', bar: a.phase !== 'walk'};
+  if (r.over) return {big: '⌛', txt: 'La boucle se referme…', bar: false};
+  if (done) return {big: '✅', txt: 'Zone explorée. Choisis la suite sur la carte.', bar: false};
+  return {big: '⏳', txt: 'Le héros attend tes ordres.', bar: false};
+}
+function messageHTML(r, a, done) {
+  const {big, txt, bar} = sceneMessage(r, a, done);
+  return `<div class="sc-msg"><div class="big">${big}</div><div>${txt}</div>${bar ? PHASE_BAR_HTML : ''}${a ? '' : MAP_BUTTON_HTML}</div>`;
+}
+// ennemis / message : reconstruits seulement quand la vague ou la phase change
+function renderSceneBody(r, a, done) {
+  const key = sceneKeyOf(r, a, done);
+  if (key === sceneKey) return;
+  sceneKey = key;
+  $('scEnemies').innerHTML = hasEnemies(a) ? a.enemies.map(enemyUnitHTML).join('') : messageHTML(r, a, done);
+}
+function updateEnemyUnit(e, i) {
+  const u = $('u-e' + i);
+  if (!u) return;
+  u.querySelector('.bar i').style.width = (Math.max(0, e.hp) / e.maxHp) * 100 + '%';
+  u.querySelector('.bar span').textContent = Math.max(0, Math.ceil(e.hp));
+  u.querySelector('.swing i').style.width = (Math.max(0, e.t) / e.speed) * 100 + '%';
+  u.classList.toggle('dead', e.hp <= 0);
+  const cv = u.querySelector('canvas.dig');
+  if (cv) drawDig(cv, e, performance.now() / 1000);
+}
+function renderLiveBars(a, h) {
+  if (hasEnemies(a)) {
+    a.enemies.forEach(updateEnemyUnit);
+    return;
   }
-  if (a && a.phase === 'fight' && a.enemies) {
-    a.enemies.forEach((e, i) => {
-      const u = $('u-e' + i);
-      if (!u) return;
-      u.querySelector('.bar i').style.width = (Math.max(0, e.hp) / e.maxHp) * 100 + '%';
-      u.querySelector('.bar span').textContent = Math.max(0, Math.ceil(e.hp));
-      u.querySelector('.swing i').style.width = (Math.max(0, e.t) / e.speed) * 100 + '%';
-      u.classList.toggle('dead', e.hp <= 0);
-      const cv = u.querySelector('canvas.dig');
-      if (cv) drawDig(cv, e, performance.now() / 1000);
-    });
-  } else if (a && $('phaseBar'))
-    $('phaseBar').style.width = (a.phase === 'rest' ? h.hp / h.maxHp : Math.min(1, a.t / a.dur)) * 100 + '%';
-  // héros
+  if (!a) return;
+  const bar = $('phaseBar');
+  if (bar) bar.style.width = (a.phase === 'rest' ? h.hp / h.maxHp : Math.min(1, a.t / a.dur)) * 100 + '%';
+}
+function renderHero(h, a, every) {
   $('heroLv').textContent = h.lvl;
   $('heroHpBar').style.width = (h.hp / h.maxHp) * 100 + '%';
   $('heroHpTxt').textContent = `${fmt(h.hp)} / ${h.maxHp}`;
-  const every = heroEvery(S.G),
-    tool = actionTool(S.G); // cadence de l'outil de la case en cours
-  $('heroSwing').style.width = (a && a.phase === 'fight' ? Math.min(1, a.heroT / every) * 100 : 0) + '%';
-  // compétences
-  const sk = [
-    `<div class="skill" title="${tool.name} — frappe toutes les ${every.toFixed(2)} s"><span>${tool.icon}</span><div class="cd" style="--p:${a && a.phase === 'fight' ? 1 - Math.min(1, a.heroT / every) : 0}"></div></div>`,
-  ];
-  for (const k in SKILLS) {
-    const s = SKILLS[k];
-    if (!skillUnlocked(S.G.meta, k)) {
-      sk.push(`<div class="skill lock" title="${s.name} — débloqué par : ${s.unlock.txt}">🔒</div>`);
-      continue;
-    }
-    const p = 1 - r.skillT[k] / s.cd,
-      ready = p <= 0;
-    sk.push(
-      `<div class="skill ${ready ? 'ready' : ''}" id="sk-${k}" title="${s.name} — ${s.desc} (recharge ${s.cd} s)"><span>${s.icon}</span><div class="cd" style="--p:${p.toFixed(3)}"></div>${ready ? '' : `<small>${Math.ceil(p * s.cd)}</small>`}</div>`,
-    );
-  }
+  $('heroSwing').style.width = (isFight(a) ? Math.min(1, a.heroT / every) * 100 : 0) + '%';
+}
+// compétences : l'outil de la case en cours, puis les compétences (verrouillées ou en recharge)
+function toolSkillHTML(tool, every, a) {
+  const p = isFight(a) ? 1 - Math.min(1, a.heroT / every) : 0;
+  return `<div class="skill" title="${tool.name} — frappe toutes les ${every.toFixed(2)} s"><span>${tool.icon}</span><div class="cd" style="--p:${p}"></div></div>`;
+}
+function skillHTML(k, r) {
+  const s = SKILLS[k];
+  if (!skillUnlocked(S.G.meta, k))
+    return `<div class="skill lock" title="${s.name} — débloqué par : ${s.unlock.txt}">🔒</div>`;
+  const p = 1 - r.skillT[k] / s.cd,
+    ready = p <= 0;
+  const left = ready ? '' : `<small>${Math.ceil(p * s.cd)}</small>`;
+  return `<div class="skill ${ready ? 'ready' : ''}" id="sk-${k}" title="${s.name} — ${s.desc} (recharge ${s.cd} s)"><span>${s.icon}</span><div class="cd" style="--p:${p.toFixed(3)}"></div>${left}</div>`;
+}
+function patchSkill(c, html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const n = tmp.firstChild;
+  c.className = n.className;
+  c.innerHTML = n.innerHTML;
+}
+function renderSkills(r, a, tool, every) {
+  const sk = [toolSkillHTML(tool, every, a), ...Object.keys(SKILLS).map(k => skillHTML(k, r))];
   const skBox = $('scSkills'),
     skKey = Object.keys(SKILLS)
       .map(k => (skillUnlocked(S.G.meta, k) ? 1 : 0))
@@ -123,16 +142,30 @@ export function renderScene() {
   if (skBox._k !== skKey) {
     skBox._k = skKey;
     skBox.innerHTML = sk.join('');
-  } else
-    Array.from(skBox.children).forEach((c, i) => {
-      const tmp = document.createElement('div');
-      tmp.innerHTML = sk[i];
-      const n = tmp.firstChild;
-      c.className = n.className;
-      c.innerHTML = n.innerHTML;
-    });
-  $('retreatBtn').disabled = !a || !!r.over;
-  $('retreatBtn').textContent = a && a.phase === 'rest' ? 'REPRENDRE LA ROUTE' : 'BATTRE EN RETRAITE';
+    return;
+  }
+  Array.from(skBox.children).forEach((c, i) => patchSkill(c, sk[i]));
+}
+function renderRetreat(r, a) {
+  const btn = $('retreatBtn');
+  btn.disabled = !a || !!r.over;
+  btn.textContent = a && a.phase === 'rest' ? 'REPRENDRE LA ROUTE' : 'BATTRE EN RETRAITE';
+}
+export function renderScene() {
+  const r = S.G.run,
+    a = r.action,
+    h = r.hero;
+  const t = sceneTile(a);
+  renderSceneBg(t);
+  const done = !!t && r.completed.has(t.id) && !a;
+  setHTML($('scTitle'), sceneTitleHTML(t, a, done));
+  renderSceneBody(r, a, done);
+  renderLiveBars(a, h);
+  const every = heroEvery(S.G),
+    tool = actionTool(S.G); // cadence de l'outil de la case en cours
+  renderHero(h, a, every);
+  renderSkills(r, a, tool, every);
+  renderRetreat(r, a);
 }
 $('retreatBtn').addEventListener('click', () => {
   retreat(S.G);

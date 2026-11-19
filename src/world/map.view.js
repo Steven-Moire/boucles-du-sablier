@@ -73,31 +73,42 @@ function tileProgress(a) {
   if (a.seg < 0) return 0;
   return (a.seg + segFill(a)) / n;
 }
+function tileClass(id, t, isShown, can) {
+  let c = 'tile';
+  if (!isShown) c += ' dim';
+  if (can) c += ' can';
+  if (id === S.selected) c += ' sel';
+  if (t.type === 'locked') c += ' locked';
+  return c;
+}
+function renderTileProgress(d, a, here) {
+  const p = d.querySelector('.tprog');
+  if (!here) {
+    p.hidden = true;
+    return;
+  }
+  p.hidden = false;
+  p.firstChild.style.width = tileProgress(a) * 100 + '%';
+}
+function renderTile(id, r, a, up) {
+  const d = tileEls[id],
+    t = TILE_MAP[id],
+    disc = S.G.meta.discovered[id];
+  d.parentNode.style.visibility = disc ? 'visible' : 'hidden';
+  const done = r.completed.has(id),
+    here = a && a.id === id,
+    can = canExplore(S.G, id) && !done;
+  d.className = tileClass(id, t, done || here || can, can);
+  d.querySelector('.ck').textContent = done && t.type !== 'village' ? '✓' : '';
+  const heroId = a ? a.id : r.heroAt;
+  const isHeroHere = heroId === id && !r.over;
+  setHTML(d.querySelector('.herom'), isHeroHere ? spr('heros', '🧙') : '');
+  renderTileProgress(d, a, here);
+  if (t.type === 'village') d.querySelector('.bang').hidden = !up;
+}
 export function renderMap() {
   const r = S.G.run,
     a = r.action,
     up = anyUpgrade();
-  for (const id in tileEls) {
-    const d = tileEls[id],
-      t = TILE_MAP[id],
-      disc = S.G.meta.discovered[id];
-    d.parentNode.style.visibility = disc ? 'visible' : 'hidden';
-    const done = r.completed.has(id),
-      here = a && a.id === id,
-      can = canExplore(S.G, id) && !done;
-    d.className =
-      'tile' +
-      (done || here || can ? '' : ' dim') +
-      (can ? ' can' : '') +
-      (id === S.selected ? ' sel' : '') +
-      (t.type === 'locked' ? ' locked' : '');
-    d.querySelector('.ck').textContent = done && t.type !== 'village' ? '✓' : '';
-    setHTML(d.querySelector('.herom'), (a ? a.id : r.heroAt) === id && !r.over ? spr('heros', '🧙') : '');
-    const p = d.querySelector('.tprog');
-    if (here) {
-      p.hidden = false;
-      p.firstChild.style.width = tileProgress(a) * 100 + '%';
-    } else p.hidden = true;
-    if (t.type === 'village') d.querySelector('.bang').hidden = !up;
-  }
+  for (const id in tileEls) renderTile(id, r, a, up);
 }
