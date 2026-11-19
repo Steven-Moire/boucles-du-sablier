@@ -129,6 +129,71 @@
       "seed": 9500,
       "sat": 1.35,
       "colors": 24
+    },
+    "intro_hameau": {
+      "kind": "bg",
+      "size": 320,
+      "gen": [
+        1344,
+        768
+      ],
+      "seed_base": 9600,
+      "seed": null,
+      "sat": 1.35,
+      "colors": 24,
+      "prompt": "small mining hamlet at the foot of grey rocky hills at dawn, wooden houses, a mine entrance with wooden beams, smoke from chimneys, warm morning light"
+    },
+    "intro_veine": {
+      "kind": "bg",
+      "size": 320,
+      "gen": [
+        1344,
+        768
+      ],
+      "seed_base": 9700,
+      "seed": null,
+      "sat": 1.35,
+      "colors": 24,
+      "prompt": "underground mine tunnel lit by a single lantern, an old miner with a yellow helmet digging toward a glittering golden vein in ancient layered rock strata"
+    },
+    "intro_chambre": {
+      "kind": "bg",
+      "size": 320,
+      "gen": [
+        1344,
+        768
+      ],
+      "seed_base": 9800,
+      "seed": null,
+      "sat": 1.35,
+      "colors": 24,
+      "prompt": "forgotten underground chamber, a giant hourglass of stone and glass in the center, glowing golden sand inside, ancient carvings on the walls, dust in light beams"
+    },
+    "intro_fele": {
+      "kind": "bg",
+      "size": 320,
+      "gen": [
+        1344,
+        768
+      ],
+      "seed_base": 9900,
+      "seed": null,
+      "sat": 1.35,
+      "colors": 24,
+      "prompt": "a giant hourglass cracking, glowing golden sand pouring out of the crack, a pickaxe stuck in the glass, sparks and flying shards, dramatic light"
+    },
+    "intro_reveil": {
+      "kind": "bg",
+      "size": 320,
+      "gen": [
+        1344,
+        768
+      ],
+      "seed_base": 10000,
+      "seed": null,
+      "sat": 1.35,
+      "colors": 24,
+      "prompt": "small wooden bedroom at dawn, an old miner sitting up in bed with wide startled eyes, morning light through the window, a cracked glowing hourglass on the nightstand"
     }
   }
 }
