@@ -110,11 +110,11 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 
 **État au 19/11** (lots 0 à 8 faits ; comptes rendus et prompts A à E dans `docs/archive/sessions-faites.md`) : ESLint + règles SonarQube, limites de taille par suffixe, `npm run check` (lint + simu de référence), captures déterministes **sans bruit connu : une différence = une vraie régression**, 5 captures de référence (`village.png` comprise ; tous les bâtiments y sont verrouillés, relire à la main les branches « débloqué » et « niveau max »). Lint : **0 problème**, chaînage optionnel fait (lot 6), Python de `tools/` propre (lot 7).
 **Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
-**Lots** : tous faits (0 à 8), configuration ruff faite (G), polices dans le dépôt faites (F). Prochaine et dernière session de qualité : épingles Python (H).
+**Lots** : tous faits (0 à 8), configuration ruff faite (G), polices dans le dépôt faites (F), épingles Python faites (H). Sessions de qualité terminées.
 **Décision de Steven (19/11, après le lot 8)** : `max-lines` à 1000 pour les `*.data.js` (avant : 300 par défaut, alors que le tableau de `coding-style.md` disait « illimité »). Pourquoi : la taille d'une table de données ne coûte rien à lire, on découpe par sujet (une zone, une famille de monstres) et pas au nombre de lignes ; 1000 est le défaut de SonarQube (S104), un garde-fou contre l'absurde. La logique reste bornée à 20 lignes par fonction. Commentaire dans `eslint.config.js`, tableau de `coding-style.md` mis à jour. Plus gros fichier de données à ce jour : `world.data.js`, 158 lignes.
 
 **Décisions de Steven (19/11, après le lot 2)** : lots 3 à 8 confirmés ; le `onerror` en ligne (`spr()` dans `src/shared/templates.js`, image du héros dans `index.html`) se traite avec le lot 5 ; le bruit des captures se **corrige à la source** (session A), on ne le masque pas en relançant.
-Ordre des conversations : **H** (A à G faites, archivées).
+Ordre des conversations : toutes faites (A à H, archivées).
 
 Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, version 14ce5f3 ou plus récente : les captures de l'ancien script ne sont plus comparables, le combat avait un tick de moins ; copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
 
@@ -122,12 +122,8 @@ Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun cha
 
 **G. Configuration ruff** : faite le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). `ruff.toml` (120, guillemets simples, Python 3.10, règles du lot 7, Markdown exclu : il reste à Prettier), `ruff==0.16.0` dans `requirements-dev.txt`, `ruff check` et `ruff format --check` dans `npm run lint`. Python de `tools/` : 0 problème.
 
-**H. Épingler `pillow` et `playwright`** (petit, repéré pendant la session G) : `requirements-dev.txt` ne fixe que ruff ; Pillow (11.0.0 sous Windows, 12.3.0 dans le `.venv` WSL) et Playwright suivent la dernière version, alors que les sorties de `pixelize.py` et les captures dépendent de leurs versions.
-```
-Lis docs/INDEX.md, CLAUDE.md et la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Pas de changement du jeu.
-1. Versions installées dans le .venv WSL (pip freeze), versions disponibles sur PyPI (pip index versions) : propose-moi les épingles (== exact, versions du .venv sauf raison contraire) avant d'écrire.
-2. requirements-dev.txt mis à jour, .venv réinstallé depuis le fichier.
-3. Vérifie : captures identiques aux références prises avant, aucune erreur JS, sorties de sd_generate.py --build et de pixelize identiques (`bash tools/qa/check-tools.sh avant` puis `apres` sous WSL), npm run check. Mets à jour CLAUDE.md si la commande d'installation change, commit, demande-moi avant de pousser.
-```
+**H. Épingles Python** : faite le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). `requirements-dev.txt` : `pillow==12.3.0`, `playwright==1.65.1`, `ruff==0.16.0` (versions du `.venv` WSL, `greenlet` laissé à playwright) ; `.venv` recréé depuis le fichier. Pillow 11.0.0 et 12.3.0 donnent des sorties identiques (`check-tools.sh`).
+
+**En suspens (à décider par Steven)** : le Python de Windows a des paquets installés en global (Pillow 11.0.0, ruff 0.16.0, requests, greenlet), utilisés par `sd_generate.py` (Forge tourne sous Windows) et par `npm run lint` sous Windows (Node n'est pas installé sous WSL). Décision de Steven (19/11) : toujours un environnement virtuel, rien en global. Session à prévoir : un venv Windows (`.venv-win` ?) installé depuis un fichier épinglé, et les commandes de CLAUDE.md qui l'utilisent.
 
 **F. Polices dans le dépôt** : faite le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). `assets/fonts/` (Inter variable + Silkscreen 400 / 700, `latin`, OFL), `src/shared/fonts.css` chargée en premier par `index.html` et le prototype ; plus aucune requête externe, captures du jeu identiques.

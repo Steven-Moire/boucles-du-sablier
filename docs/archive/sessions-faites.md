@@ -228,3 +228,15 @@ Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/testing.md, puis index.ht
 3. Vérifie : le jeu se charge sans réseau externe (Playwright qui bloque fonts.googleapis.com et fonts.gstatic.com), captures comparées aux références prises avant (différences de lissage possibles : montre-les-moi avant de reprendre de nouvelles références), aucune erreur JS, npm run check.
 Mets à jour docs/INDEX.md et CLAUDE.md, commit, demande-moi avant de pousser.
 ```
+
+## Qualité du code — épingles Python du 19/11 (session H, faite)
+
+**Fait le 19/11 (session H)** : `.venv` WSL relevé (`uv pip freeze`) : pillow 12.3.0, playwright 1.65.1, greenlet 3.5.6, **ruff absent** (ajouté au fichier en session G sans réinstallation) ; PyPI : pillow 12.3.0, playwright 1.65.2, ruff 0.17.6. Épingles validées par Steven : `pillow==12.3.0`, `playwright==1.65.1` (celle des captures de référence), `ruff==0.16.0` (inchangée) ; `greenlet` non épinglé (seule dépendance de playwright 1.65.1, `pyee` a disparu). `.venv` recréé (`uv venv --clear` puis la commande de CLAUDE.md, inchangée). Vérifié : 6 captures identiques aux références prises avant, aucune erreur JS, aucune requête externe ; `check-tools.sh avant` / `apres` : `log.txt` et `sha.txt` identiques ; Pillow 11.0.0 (version du Python Windows) dans un venv jetable du scratchpad : empreintes identiques à 12.3.0, journaux identiques au chemin de l'interpréteur près ; `npm run check` sous Windows (Node absent sous WSL, ruff 0.16.0 de Windows) : lint 0, simu identique. Décision de Steven : toujours un venv, rien installé en global (le cas du Python Windows est resté en suspens dans `PROCHAINES-SESSIONS.md`).
+
+**H. Épingler `pillow` et `playwright`** (petit, repéré pendant la session G) : `requirements-dev.txt` ne fixe que ruff ; Pillow (11.0.0 sous Windows, 12.3.0 dans le `.venv` WSL) et Playwright suivent la dernière version, alors que les sorties de `pixelize.py` et les captures dépendent de leurs versions.
+```
+Lis docs/INDEX.md, CLAUDE.md et la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Pas de changement du jeu.
+1. Versions installées dans le .venv WSL (pip freeze), versions disponibles sur PyPI (pip index versions) : propose-moi les épingles (== exact, versions du .venv sauf raison contraire) avant d'écrire.
+2. requirements-dev.txt mis à jour, .venv réinstallé depuis le fichier.
+3. Vérifie : captures identiques aux références prises avant, aucune erreur JS, sorties de sd_generate.py --build et de pixelize identiques (`bash tools/qa/check-tools.sh avant` puis `apres` sous WSL), npm run check. Mets à jour CLAUDE.md si la commande d'installation change, commit, demande-moi avant de pousser.
+```
