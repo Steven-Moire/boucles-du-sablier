@@ -115,9 +115,9 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 **Ordre des lots restants** (un commit chacun) : ~~2 arborescence par domaine~~ → 3 complexité UI → 4 complexité moteur et simu → 5 ternaires et templates → 6 chaînage optionnel → 7 Python de tools/ → 8 limites `max-lines` par suffixe dans `eslint.config.js` (`*.engine.js` 250, `*.view.js` 200, `main.js` 60, `tools/` 200, comme le tableau de `.claude/rules/javascript/coding-style.md` ; décidé le 19/11).
 
 **Décisions de Steven (19/11, après le lot 2)** : lots 3 à 8 confirmés ; le `onerror` en ligne (`spr()` dans `src/shared/templates.js`, image du héros dans `index.html`) se traite avec le lot 5 ; le bruit des captures se **corrige à la source** (session A), on ne le masque pas en relançant.
-Ordre des conversations : **A → B → C → D → E**, une conversation et un commit par ligne. Arborescence validée et prompt du lot 2 : `docs/archive/sessions-faites.md`.
+Ordre des conversations : ~~A~~ (fait, 14ce5f3) **→ B → C → D → E → F**, une conversation et un commit par ligne. Arborescence validée et prompt du lot 2 : `docs/archive/sessions-faites.md`.
 
-Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
+Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, version 14ce5f3 ou plus récente : les captures de l'ancien script ne sont plus comparables, le combat avait un tick de moins ; copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
 
 **A. Captures fiables (avant le lot 3)** :
 ```
@@ -134,7 +134,7 @@ Mets à jour la ligne « bruit connu » de PROCHAINES-SESSIONS.md et .claude/rul
 Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/coding-style.md et sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs). Lot 3 : ramener la complexité cognitive à ≤ 15 et les fonctions à ≤ 50 lignes dans l'UI, refactoring pur. Ne lis que les fichiers cités.
 Cibles (npm run lint au commit a648497) : renderScene 61 et 109 lignes (src/combat/scene.view.js), consumeEvents 41 (src/app/events.view.js → table de gestionnaires {type: fonction}), tileHTML 35 et 66 lignes (src/world/explore-panel.view.js), renderMap 26 (src/world/map.view.js), villageHTML 19 (src/village/village.view.js).
 Corrections attendues : extraire des fonctions courtes (un morceau de gabarit = une fonction), retours anticipés, tables de correspondance. Les ternaires et templates imbriqués de ces fonctions peuvent tomber au passage ; le reste est pour le lot 5. Un gabarit utilisé par deux zones va dans src/shared/templates.js.
-Avant : captures de référence. Après : npm run check:sim identique, npm run lint en baisse sans nouvelle alerte, captures identiques (le combat compris), aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
+Avant : captures de référence avec le tools/screenshot.py actuel (pas de captures d'avant 14ce5f3). Après : npm run check:sim identique, npm run lint en baisse sans nouvelle alerte, captures identiques (le combat compris), aucune erreur JS. Commit refactor(qualite), demande-moi avant de pousser.
 ```
 
 **C. Lot 4 : complexité du moteur et de la simu** :
@@ -160,4 +160,13 @@ Lot 6, chaînage optionnel (S6582, hors lint : getDiagnostics de VS Code sur src
 Lot 7, Python de tools/ : inventaire d'abord (complexité, docstrings, littéraux dupliqués, imbrication selon .claude/rules/python/sonarqube.md ; outils disponibles dans requirements-dev.txt), propose-moi la liste avant de corriger. Garde-fous : sprite_grids.py régénère src/enemies/grids.generated.js identique octet pour octet, screenshot.py et compare_shots.py donnent les mêmes résultats.
 Lot 8, max-lines par suffixe dans eslint.config.js, comme le tableau de coding-style.md : *.engine.js 250, *.view.js 200, app/main.js 60, tools/**/*.js 200 (et max-lines-per-function 20 pour *.data.js) ; lint propre sans relever de seuil (au lot 2, tous les fichiers étaient déjà sous leur limite).
 Après chaque lot : npm run check (lint + simu), captures identiques, aucune erreur JS. Demande-moi avant de pousser.
+```
+
+**F. Polices dans le dépôt (avant la publication GitHub Pages puis itch.io)** : décidé le 19/11. Aujourd'hui Silkscreen et Inter viennent de Google Fonts : le jeu dépend du réseau (jeu téléchargé depuis itch, joué hors ligne) et envoie l'IP du joueur à Google (RGPD).
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/testing.md, puis index.html et src/app/layout.css (variables --pix et --body). Changement du jeu livré, rendu identique attendu.
+1. Inventaire : graisses et sous-ensembles vraiment utilisés (index.html charge Silkscreen 400/700 et Inter 400 à 800) ; vérifie les licences (SIL OFL attendue) et propose-moi la liste avant de télécharger.
+2. Fichiers woff2 dans assets/fonts/ avec leur licence, @font-face dans une feuille CSS chargée en premier (même font-display: swap), liens Google Fonts retirés d'index.html.
+3. Vérifie : le jeu se charge sans réseau externe (Playwright qui bloque fonts.googleapis.com et fonts.gstatic.com), captures comparées aux références prises avant (différences de lissage possibles : montre-les-moi avant de reprendre de nouvelles références), aucune erreur JS, npm run check.
+Mets à jour docs/INDEX.md et CLAUDE.md, commit, demande-moi avant de pousser.
 ```
