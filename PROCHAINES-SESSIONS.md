@@ -110,16 +110,23 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 
 **État au 19/11** (lots 0 à 8 faits ; comptes rendus et prompts A à E dans `docs/archive/sessions-faites.md`) : ESLint + règles SonarQube, limites de taille par suffixe, `npm run check` (lint + simu de référence), captures déterministes **sans bruit connu : une différence = une vraie régression**, 5 captures de référence (`village.png` comprise ; tous les bâtiments y sont verrouillés, relire à la main les branches « débloqué » et « niveau max »). Lint : **0 problème**, chaînage optionnel fait (lot 6), Python de `tools/` propre (lot 7).
 **Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
-**Lots** : tous faits (0 à 8). Reste à décider : configuration ruff (G).
+**Lots** : tous faits (0 à 8). Prochaine session : configuration ruff (G).
+**Décision de Steven (19/11, après le lot 8)** : `max-lines` à 1000 pour les `*.data.js` (avant : 300 par défaut, alors que le tableau de `coding-style.md` disait « illimité »). Pourquoi : la taille d'une table de données ne coûte rien à lire, on découpe par sujet (une zone, une famille de monstres) et pas au nombre de lignes ; 1000 est le défaut de SonarQube (S104), un garde-fou contre l'absurde. La logique reste bornée à 20 lignes par fonction. Commentaire dans `eslint.config.js`, tableau de `coding-style.md` mis à jour. Plus gros fichier de données à ce jour : `world.data.js`, 158 lignes.
 
 **Décisions de Steven (19/11, après le lot 2)** : lots 3 à 8 confirmés ; le `onerror` en ligne (`spr()` dans `src/shared/templates.js`, image du héros dans `index.html`) se traite avec le lot 5 ; le bruit des captures se **corrige à la source** (session A), on ne le masque pas en relançant.
-Ordre des conversations : **F**, puis **G** si Steven la valide (A à E faites, archivées).
+Ordre des conversations : **G → F** (G validée par Steven le 19/11 ; A à E faites, archivées).
 
 Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun changement de comportement ; `npm run check:sim` identique ; `npm run lint` en baisse (jamais de `NOSONAR`, `eslint-disable` ni seuil relevé) ; captures de référence prises **avant** (`tools/screenshot.py` sous WSL, version 14ce5f3 ou plus récente : les captures de l'ancien script ne sont plus comparables, le combat avait un tick de moins ; copiées dans le scratchpad), comparées **après** avec `tools/qa/compare_shots.py` : identiques ; aucune erreur JS ; commit, demander avant de pousser.
 
 **E. Lots 6 à 8** : faits le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). Lint à 0 problème avec les limites `max-lines` par suffixe ; un seul `a && a.b` gardé volontairement (`explore-panel.view.js`, `a && a.tool !== cur`) ; Python de `tools/` propre pour ruff (hors E501 et PLR2004).
 
-**G. Configuration ruff pour `tools/`** (à décider, idée du 19/11) : `ruff.toml` avec `line-length = 120` comme Prettier et les règles du lot 7 (`D1`, `I`, `C901`, `E`, `F`, `W`, `B`, `SIM`, `UP`), puis `ruff format` pour la mise en forme (jamais à la main), branché sur `npm run lint` ; un commit de mise en forme seul, sorties des scripts identiques (même méthode qu'au lot 7).
+**G. Configuration ruff pour `tools/`** (validée le 19/11, prochaine session) :
+```
+Lis docs/INDEX.md, CLAUDE.md, .claude/rules/python/sonarqube.md, puis la section « 4. Qualité du code » de PROCHAINES-SESSIONS.md (garde-fous communs) et le compte rendu du lot 7 dans docs/archive/sessions-faites.md (méthode de vérification des scripts). Refactoring pur.
+1. ruff.toml : line-length = 120 comme Prettier, règles du lot 7 (D1, I, C901, E, F, W, B, SIM, UP), version de ruff épinglée dans requirements-dev.txt (vérifier qu'elle existe sur PyPI). Propose-moi la config avant de l'écrire, avec ce que ruff signale encore.
+2. ruff format pour la mise en forme (jamais à la main), puis ruff check et ruff format --check branchés sur npm run lint. Un commit pour la config, un commit de mise en forme seule.
+3. Vérifie : sorties des scripts identiques avant / après (script de test du lot 7 : --build dans un dossier ignoré, variantes de pixelize, compare_shots), grids.generated.js identique octet pour octet, captures identiques, aucune erreur JS, npm run check. Mets à jour CLAUDE.md (commandes) et docs/INDEX.md, demande-moi avant de pousser.
+```
 
 **F. Polices dans le dépôt (avant la publication GitHub Pages puis itch.io)** : décidé le 19/11. Aujourd'hui Silkscreen et Inter viennent de Google Fonts : le jeu dépend du réseau (jeu téléchargé depuis itch, joué hors ligne) et envoie l'IP du joueur à Google (RGPD).
 ```

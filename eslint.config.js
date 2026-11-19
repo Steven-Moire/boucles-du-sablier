@@ -79,7 +79,10 @@ export default [
   {files: VIEWS, rules: maxLines(200)},
   {files: ['src/app/main.js'], rules: maxLines(60)},
   {files: ['tools/**/*.js'], rules: maxLines(200)},
-  {files: DATA, rules: {'max-lines-per-function': ['warn', {max: 20, ...COUNT}]}},
+  // données : la taille d'une table ne coûte rien à lire, on découpe par sujet (une zone, une famille de monstres),
+  // pas au nombre de lignes ; 1000 = défaut de SonarQube (S104), garde-fou contre l'absurde (décidé le 19/11).
+  // La logique n'a rien à faire ici : fonctions de 20 lignes au plus.
+  {files: DATA, rules: {...maxLines(1000), 'max-lines-per-function': ['warn', {max: 20, ...COUNT}]}},
   // mise en forme : laissée à Prettier (npm run format), on coupe les règles ESLint qui la contrediraient
   prettierConfig,
 ];
