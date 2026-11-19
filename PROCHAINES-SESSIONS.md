@@ -1,8 +1,8 @@
 # Prochaines sessions — une conversation par sujet
 
-La conversation du 12 au 19/11/2026 a dépassé 600 k tokens de contexte. La suite se fait en **trois conversations dédiées**, chacune repartant de `docs/INDEX.md` (qui résume tout) sans relire l'historique.
+Chaque conversation repart de `docs/INDEX.md` (qui résume tout) sans relire l'historique. Ce qui est déjà fait (prompts exécutés, état d'avant) est archivé dans `docs/archive/sessions-faites.md`.
 
-**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Mise à jour du 19/11 (soir) : ordre conseillé désormais **Qualité du code (4) → Gameplay 3a → 3b**, Graphismes (héros selon l'outil) et Lore en parallèle. Ancien ordre : **Lore → Graphismes → Gameplay** (le lore donne les noms et le texte que l'intro affiche), mais elles sont indépendantes.
+**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Qualité du code (4) → Gameplay 3a → 3b**, Graphismes (héros selon l'outil) et Lore en parallèle.
 
 Rappels valables partout :
 - Stable Diffusion (Forge) doit tourner pour toute génération d'image : API sur http://127.0.0.1:7860.
@@ -32,19 +32,7 @@ Mets à jour docs/lore.md et docs/INDEX.md, commit et push. Ne touche pas au cod
 
 ## 2. Graphismes
 
-**Fait le 19/11** : les 4 points du prompt ci-dessous (intro choisie et intégrée, héros v3 avec pioche, icônes de cases). Reste possible : pioche vraiment sur l'épaule (retouche à la main ou inpainting), ombres grises sous quelques sprites, fonds de scène v2, bâtiments du village.
-
-**État avant cette session** : sprites v2 du héros et des 7 monstres (Juggernaut XI + LoRA Pixel Art XL), fonds de combat v1. **Intro** : 5 scènes générées dans `sd_raw/intro_*`, **génération terminée** (30 images : 3 variantes par scène et par réglage, `pxl_*` = Juggernaut + LoRA, `v1_turbo_*` = DreamShaper Turbo sans LoRA), à trier. Pour d'autres variantes : `python tools/sd_generate.py intro_<scène> -n 3 --seed <nouvelle seed>`.
-
-**Prompt à coller** :
-```
-Lis docs/INDEX.md puis docs/art-direction.md (court) et tools/sprites.json. On travaille les graphismes des Boucles du Sablier ; Forge tourne sur :7860.
-1. Intro : fais une planche de contrôle des variantes de sd_raw/intro_* (pxl_ et v1_turbo_), montre-la-moi, propose la meilleure par scène. Après mon choix, note les seeds dans sprites.json et lance `python tools/sd_generate.py --build`.
-2. Intègre l'intro au jeu : 5 écrans au premier lancement (image + texte, passer avec un clic, bouton « Passer »), avec le texte de docs/lore.md (s'il n'est pas encore écrit, mets un texte provisoire marqué TODO). Ne la rejoue pas si une sauvegarde existe.
-3. Héros : régénère-le avec une vraie pioche sur l'épaule (il tient une lampe-bâton), même pipeline.
-4. Icônes de cases de la carte en 32×32 (combat, repaire, boss, bosquet, filon, source, trésor, village, puits) pour remplacer les emojis, avec repli sur l'emoji.
-Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et docs/INDEX.md, commit et push à chaque étape.
-```
+**Fait le 19/11** (détails dans l'archive) : intro intégrée, héros v3 avec pioche, icônes de cases 32×32. Reste possible : pioche vraiment sur l'épaule (retouche à la main ou inpainting), ombres grises sous quelques sprites, fonds de scène v2, bâtiments du village.
 
 **Prochain prompt (héros selon l'outil, le plus important des graphismes)** — depuis le 19/11 le héros choisit pioche, marteau ou coutelas avant chaque case (`TOOLS` dans `src/data.js`, `meta.tool`), mais son sprite tient toujours une pioche :
 ```
@@ -64,7 +52,7 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 
 ## 3. Gameplay
 
-**Fait le 19/11** : point 0 (le boss à la 8e boucle existe depuis la v0.3 → cible élargie à 8e-13e, médiane 9-12) et étape 2a (marteau et coutelas, choix avant chaque case, `node tools/sim.js --outils`), commit 3bdead3. Icône d'attaque hors combat corrigée (montre l'outil choisi).
+**Fait le 19/11** (détails dans l'archive) : cible élargie à 8e-13e boucle (médiane 9-12), étape 2a (marteau et coutelas, commit 3bdead3).
 
 **Idées validées par Steven le 19/11** (à caser dans 3a / 3b, puis après) :
 1. Outil conseillé par monstre dans le bestiaire (golem → marteau, loup → coutelas, élites → pioche) ;
@@ -120,7 +108,7 @@ Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœu
 
 ## 4. Qualité du code (à faire avant 3a)
 
-**Fait le 19/11 (lot 0, commit 9ad320e)** : `eslint.config.js` (règles SonarQube, couches, cycles), `npm run lint` / `npm run check`, simu de référence (`tools/qa/check-sim.js`), captures déterministes (`tools/screenshot.py` + `tools/qa/compare_shots.py`), règles locales `.claude/rules/javascript/`, hook `js-lint-guard`, skill `/js-quality`. Le lint signale 71 problèmes.
+**Fait le 19/11** (lot 0, commit 9ad320e, détails dans l'archive) : ESLint + règles SonarQube, `npm run check` (simu de référence), captures déterministes, règles `.claude/rules/javascript/`, skill `/js-quality`. Le lint signale 71 problèmes.
 **Décisions de Steven** : tout en anglais (dossiers, fichiers, code), fichiers en `kebab-case` avec suffixe de rôle (`.data.js`, `.engine.js`, `.view.js`, CSS à côté de sa vue), dossiers par domaine (`world/`, `hero/`, `enemies/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`), Python de `tools/` inclus, imports circulaires corrigés, aucun `NOSONAR` (de vraies corrections), mise en forme par Prettier comme `ruff format` dans atlas (jamais à la main).
 **Ordre des lots restants** (un commit chacun) : Prettier → 1 hygiène → 2 arborescence par domaine + découpage de engine/data/style.css → 3 complexité UI → 4 complexité moteur et simu → 5 ternaires et templates → 6 chaînage optionnel → 7 Python de tools/.
 
@@ -131,15 +119,4 @@ Avant chaque lot : captures de référence (tools/screenshot.py sous WSL, copié
 1. Lot Prettier, comme ruff format dans atlas : Prettier en devDependency à version exacte (publiée depuis plus de deux semaines), .prettierrc adapté au code actuel (guillemets simples, largeur 120), .prettierignore (grids.js généré, proto/, assets/), `prettier --check` ajouté à npm run lint, `npm run format` pour écrire ; eslint-config-prettier pour éviter les conflits. Un seul commit `style:` qui ne change que la forme ; vérifie que la simu reste identique.
 2. Lot 1 hygiène : import inutilisé (intro.js), blocs sur une ligne, affectations imbriquées de sim.js → fonction lcg(seed) (même suite de nombres), localStorage dans un module de sauvegarde qui renvoie {ok, error} (aucun catch vide), relance d'animation sans `void` (classe retirée sur animationend, getAnimations()), générateur à graine séparé pour les effets visuels (les éclats ne doivent plus consommer le hasard du jeu : la capture du combat doit devenir identique au pixel près d'un lancement à l'autre).
 Aligne aussi .claude/rules/everything-claude-code-guardrails.md sur le kebab-case. Commit par lot, demande-moi avant de pousser.
-```
-
-**État** : ~1 500 lignes, fichiers petits (le plus gros : `src/engine.js`, 263 lignes) mais lignes très denses. SonarQube for IDE signale surtout de la complexité cognitive au-delà de 15 (`consumeEvents` dans main.js : 41, `renderScene` dans scene.js : 61, `tileHTML` dans panel.js : 35, `fightStep` dans engine.js : 30, `runBot` dans sim.js : 27), des ternaires et templates imbriqués, des `a && a.b` au lieu de `a?.b`. HTML construit dans des chaînes JS, CSS dans un seul fichier de 226 lignes. Rien n'a été touché exprès pendant le gameplay (règle « zéro refactoring passant »).
-
-**Prompt à coller** :
-```
-Lis docs/INDEX.md, CLAUDE.md (architecture et règles), puis .claude/rules/common/coding-style.md. On ne change AUCUN comportement : refactoring pur des Boucles du Sablier.
-1. Inventaire d'abord : liste les avertissements SonarQube (getDiagnostics sur src/ et tools/) par fichier et par règle, et propose un plan en lots (un lot = un sujet, un commit), sans rien modifier. Attends mon accord.
-2. Lots proposés (à ajuster) : a) complexité cognitive ≤ 15 en extrayant des fonctions (consumeEvents → table de gestionnaires par type d'événement, renderScene, tileHTML, fightStep, runBot) ; b) ternaires imbriqués et templates imbriqués → petites fonctions de rendu ; c) chaînage optionnel ; d) organisation : gabarits HTML des panneaux dans des fonctions/modules dédiés (src/ui/templates/ ?), CSS découpé par zone (src/styles/ : base, carte, scène, panneau, modales) chargé depuis index.html, sans outil de build.
-3. Garde-fous à chaque lot : `node tools/sim.js` et `node tools/sim.js --outils` identiques octet pour octet à avant (compare avec un fichier de référence), `tools/screenshot.py` sans erreur JS et captures identiques à l'œil, moteur toujours sans DOM, sauvegarde inchangée.
-Mets à jour CLAUDE.md (architecture) et docs/INDEX.md si des fichiers bougent, commit par lot, demande-moi avant de pousser.
 ```
