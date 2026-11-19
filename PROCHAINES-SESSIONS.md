@@ -32,7 +32,9 @@ Mets à jour docs/lore.md et docs/INDEX.md, commit et push. Ne touche pas au cod
 
 ## 2. Graphismes
 
-**État** : sprites v2 du héros et des 7 monstres (Juggernaut XI + LoRA Pixel Art XL), fonds de combat v1. **Intro** : 5 scènes générées dans `sd_raw/intro_*`, **génération terminée** (30 images : 3 variantes par scène et par réglage, `pxl_*` = Juggernaut + LoRA, `v1_turbo_*` = DreamShaper Turbo sans LoRA), à trier. Pour d'autres variantes : `python tools/sd_generate.py intro_<scène> -n 3 --seed <nouvelle seed>`.
+**Fait le 19/11** : les 4 points du prompt ci-dessous (intro choisie et intégrée, héros v3 avec pioche, icônes de cases). Reste possible : pioche vraiment sur l'épaule (retouche à la main ou inpainting), ombres grises sous quelques sprites, fonds de scène v2, bâtiments du village.
+
+**État avant cette session** : sprites v2 du héros et des 7 monstres (Juggernaut XI + LoRA Pixel Art XL), fonds de combat v1. **Intro** : 5 scènes générées dans `sd_raw/intro_*`, **génération terminée** (30 images : 3 variantes par scène et par réglage, `pxl_*` = Juggernaut + LoRA, `v1_turbo_*` = DreamShaper Turbo sans LoRA), à trier. Pour d'autres variantes : `python tools/sd_generate.py intro_<scène> -n 3 --seed <nouvelle seed>`.
 
 **Prompt à coller** :
 ```
@@ -53,12 +55,15 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 
 ## 3. Gameplay
 
+**À régler en premier** : une graine de la simu sur 10 tombe à 8 boucles (sous la cible 9-13), constaté le 19/11/2026 (point 0 du prompt).
+
 **État** : combat-minage en place (les monstres se creusent pixel par pixel, pioche seule, clic pour viser, matériaux extraits, composition dans le bestiaire). Combats et équilibrage identiques à la v0.3. Prochaine étape validée : **outils + forge + équipement non permanent + mémoire du village par la renommée**.
 
 **Prompt à coller** :
 ```
 Lis docs/INDEX.md, puis dans docs/design.md seulement les sections « Miner les ennemis » et « Équipement, forge et mémoire du village — PROPOSITION v3 » (et dans la v2 : « Types d'armes » et « Objets »). Lis CLAUDE.md pour l'architecture (src/dig.js, src/engine.js, src/ui/digview.js).
-On attaque l'étape 2 du combat-minage, une mécanique à la fois, jouable à chaque étape :
+0. D'abord, l'équilibrage : le 19/11, `node tools/sim.js` donne le boss aux boucles 9 13 10 12 9 12 8 9 12 9 — une graine sur 10 tombe à 8, sous la cible (9e-13e). Vérifie si c'est déjà le cas sur le commit 69b808d (avant l'intro, qui ne touche pas au moteur), dis-moi d'où ça vient et propose un correctif ou un élargissement de la cible avant de toucher au reste.
+On attaque ensuite l'étape 2 du combat-minage, une mécanique à la fois, jouable à chaque étape :
 a) marteau et coutelas comme outils (motifs du prototype proto/mine-ennemi.html), choix de l'outil avant une case ;
 b) forge : objets forgés avec les matériaux extraits, équipement non permanent ;
 c) mémoire du village par la renommée (rangs Hameau → Cité : arme, armure, accessoire, puis améliorations deviennent permanentes).

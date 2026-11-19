@@ -86,7 +86,10 @@ button{font-family:inherit;cursor:pointer}
 .unit.elite .spr{width:128px;height:128px}
 .unit.boss .spr{width:192px;height:192px}
 .unit.hero .spr{width:128px;height:128px}
-.herom .spr{width:32px;height:32px}
+.herom .spr{width:32px;height:32px;object-fit:contain}
+.ticon .spr{width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 2px 0 rgba(0,0,0,.35))}
+.legend .lg-i{display:inline-flex;align-items:center;gap:3px}
+.legend .lg-i .spr{width:16px;height:16px;object-fit:contain;margin:0;filter:none}
 .mbox .spr{width:96px;height:96px;object-fit:contain}
 .scene.has-bg{image-rendering:pixelated}
 .unit .nm{font-size:12px;font-weight:700;display:flex;gap:5px;justify-content:center;align-items:center;white-space:nowrap}

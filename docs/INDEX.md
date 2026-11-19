@@ -9,7 +9,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 - **Prochaine étape** : outils (pioche / marteau / coutelas) + forge + équipement non permanent + mémoire du village par la renommée.
 - **Lore décidé** : le mineur est « le Radoteur », vrai nom Anselme Tardif révélé par une scène (voir `lore.md`). Lieux confirmés : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret), aucune vraie commune ni lieu-dit de ces noms trouvés. **Texte final des 5 écrans de l'intro** écrit dans `lore.md`.
 - **Retenus provisoirement** (à ajuster en testant) : 5 vestiges dans les monstres, 6 répliques de déjà-vu par rang de renommée, carnet des vestiges (`lore.md`).
-- **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/ui/intro.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ».
+- **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/ui/intro.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ». **Héros v3** avec une vraie pioche, **icônes de cases 32×32** sur la carte (repli emoji).
 - Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md`.
 
 ## docs/design.md — design et formules (long : lire par section)

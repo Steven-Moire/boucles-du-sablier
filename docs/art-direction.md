@@ -12,7 +12,7 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 ## Spécifications
 | Élément | Taille native | Affichage |
 |---|---|---|
-| Icônes de cases | 32 × 32 | ×2 (64 px) |
+| Icônes de cases | 32 × 32 | ×1 sur la carte (cases de 60 px), ×0,5 dans la légende |
 | Monstres normaux | 48 × 48 | ×2 |
 | Élites | 64 × 64 | ×2 |
 | Boss | 96 × 96 | ×2 |
@@ -36,6 +36,8 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 7. **Retouche par img2img / inpainting** (sans quitter le pipeline) : dans `sprites.json`, un asset peut avoir `init` (image de départ sous `sd_raw/`), `denoise` (0 à 1) et `mask` (rectangle `[x0, y0, x1, y1]` à redessiner, le reste ne bouge pas). Un asset avec `"build": false` sert seulement de base et n'est pas pixelisé.
 8. **Retouche à la main** dans Aseprite, LibreSprite ou Pixelorama (gratuit) : contours, yeux, petits défauts. Sur du pixel art, SD produit souvent des « faux pixels », donc cette étape reste nécessaire.
 
+Les icônes de cases (`kind: "icon"` dans `sprites.json`) ont leur propre préfixe `style_icon` (objet seul, silhouette épaisse). La carte les affiche avec repli sur l'emoji si le fichier manque ; la case verrouillée du biome Puits ancien prend `tile_puits`. Un asset peut ajouter `negative_extra` à son négatif.
+
 ## Assets prioritaires
 1. Portrait du héros (le mineur fou)
 2. Monstres : mulot, sanglier, sanglier alpha, loup, golem, ours, Gardien du Sablier
@@ -45,11 +47,11 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 
 ## Suivi des assets
 Prompts complets, modèle et seeds : `tools/sprites.json`. Modèle actuel (v2) : **Juggernaut XI + LoRA Pixel Art XL** (poids 1,2 ; 30 pas ; CFG 6 ; DPM++ 2M Karras), pixelisation sans saturation et 24 couleurs. Les fonds restent ceux de la v1 (DreamShaperXL Turbo, profil `v1_turbo`) : en v2 leur ciel tombait sur le cyan de la palette.
-Limites connues : le héros tient une lampe-bâton plutôt qu'une pioche, petites ombres grises sous certains monstres. À retoucher à la main.
+Limites connues : le héros tient sa pioche levée à la main plutôt que posée sur l'épaule, petites ombres grises sous certains monstres et certaines icônes (couronne, goutte, coffre). À retoucher à la main.
 
 | Asset | Fichier | Prompt (résumé) | Seed | État |
 |---|---|---|---|---|
-| Héros | `assets/sprites/heros.png` | mineur fou, casque jaune + pioche | pxl_1101 | v2 (Juggernaut + Pixel Art XL) |
+| Héros | `assets/sprites/heros.png` | mineur fou, casque jaune + vraie pioche (négatif : bâton, lanterne, torche) | pxl_1202 | v3 (ancienne : pxl_1101, lampe-bâton) |
 | Mulot dentu | `assets/sprites/mulot.png` | souris en colère, grandes incisives | pxl_2002 | v2 (Juggernaut + Pixel Art XL) |
 | Sanglier | `assets/sprites/sanglier.png` | sanglier de profil | pxl_3103 | v2 (Juggernaut + Pixel Art XL) |
 | Sanglier alpha | `assets/sprites/sanglier_alpha.png` | sanglier couvert de boue, couronne de brindilles | pxl_4103 | v2 (Juggernaut + Pixel Art XL) |
@@ -59,6 +61,7 @@ Limites connues : le héros tient une lampe-bâton plutôt qu'une pioche, petite
 | Gardien du Sablier | `assets/sprites/gardien.png` | gardien de pierre et d'or | pxl_8103 | v2 (Juggernaut + Pixel Art XL) |
 | Fond Prés de l'Aube | `assets/sprites/bg_pres.png` | prairie à l'aube, ciel rose | 9000 | v1 (Turbo) |
 | Fond Collines grises | `assets/sprites/bg_collines.png` | collines rocheuses, falaises | 9500 | v1 (Turbo) |
+| Icônes de cases | `assets/sprites/tile_<type>.png` | combat 11002, repaire (elite) 11100, boss 11202, bosquet (wood) 11300, filon (ore) 11401, source (spring) 11502, trésor (chest) 11602, village 11702, puits 11803 | pxl_* | v2, préfixe `style_icon` |
 | Intro 1 — hameau | `assets/sprites/intro_hameau.png` | hameau minier au pied des collines grises, aube | pxl_9602 | v2 |
 | Intro 2 — veine | `assets/sprites/intro_veine.png` | mineur à la lanterne dans une galerie dorée | v1_turbo_9701 | v1 (Turbo) |
 | Intro 3 — chambre | `assets/sprites/intro_chambre.png` | chambre oubliée, Sablier au centre | pxl_9801 | v2 |
