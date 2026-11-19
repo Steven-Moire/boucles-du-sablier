@@ -35,5 +35,6 @@ Pixel art façon Little Dig, le héros, tailles des sprites, palette Endesga 64,
 ## Ailleurs
 - `CLAUDE.md` : architecture du code, commandes, règles de travail, feuille de route.
 - `tools/sprites.json` : prompts, modèles et seeds de tous les visuels (sprites, fonds, intro).
+- Polices : servies avec le jeu, plus aucune ressource externe (hors ligne, rien envoyé à Google). `assets/fonts/` : Inter (un woff2 variable pour les graisses 400 à 800) et Silkscreen 400 / 700, sous-ensemble `latin` seul (couvre tout le français du jeu), licences SIL OFL 1.1 à côté ; déclarées dans `src/shared/fonts.css`, chargée en premier par `index.html` et par le prototype.
 - Qualité du code : `npm run lint` (`eslint.config.js`, règles SonarQube, couches, puis `prettier --check`, puis `ruff check` et `ruff format --check` sur le Python de `tools/`, config `ruff.toml`), `npm run format` (Prettier et ruff écrivent la mise en forme) et `npm run check` (+ simu comparée aux références de `tools/qa/ref/`) ; règles détaillées dans `.claude/rules/javascript/` (local), audit complet avec le skill `/js-quality`.
 - `proto/mine-ennemi.html` : prototype du minage avec marteau et coutelas.

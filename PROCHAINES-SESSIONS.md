@@ -130,11 +130,4 @@ Lis docs/INDEX.md, CLAUDE.md et la section « 4. Qualité du code » de PROCHAIN
 3. Vérifie : captures identiques aux références prises avant, aucune erreur JS, sorties de sd_generate.py --build et de pixelize identiques (`bash tools/qa/check-tools.sh avant` puis `apres` sous WSL), npm run check. Mets à jour CLAUDE.md si la commande d'installation change, commit, demande-moi avant de pousser.
 ```
 
-**F. Polices dans le dépôt (avant la publication GitHub Pages puis itch.io)** : décidé le 19/11. Aujourd'hui Silkscreen et Inter viennent de Google Fonts : le jeu dépend du réseau (jeu téléchargé depuis itch, joué hors ligne) et envoie l'IP du joueur à Google (RGPD).
-```
-Lis docs/INDEX.md, CLAUDE.md, .claude/rules/javascript/testing.md, puis index.html et src/app/layout.css (variables --pix et --body). Changement du jeu livré, rendu identique attendu.
-1. Inventaire : graisses et sous-ensembles vraiment utilisés (index.html charge Silkscreen 400/700 et Inter 400 à 800) ; vérifie les licences (SIL OFL attendue) et propose-moi la liste avant de télécharger.
-2. Fichiers woff2 dans assets/fonts/ avec leur licence, @font-face dans une feuille CSS chargée en premier (même font-display: swap), liens Google Fonts retirés d'index.html.
-3. Vérifie : le jeu se charge sans réseau externe (Playwright qui bloque fonts.googleapis.com et fonts.gstatic.com), captures comparées aux références prises avant (différences de lissage possibles : montre-les-moi avant de reprendre de nouvelles références), aucune erreur JS, npm run check.
-Mets à jour docs/INDEX.md et CLAUDE.md, commit, demande-moi avant de pousser.
-```
+**F. Polices dans le dépôt** : faite le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). `assets/fonts/` (Inter variable + Silkscreen 400 / 700, `latin`, OFL), `src/shared/fonts.css` chargée en premier par `index.html` et le prototype ; plus aucune requête externe, captures du jeu identiques.

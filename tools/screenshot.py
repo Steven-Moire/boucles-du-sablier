@@ -40,7 +40,7 @@ CHROMIUM_ARGS = [
     '--disable-threaded-scrolling',
     '--disable-checker-imaging',
 ]
-# attend les polices (Silkscreen, Inter : Google Fonts), toutes les <img> du document, puis la fin
+# attend les polices (Silkscreen, Inter : assets/fonts/), toutes les <img> du document, puis la fin
 # des animations CSS finies (fondu de l'intro) : elles suivent le temps réel, pas l'horloge de Playwright
 WAIT_ASSETS = """
 async () => {

@@ -4,8 +4,8 @@ Jeu incrémental / idle à boucle temporelle, jouable dans le navigateur. Projet
 **Toujours répondre en français.** Les textes du jeu sont en français.
 
 ## État actuel (v0.3, découpé en modules)
-Modules ES natifs, aucune dépendance livrée au joueur, aucun build. Déployé tel quel sur GitHub Pages.
-- `index.html` : squelette HTML, charge les 13 feuilles CSS de zone (dans l'ordre de l'ancien `style.css`, la cascade en dépend) et `src/app/main.js` (`<script type="module">`).
+Modules ES natifs, aucune dépendance livrée au joueur, aucun build, aucune ressource externe (le jeu marche hors ligne). Déployé tel quel sur GitHub Pages.
+- `index.html` : squelette HTML, charge d'abord `src/shared/fonts.css` (polices de `assets/fonts/`, woff2 + licences OFL : jamais de Google Fonts ni d'autre CDN), puis les 13 feuilles CSS de zone (dans l'ordre de l'ancien `style.css`, la cascade en dépend) et `src/app/main.js` (`<script type="module">`).
 - `src/` : **un dossier par domaine**, en anglais ; le **suffixe dit le rôle** (règles : `.claude/rules/javascript/architecture.md`) :
   `*.data.js` (données, n'importent que des données) ← `*.engine.js` (moteur **pur**, aucun DOM) ← `*.view.js` (affichage d'une zone, CSS à côté) ← `app/main.js`.
   - `world/` : carte et cases (`world.data.js`), une boucle (`loop.engine.js`), explorer une case (`explore.engine.js`), le pas de 50 ms (`tick.engine.js`, seul à importer combat + exploration), carte (`map.view.js`), onglet Exploration (`explore-panel.view.js`).
