@@ -134,7 +134,8 @@ export function nextSegment(G){
   }
 }
 // outil du héros pendant l'action en cours (pioche par défaut, ×1 partout : combats identiques à la v0.3)
-export const actionTool = G => TOOLS[(G.run.action && G.run.action.tool) || DEFAULT_TOOL];
+// hors action : l'outil choisi pour la prochaine case (affichage)
+export const actionTool = G => TOOLS[(G.run.action && G.run.action.tool) || G.meta.tool] || TOOLS[DEFAULT_TOOL];
 // temps entre deux attaques de base du héros avec son outil
 export const heroEvery = G => G.run.hero.speed * actionTool(G).every;
 export function strike(G, src, att, tgtKey, def, mult, sure){
