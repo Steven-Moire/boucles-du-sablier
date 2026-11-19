@@ -1,7 +1,9 @@
-import {GRIDS} from '../grids.js';
-import {COMPOSITION, MATS} from '../data.js';
-import {aimAt} from '../engine.js';
-import {S, fxRandom, spr} from './state.js';
+import {GRIDS} from '../enemies/grids.generated.js';
+import {COMPOSITION} from '../enemies/enemies.data.js';
+import {aimAt} from '../combat/combat.engine.js';
+import {S} from '../shared/state.js';
+import {fxRandom} from '../shared/rng.js';
+import {spr} from '../shared/templates.js';
 
 // ---------- combat-minage : monstre dessiné pixel par pixel ----------
 const SCALE = 2; // agrandissement entier (pixel art)
@@ -116,9 +118,3 @@ export function digParticles(unit, id, w, idx, broken = []) {
     setTimeout(() => p.remove(), 700);
   }
 }
-
-// Texte du butin extrait (ex. « +2 🟫 +1 🦴 »)
-export const gotText = got =>
-  Object.entries(got || {})
-    .map(([k, n]) => `+${n} ${MATS[k].icon}`)
-    .join(' ');

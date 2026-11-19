@@ -1,8 +1,35 @@
-// Simulation headless : un bot joue les boucles avec le moteur pur (src/engine.js), sans DOM
-import * as engine from '../src/engine.js';
-import * as data from '../src/data.js';
-import {lcg} from '../src/rng.js';
-const E = {...data, ...engine};
+// Simulation headless : un bot joue les boucles avec le moteur pur (src/**/*.engine.js), sans DOM
+import * as worldData from '../src/world/world.data.js';
+import * as heroData from '../src/hero/hero.data.js';
+import * as enemiesData from '../src/enemies/enemies.data.js';
+import * as miningData from '../src/mining/mining.data.js';
+import * as villageData from '../src/village/village.data.js';
+import * as loop from '../src/world/loop.engine.js';
+import * as exploreEngine from '../src/world/explore.engine.js';
+import * as tickEngine from '../src/world/tick.engine.js';
+import * as hero from '../src/hero/hero.engine.js';
+import * as enemies from '../src/enemies/enemies.engine.js';
+import * as strata from '../src/mining/strata.engine.js';
+import * as digEngine from '../src/mining/dig.engine.js';
+import * as combat from '../src/combat/combat.engine.js';
+import * as village from '../src/village/village.engine.js';
+import {lcg} from '../src/shared/rng.js';
+const E = {
+  ...worldData,
+  ...heroData,
+  ...enemiesData,
+  ...miningData,
+  ...villageData,
+  ...loop,
+  ...exploreEngine,
+  ...tickEngine,
+  ...hero,
+  ...enemies,
+  ...strata,
+  ...digEngine,
+  ...combat,
+  ...village,
+};
 
 function runBot(seed, maxLoops = 60, verbose = false, tool = null) {
   const rng = lcg(seed);

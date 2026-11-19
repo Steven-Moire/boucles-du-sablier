@@ -1,5 +1,5 @@
 # Généré par tools/sprite_grids.py : jamais formaté ni édité à la main
-src/grids.js
+src/**/*.generated.js
 # Prototype d'origine, gardé tel quel pour comparaison
 proto/
 # Images et sprites

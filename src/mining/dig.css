@@ -1,0 +1,37 @@
+/* combat-minage */
+.unit canvas.dig {
+  display: block;
+  margin: 0 auto;
+  image-rendering: pixelated;
+  cursor: crosshair;
+  filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35));
+}
+.unit .chip-px {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  pointer-events: none;
+  animation: chipfall 0.7s ease-in forwards;
+  z-index: 2;
+}
+@keyframes chipfall {
+  0% {
+    transform: translate(0, 0);
+  }
+  30% {
+    transform: translate(calc(var(--dx) * 0.5), -14px);
+  }
+  100% {
+    transform: translate(var(--dx), 40px);
+    opacity: 0;
+  }
+}
+.float.f-loot {
+  color: #9fe3ff;
+  font-size: 15px;
+}
+.unit .chip-px.broke {
+  width: 6px;
+  height: 6px;
+  box-shadow: 0 0 4px #fff;
+}

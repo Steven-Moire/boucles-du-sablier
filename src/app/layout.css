@@ -1,0 +1,249 @@
+:root {
+  --bg: #14161b;
+  --panel: #1d2028;
+  --panel2: #252935;
+  --line: #323746;
+  --text: #ebe8df;
+  --muted: #9a9eab;
+  --gold: #f0c04a;
+  --gold-d: #a8842c;
+  --hp: #6cc46a;
+  --danger: #e3625b;
+  --time: #7db3ea;
+  --xp: #b48cf0;
+  --pix: 'Silkscreen', monospace;
+  --body: 'Inter', system-ui, sans-serif;
+}
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 14px;
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 16px 30px;
+}
+/* top bar */
+.top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.title {
+  font-family: var(--pix);
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: var(--gold);
+  margin-right: auto;
+  line-height: 1.1;
+}
+.title small {
+  display: block;
+  font-family: var(--body);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0;
+}
+.res {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.chip {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 5px 9px;
+  font-weight: 600;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.chip span {
+  color: var(--muted);
+  font-weight: 500;
+  margin-left: 3px;
+}
+.speed {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.speed button {
+  background: var(--panel);
+  color: var(--muted);
+  border: 0;
+  padding: 6px 10px;
+  font-weight: 700;
+}
+.speed button.on {
+  background: var(--gold);
+  color: #1a1a1a;
+}
+/* timer */
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-bottom: 12px;
+}
+.timer .lbl {
+  font-family: var(--pix);
+  font-size: 12px;
+  color: var(--time);
+  white-space: nowrap;
+}
+.bar {
+  position: relative;
+  height: 12px;
+  background: #0e1014;
+  border-radius: 6px;
+  overflow: hidden;
+  flex: 1;
+}
+.bar > i {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  border-radius: 6px;
+}
+.bar > span {
+  position: absolute;
+  inset: 0;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: inherit;
+  color: #fff !important;
+  text-shadow: 0 1px 2px #000;
+  z-index: 1;
+}
+.bar.time > i {
+  background: linear-gradient(90deg, #4f86c4, var(--time));
+}
+.bar.hp > i {
+  background: var(--hp);
+}
+.bar.hp.enemy > i {
+  background: var(--danger);
+}
+.bar.xp > i {
+  background: var(--xp);
+}
+.bar.thin {
+  height: 7px;
+}
+.timer .val {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  min-width: 64px;
+  text-align: right;
+}
+/* layout */
+.main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 370px;
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 940px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+.left {
+  padding: 10px 14px 14px;
+}
+.viewtabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.viewtabs button {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-family: var(--pix);
+  font-size: 11px;
+  position: relative;
+}
+.viewtabs button.on {
+  color: #111;
+  background: var(--gold);
+  border-color: var(--gold);
+}
+.vhp {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.vhp .bar {
+  width: 160px;
+  height: 14px;
+  line-height: 14px;
+  flex: none;
+}
+.viewtabs .live {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--danger);
+  margin-left: 6px;
+  animation: blink 1s infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.2;
+  }
+}
+.view {
+  height: 620px;
+}
+.view[hidden] {
+  display: none;
+}
+.foot {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.foot button {
+  background: none;
+  border: 0;
+  color: var(--muted);
+  text-decoration: underline;
+}

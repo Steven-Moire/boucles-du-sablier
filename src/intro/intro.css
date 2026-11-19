@@ -1,0 +1,86 @@
+/* intro (premier lancement) */
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: #07080b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  cursor: pointer;
+  user-select: none;
+}
+.in-frame {
+  width: min(960px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.in-fade {
+  animation: infade 0.6s ease-out;
+}
+@keyframes infade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.in-img {
+  width: 100%;
+  aspect-ratio: 320/183;
+  object-fit: cover;
+  image-rendering: pixelated;
+  border: 2px solid var(--line);
+  border-radius: 4px;
+  background: #000;
+}
+.in-img[hidden] {
+  display: none;
+}
+.in-text {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.55;
+  text-align: center;
+  color: var(--text);
+  min-height: 3.2em;
+}
+.in-foot {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.in-dots {
+  display: flex;
+  gap: 6px;
+}
+.in-dots i {
+  width: 8px;
+  height: 8px;
+  background: var(--line);
+  display: block;
+}
+.in-dots i.on {
+  background: var(--gold);
+}
+.in-skip {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-weight: 600;
+}
+.in-skip:hover {
+  color: var(--gold);
+  border-color: var(--gold-d);
+}

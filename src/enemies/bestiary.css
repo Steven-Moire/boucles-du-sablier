@@ -1,0 +1,59 @@
+.mon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #14161b;
+  margin-bottom: 5px;
+  cursor: pointer;
+  color: var(--text);
+  width: 100%;
+  text-align: left;
+}
+.mon.unk {
+  cursor: default;
+  color: var(--muted);
+}
+.tag {
+  font-size: 10px;
+  font-family: var(--pix);
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: #2c303a;
+  color: var(--muted);
+}
+.tag.k {
+  background: #2b3a2b;
+  color: var(--hp);
+}
+.tag.t {
+  background: #3a3220;
+  color: var(--gold);
+}
+.trophies {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.troph {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 7px 8px;
+  background: #14161b;
+  font-size: 12px;
+}
+.troph b {
+  display: block;
+  font-size: 12px;
+}
+.troph span {
+  color: var(--muted);
+}
+.troph.own {
+  border-color: var(--gold-d);
+}
+.troph.own span {
+  color: var(--gold);
+}

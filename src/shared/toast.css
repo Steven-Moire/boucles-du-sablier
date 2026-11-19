@@ -1,0 +1,34 @@
+.toasts {
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 30;
+  pointer-events: none;
+}
+.toast {
+  background: #22262f;
+  border: 1px solid var(--gold-d);
+  border-left: 4px solid var(--gold);
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 240px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  animation: tin 0.3s ease-out;
+}
+.toast b {
+  display: block;
+  color: var(--gold);
+  font-family: var(--pix);
+  font-size: 11px;
+  font-weight: 400;
+  margin-bottom: 2px;
+}
+@keyframes tin {
+  from {
+    transform: translateX(30px);
+    opacity: 0;
+  }
+}

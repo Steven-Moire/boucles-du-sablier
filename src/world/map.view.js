@@ -1,7 +1,9 @@
-import {BIOMES, TILES, TILE_MAP, TYPES, tid} from '../data.js';
-import {canExplore, explore} from '../engine.js';
-import {$, S, anyUpgrade, setHTML, spr} from './state.js';
-import {consumeEvents, render} from './main.js';
+import {BIOMES, TILES, TILE_MAP, TYPES, tid} from './world.data.js';
+import {canExplore, explore, segFill} from './explore.engine.js';
+import {S, anyUpgrade} from '../shared/state.js';
+import {$, setHTML} from '../shared/dom.js';
+import {spr} from '../shared/templates.js';
+import {requestRender} from '../shared/render.js';
 
 // ---------- carte ----------
 const xs = TILES.map(t => t.x),
@@ -41,15 +43,14 @@ mapEl.addEventListener('click', e => {
   if (!d) return;
   S.selected = d.dataset.id;
   S.tab = TILE_MAP[S.selected].type === 'village' && anyUpgrade() ? 'village' : 'explore';
-  render();
+  requestRender();
 });
 mapEl.addEventListener('dblclick', e => {
   const d = e.target.closest('.tile');
   if (!d) return;
   S.selected = d.dataset.id;
   if (explore(S.G, S.selected)) S.tab = 'explore';
-  consumeEvents();
-  render();
+  requestRender();
 });
 $('legend').innerHTML =
   ['pres', 'collines', 'puits']
@@ -71,14 +72,6 @@ function tileProgress(a) {
   const n = a.segs.length;
   if (a.seg < 0) return 0;
   return (a.seg + segFill(a)) / n;
-}
-export function segFill(a) {
-  if (a.phase === 'fight' && a.enemies) {
-    const tot = a.enemies.reduce((s, e) => s + e.maxHp, 0),
-      left = a.enemies.reduce((s, e) => s + Math.max(0, e.hp), 0);
-    return 1 - left / tot;
-  }
-  return a.dur ? Math.min(1, a.t / a.dur) : 0;
 }
 export function renderMap() {
   const r = S.G.run,

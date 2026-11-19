@@ -1,0 +1,241 @@
+/* side */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--line);
+}
+.tabs button {
+  flex: 1;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  padding: 11px 6px;
+  font-family: var(--pix);
+  font-size: 12px;
+  position: relative;
+}
+.tabs button.on {
+  color: var(--gold);
+  box-shadow: inset 0 -2px 0 var(--gold);
+}
+.tabs .bg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  font-family: var(--body);
+  font-weight: 800;
+  font-size: 11px;
+  margin-left: 5px;
+  vertical-align: 1px;
+}
+.pane {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sec {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 12px;
+}
+.sec h3 {
+  margin: 0 0 8px;
+  font-family: var(--pix);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+.row .k {
+  color: var(--muted);
+}
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 4px 10px;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.stats b {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.barline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0;
+  font-size: 12px;
+}
+.barline .n {
+  min-width: 70px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.tname {
+  font-size: 17px;
+  font-weight: 700;
+  text-align: center;
+}
+.tsub {
+  color: var(--muted);
+  text-align: center;
+  font-size: 12px;
+  margin-top: 2px;
+}
+.segs {
+  display: flex;
+  gap: 3px;
+  margin: 10px 0 4px;
+  height: 16px;
+}
+.segs i {
+  flex: 1;
+  background: #0e1014;
+  border-radius: 3px;
+  border: 1px solid #000;
+}
+.segs i.f {
+  background: #6aa83b;
+}
+.segs i.cur {
+  background: linear-gradient(90deg, #6aa83b var(--p), #0e1014 var(--p));
+}
+.segcap {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--pix);
+  font-size: 10px;
+  color: var(--muted);
+}
+.divh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 8px;
+  color: var(--muted);
+  font-family: var(--pix);
+  font-size: 10px;
+}
+.divh:before,
+.divh:after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.enemies {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.enemy {
+  background: #14161b;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 6px 10px;
+  text-align: left;
+  color: var(--text);
+  min-width: 110px;
+}
+.enemy b {
+  display: block;
+}
+.enemy span {
+  color: var(--muted);
+  font-size: 12px;
+}
+.enemy.unk b {
+  color: var(--muted);
+}
+.enemy.el {
+  border-color: #7a3a3a;
+}
+.enemy.bo {
+  border-color: var(--gold-d);
+}
+.btn {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--text);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--pix);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.btn:hover:not(:disabled) {
+  background: var(--text);
+  color: #111;
+}
+.btn.gold {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.btn.gold:hover:not(:disabled) {
+  background: var(--gold);
+  color: #111;
+}
+.btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.btn.small {
+  padding: 7px;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.note {
+  color: var(--muted);
+  font-size: 12px;
+  text-align: center;
+  margin-top: 6px;
+  line-height: 1.4;
+}
+.log {
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 170px;
+  overflow: auto;
+  color: var(--muted);
+}
+.log div {
+  padding: 1px 0;
+  border-bottom: 1px solid #2a2e39;
+}
+.log .g {
+  color: var(--gold);
+}
+.log .r {
+  color: var(--danger);
+}
+.log .b {
+  color: var(--time);
+}
+.log .v {
+  color: var(--hp);
+}
+.log .p {
+  color: var(--xp);
+}

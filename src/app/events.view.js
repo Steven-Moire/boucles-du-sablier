@@ -1,12 +1,12 @@
-import {MONSTERS, UPGRADES} from '../data.js';
-import {tick} from '../engine.js';
-import {$, S, anim, hadSave, saveMeta, toast} from './state.js';
-import {playIntro} from './intro.js';
-import {renderMap} from './map.js';
-import {floatNum, renderScene, unitEl} from './scene.js';
-import {digParticles, gotText} from './digview.js';
-import {renderPane, renderTabs, renderTop} from './panel.js';
-import {openBoss, openLoopEnd} from './modals.js';
+import {MONSTERS} from '../enemies/enemies.data.js';
+import {UPGRADES} from '../village/village.data.js';
+import {S, saveMeta} from '../shared/state.js';
+import {$, anim, toast} from '../shared/dom.js';
+import {gotText} from '../shared/format.js';
+import {requestRender} from '../shared/render.js';
+import {floatNum, unitEl} from '../combat/scene.view.js';
+import {digParticles} from '../mining/dig.view.js';
+import {openBoss, openLoopEnd} from '../modals/loop-end.view.js';
 
 // ---------- événements & boucle principale ----------
 export function consumeEvents() {
@@ -28,7 +28,7 @@ export function consumeEvents() {
       S.backTimer = setTimeout(() => {
         if (!S.G.run.action) {
           S.view = 'map';
-          render();
+          requestRender();
         }
       }, 900);
     } else if (ev.type === 'level' && fx) floatNum('hero', 'NIVEAU ' + ev.lvl, 'f-lv');
@@ -51,27 +51,3 @@ export function consumeEvents() {
   }
   S.G.events.length = 0;
 }
-export function render() {
-  renderTop();
-  renderTabs();
-  renderMap();
-  if (S.view === 'scene') renderScene();
-  renderPane();
-}
-let last = performance.now(),
-  saveT = 0;
-setInterval(() => {
-  const now = performance.now(),
-    dt = Math.min(1, (now - last) / 1000);
-  last = now;
-  if (!S.modalMode) tick(S.G, dt * S.gameSpeed);
-  consumeEvents();
-  saveT += dt;
-  if (saveT > 5) {
-    saveT = 0;
-    saveMeta();
-  }
-  render();
-}, 50);
-render();
-if (!hadSave) playIntro();

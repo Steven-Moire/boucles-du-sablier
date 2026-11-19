@@ -6,9 +6,17 @@ import sonarjs from 'eslint-plugin-sonarjs';
 import importX from 'eslint-plugin-import-x';
 import prettierConfig from 'eslint-config-prettier/flat';
 
-// Couches (voir CLAUDE.md) : données ← moteur ← UI. Le moteur et les données n'importent jamais l'UI.
-const UI = ['**/ui/**'];
-const ENGINE = ['**/engine.js', '**/dig.js'];
+// Couches repérées par le suffixe (voir .claude/rules/javascript/architecture.md) :
+// *.data.js ← *.engine.js ← *.view.js ← app/main.js ; shared/ = briques de l'UI, sous les vues.
+const DATA = ['src/**/*.data.js'];
+const ENGINE = ['src/**/*.engine.js'];
+const VIEWS = ['src/**/*.view.js'];
+const SHARED = ['src/shared/**/*.js'];
+const restrict = (group, message) => ({'no-restricted-imports': ['error', {patterns: [{group, message}]}]});
+// tout chemin qui ne finit pas par .data.js
+const restrictNonData = message => ({
+  'no-restricted-imports': ['error', {patterns: [{regex: String.raw`^(?!.*\.data\.js$)`, message}]}],
+});
 
 export default [
   {
@@ -20,7 +28,7 @@ export default [
       'sd_raw/**',
       '.venv/**',
       'assets/**',
-      'src/grids.js',
+      'src/**/*.generated.js',
     ],
   },
   js.configs.recommended,
@@ -42,35 +50,25 @@ export default [
       'import-x/extensions': ['error', 'always', {ignorePackages: true}],
     },
   },
-  // UI : seul endroit où le DOM existe
-  {files: UI.map(g => g + '/*.js'), languageOptions: {globals: globals.browser}},
-  // moteur pur : pas de globals navigateur (document, window… → no-undef), pas d'import de l'UI
+  // UI (vues, app/, shared/) : seul endroit où le DOM existe ; le moteur et les données n'ont pas les globals navigateur
+  {files: [...VIEWS, 'src/app/**/*.js', ...SHARED], languageOptions: {globals: globals.browser}},
+  // données : n'importent que d'autres données
+  {files: DATA, rules: restrictNonData("Les données n'importent que d'autres *.data.js.")},
+  // moteur pur : jamais une vue, ni shared/, ni app/ (tools/sim.js le fait tourner dans Node)
   {
-    files: ['src/*.js'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {patterns: [{group: ['**/ui/*'], message: "Le moteur et les données n'importent jamais l'UI."}]},
-      ],
-    },
+    files: ENGINE,
+    rules: restrict(
+      ['**/*.view.js', '**/shared/**', '**/app/**'],
+      "Le moteur n'importe que des *.data.js et *.engine.js.",
+    ),
   },
-  // données : n'importent ni le moteur ni l'UI
+  // vues : jamais main.js (demander un rendu avec requestRender() de shared/render.js)
   {
-    files: ['src/data.js'],
-    rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          patterns: [
-            {
-              group: [...ENGINE.map(g => g.replace('**/', './')), '**/ui/*'],
-              message: "Les données n'importent rien du moteur ni de l'UI.",
-            },
-          ],
-        },
-      ],
-    },
+    files: VIEWS,
+    rules: restrict(['**/app/main.js', './main.js'], "Une vue n'importe jamais main.js : requestRender()."),
   },
+  // shared/ : briques du bas de l'UI, n'importent aucune vue
+  {files: SHARED, rules: restrict(['**/*.view.js'], "shared/ n'importe aucune vue.")},
   // outils Node (simu, vérifications)
   {files: ['tools/**/*.js', 'eslint.config.js'], languageOptions: {globals: globals.node}},
   // mise en forme : laissée à Prettier (npm run format), on coupe les règles ESLint qui la contrediraient

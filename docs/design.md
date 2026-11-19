@@ -69,9 +69,10 @@ Stats au niveau L : `PV = (12 + 8(L−1)) × mult`, `puissance = (3 + 1,6(L−1)
 Le boss tombe entre la 8e et la 13e boucle, soit environ 12 à 20 min de jeu en ×1. **Cible (révisée le 2026-11-19) : boss entre la 8e et la 13e boucle, médiane entre 9 et 12.**
 Pourquoi : la série `9 13 10 12 9 12 8 9 12 9` est identique depuis le prototype v0.3 (vérifié sur a625c8a → 6f6844a → 3fab3e6 → 69b808d → main) ; le 8 vient d'une graine chanceuse, ce n'est pas une régression. Le remonter par les chiffres pousserait la graine à 13 vers 14 : on élargit la cible plutôt que de déplacer l'écart. À recaler après la mémoire du village (étape 2c), qui changera la courbe de progression.
 
-## Architecture du code (étape 1 de la feuille de route, faite)
-Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données), `src/engine.js` (moteur pur, testable dans Node), `src/ui/*.js` (rendu et interactions). Le découpage est mécanique : aucune règle ni aucun chiffre n'a changé.
-- **Simulation** : `node tools/sim.js` importe `src/engine.js` et `src/data.js`. Sortie identique octet pour octet à celle de la v0.3 monolithique (boss aux boucles 9 13 10 12 9 12 8 9 12 9).
+## Architecture du code (étape 1 de la feuille de route, faite ; arborescence par domaine le 2026-11-19)
+Le jeu est découpé en modules ES natifs, sans build, **un dossier par domaine** (`src/world/`, `hero/`, `enemies/`, `mining/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`, `app/`). Le suffixe dit le rôle : `*.data.js` (données) ← `*.engine.js` (moteur pur, testable dans Node) ← `*.view.js` (rendu et interactions d'une zone, avec son CSS à côté) ← `app/main.js`. Liste des modules : `CLAUDE.md` ; règles des couches : `.claude/rules/javascript/architecture.md`, vérifiées par `npm run lint`. Les deux découpages (v0.3 monolithique → modules, puis modules → domaines) sont mécaniques : aucune règle ni aucun chiffre n'a changé.
+- **Sens des imports, sans cycle** : une vue demande un rendu par `requestRender()` (`shared/render.js`, auquel `app/main.js` s'abonne) au lieu d'importer `main.js` ; `world/tick.engine.js` est le seul module qui importe à la fois le combat et l'exploration. Les 8 cycles d'imports de l'ancien découpage ont disparu.
+- **Simulation** : `node tools/sim.js` importe chaque `*.data.js` et `*.engine.js` (réunis dans un seul objet `E`). Sortie identique octet pour octet à celle de la v0.3 monolithique (boss aux boucles 9 13 10 12 9 12 8 9 12 9).
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
@@ -104,7 +105,7 @@ Prototype jouable, à part du jeu : `proto/mine-ennemi.html` (en ligne : `/proto
 ### Ce que ça change au plan
 - Le **tableau de loot v3** (commun / peu commun / rare) reste la bonne structure : il devient la **composition** des monstres au lieu d'un tirage. Les élites ont un gros cœur rare (5 %) : c'est le « même loot, mais plus de rare » voulu.
 - Les **types d'armes** et les **éléments** sortent de la fin du plan : ce sont les outils et les effets du minage, ils arrivent avec.
-- **Moteur pur et simulation** : les grilles de pixels sont précalculées depuis les PNG par un outil (`tools/sprite_grids.py` → `src/grids.js`), pour que `src/engine.js` reste sans DOM et que `tools/sim.js` puisse faire creuser le bot dans Node.
+- **Moteur pur et simulation** : les grilles de pixels sont précalculées depuis les PNG par un outil (`tools/sprite_grids.py` → `src/enemies/grids.generated.js`), pour que le moteur reste sans DOM et que `tools/sim.js` puisse faire creuser le bot dans Node.
 - **Équilibrage** : la vie totale des pixels jusqu'à l'effondrement est calée sur les PV actuels des monstres (même durée de combat), cible inchangée (boss entre la 9e et la 13e boucle).
 
 ### Découpage proposé
@@ -117,7 +118,7 @@ Prototype jouable, à part du jeu : `proto/mine-ennemi.html` (en ligne : `/proto
 Décisions de Steven : « on garde ce qu'on extrait » validé ; il faut un **tableau de composition** ; plus tard, des **améliorations pour viser** (ou non) certains éléments ; les **éléments se récupèrent** pour forger armes et armures (une sorte de mini-jeu, puisqu'une arme ne se forge qu'une fois) ; un peu plus d'**aléatoire** quand on ne clique pas.
 
 Règles en place :
-- Chaque monstre est sa grille de pixels (`src/grids.js`, généré par `tools/sprite_grids.py` depuis les sprites). Les dégâts creusent (`src/dig.js`) ; la mort suit toujours les **PV** (formules inchangées), la grille est calée pour qu'à la mort ~30 % de sa vie de pixels soit creusée.
+- Chaque monstre est sa grille de pixels (`src/enemies/grids.generated.js`, généré par `tools/sprite_grids.py` depuis les sprites). Les dégâts creusent (`src/mining/dig.engine.js`) ; la mort suit toujours les **PV** (formules inchangées), la grille est calée pour qu'à la mort ~30 % de sa vie de pixels soit creusée.
 - **Pioche** pour l'instant : tunnel de ~2 px depuis la surface la plus proche jusqu'au point visé, puis cratère qui s'élargit. **Clic sur un ennemi** = nouveau point visé.
 - **Aléatoire à chaque apparition** : veine élémentaire tracée au hasard (2-3 branches) et cible par défaut tirée au hasard (cœur 45 %, veine 35 %, n'importe où 20 %).
 - **Extraction à la mort** : pixels creusés / rendement de la strate ; la fraction restante est une chance d'une unité de plus.
@@ -151,7 +152,7 @@ C'est l'ordre de grandeur visé par la v3 (communs abondants, rares rythmés par
 - Sprites plus grands en combat (×3) si le minage manque de lisibilité.
 
 ### Étape 2a faite : marteau et coutelas (2026-11-19)
-Règles en place (`TOOLS` dans `src/data.js`) : on **choisit l'outil avant d'entrer sur une case de combat** (panneau de droite, sous les ennemis). L'action en cours garde l'outil avec lequel elle a commencé ; le choix est mémorisé (`meta.tool`). Combat repris des « Types d'armes » de la v2, motif de creusage repris du prototype :
+Règles en place (`TOOLS` dans `src/hero/hero.data.js`) : on **choisit l'outil avant d'entrer sur une case de combat** (panneau de droite, sous les ennemis). L'action en cours garde l'outil avec lequel elle a commencé ; le choix est mémorisé (`meta.tool`). Combat repris des « Types d'armes » de la v2, motif de creusage repris du prototype :
 | Outil | Attaque toutes les | Dégâts | Bonus | Motif de creusage | Effet sur le butin |
 |---|---|---|---|---|---|
 | ⛏️ Pioche | 0,9 s | ×1 | — | tunnel de ~2 px jusqu'au point visé, puis cratère | atteint le cœur intact |

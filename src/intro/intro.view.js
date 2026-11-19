@@ -1,4 +1,5 @@
-import {S, anim} from './state.js';
+import {S} from '../shared/state.js';
+import {anim} from '../shared/dom.js';
 
 // ---------- intro : 5 écrans au premier lancement (texte : docs/lore.md) ----------
 // image = assets/sprites/<key>.png (clé dans tools/sprites.json) ; si elle manque, le texte seul reste affiché

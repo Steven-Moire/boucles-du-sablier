@@ -10,7 +10,20 @@
       href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="src/style.css" />
+    <!-- une feuille par zone ; l'ordre est celui de l'ancien src/style.css (la cascade en dépend) -->
+    <link rel="stylesheet" href="src/app/layout.css" />
+    <link rel="stylesheet" href="src/shared/sprites.css" />
+    <link rel="stylesheet" href="src/world/map.css" />
+    <link rel="stylesheet" href="src/combat/scene.css" />
+    <link rel="stylesheet" href="src/combat/scene-fx.css" />
+    <link rel="stylesheet" href="src/app/panel.css" />
+    <link rel="stylesheet" href="src/village/village.css" />
+    <link rel="stylesheet" href="src/enemies/bestiary.css" />
+    <link rel="stylesheet" href="src/modals/modal.css" />
+    <link rel="stylesheet" href="src/shared/toast.css" />
+    <link rel="stylesheet" href="src/mining/dig.css" />
+    <link rel="stylesheet" href="src/world/explore-panel.css" />
+    <link rel="stylesheet" href="src/intro/intro.css" />
   </head>
   <body>
     <div class="app">
@@ -66,6 +79,6 @@
     <div class="modal" id="modal" hidden><div class="mbox" id="mbox"></div></div>
     <div class="toasts" id="toasts"></div>
 
-    <script type="module" src="src/ui/main.js"></script>
+    <script type="module" src="src/app/main.js"></script>
   </body>
 </html>

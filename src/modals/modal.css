@@ -1,0 +1,142 @@
+/* modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 6, 9, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+  padding: 16px;
+}
+.modal[hidden] {
+  display: none;
+}
+.mbox {
+  background: #e9e9ea;
+  color: #1b1b1b;
+  border-radius: 10px;
+  width: min(400px, 100%);
+  padding: 18px 20px;
+  position: relative;
+  max-height: 92vh;
+  overflow: auto;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+.mbox h2 {
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+}
+.mbox .sub {
+  text-align: center;
+  color: #666;
+  margin-top: 2px;
+}
+.mbox .x {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: 0;
+  font-size: 20px;
+  color: #999;
+}
+.mbox .divh {
+  color: #111;
+}
+.mbox .divh:before,
+.mbox .divh:after {
+  background: #c9c9cc;
+}
+.mbox .divh span {
+  background: #111;
+  color: #fff;
+  padding: 3px 7px;
+  border-radius: 4px;
+}
+.mbox .row {
+  border-bottom: 1px dashed #c9c9cc;
+  padding: 6px 2px;
+}
+.mbox .row .k {
+  color: #333;
+}
+.mbox .row b {
+  font-variant-numeric: tabular-nums;
+}
+.mbox .note {
+  color: #555;
+}
+.drops {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.drop {
+  width: 58px;
+  height: 58px;
+  border: 1px solid #999;
+  border-radius: 6px;
+  background: #d5d5d8;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.drop.uniq {
+  border: 2px solid var(--gold-d);
+  background: #efe1b6;
+}
+.drop.got {
+  opacity: 0.45;
+}
+.drop small {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #111;
+  color: #fff;
+  font-size: 10px;
+  text-align: center;
+  border-radius: 0 0 5px 5px;
+  font-family: var(--pix);
+}
+.drop em {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 700;
+  color: #111;
+}
+.mbox .btn {
+  border-color: #111;
+  color: #111;
+}
+.mbox .btn:hover {
+  background: #111;
+  color: #fff;
+}
+.gains {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 6px;
+}
+.gains div {
+  background: #d9d9dc;
+  border-radius: 6px;
+  padding: 7px 9px;
+  font-weight: 600;
+}
+.gains span {
+  display: block;
+  font-weight: 400;
+  color: #555;
+  font-size: 12px;
+}

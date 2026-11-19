@@ -1,24 +1,26 @@
-import {BIOMES, SKILLS, TILE_MAP} from '../data.js';
-import {actionTool, buildSegments, heroEvery, retreat, skillUnlocked} from '../engine.js';
-import {$, S, SCENE_BG, fmt, fxRandom, sceneBgOk, setHTML} from './state.js';
-import {segFill} from './map.js';
-import {consumeEvents, render} from './main.js';
-import {digPortrait, drawDig, onDigClick} from './digview.js';
+import {BIOMES, TILE_MAP} from '../world/world.data.js';
+import {SKILLS} from '../hero/hero.data.js';
+import {actionTool, heroEvery, skillUnlocked} from '../hero/hero.engine.js';
+import {retreat} from '../world/explore.engine.js';
+import {S} from '../shared/state.js';
+import {$, setHTML} from '../shared/dom.js';
+import {fmt} from '../shared/format.js';
+import {fxRandom} from '../shared/rng.js';
+import {segBar} from '../shared/templates.js';
+import {requestRender} from '../shared/render.js';
+import {digPortrait, drawDig, onDigClick} from '../mining/dig.view.js';
 
 // ---------- scène de combat ----------
 let sceneKey = '';
-export function segBar(t, a, done) {
-  const n = buildSegments(t).length;
-  let cells = '';
-  for (let i = 0; i < n; i++) {
-    if (done) cells += '<i class="f"></i>';
-    else if (a && a.id === t.id) {
-      if (i < a.seg) cells += '<i class="f"></i>';
-      else if (i === a.seg) cells += `<i class="cur" style="--p:${Math.round(segFill(a) * 100)}%"></i>`;
-      else cells += '<i></i>';
-    } else cells += '<i></i>';
-  }
-  return `<div class="segs">${cells}</div>`;
+// fonds de scène : préchargés, affichés seulement une fois chargés
+export const SCENE_BG = {pres: 'bg_pres', collines: 'bg_collines'};
+export const sceneBgOk = {};
+for (const b in SCENE_BG) {
+  const im = new Image();
+  im.onload = () => {
+    sceneBgOk[b] = true;
+  };
+  im.src = `assets/sprites/${SCENE_BG[b]}.png`;
 }
 export function renderScene() {
   const r = S.G.run,
@@ -134,14 +136,13 @@ export function renderScene() {
 }
 $('retreatBtn').addEventListener('click', () => {
   retreat(S.G);
-  consumeEvents();
-  render();
+  requestRender();
 });
 $('sceneView').addEventListener('click', e => {
   const b = e.target.closest('[data-view]');
   if (b) {
     S.view = b.dataset.view;
-    render();
+    requestRender();
   }
 });
 $('scEnemies').addEventListener('click', onDigClick);

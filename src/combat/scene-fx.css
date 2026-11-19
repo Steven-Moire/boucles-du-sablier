@@ -1,0 +1,112 @@
+.float {
+  position: absolute;
+  left: 50%;
+  top: 18%;
+  font-weight: 800;
+  font-size: 19px;
+  color: #fff;
+  text-shadow: 0 2px 3px #000;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: floatUp 1s ease-out forwards;
+  z-index: 3;
+}
+.float.f-crit {
+  color: var(--gold);
+  font-size: 24px;
+}
+.float.f-heal {
+  color: var(--hp);
+}
+.float.f-miss {
+  color: #c9c9c9;
+  font-size: 13px;
+}
+.float.f-sk {
+  color: #ffb3ef;
+}
+.float.f-lv {
+  color: var(--xp);
+  font-family: var(--pix);
+  font-size: 14px;
+}
+@keyframes floatUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0);
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -46px);
+  }
+}
+.skills {
+  display: flex;
+  gap: 8px;
+}
+.skill {
+  width: 54px;
+  height: 54px;
+  border: 2px solid #000;
+  border-radius: 8px;
+  background: #2c3140;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  overflow: hidden;
+  cursor: help;
+}
+.skill .cd {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(rgba(0, 0, 0, 0.7) calc(var(--p) * 1turn), transparent 0);
+}
+.skill.ready {
+  border-color: var(--gold);
+}
+.skill.lock {
+  opacity: 0.4;
+  font-size: 18px;
+}
+.skill.fire {
+  animation: fire 0.35s;
+}
+@keyframes fire {
+  50% {
+    transform: scale(1.18);
+  }
+}
+.skill small {
+  position: absolute;
+  bottom: 1px;
+  right: 3px;
+  font-size: 9px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 1px 1px #000;
+}
+.retreat {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  background: rgba(10, 11, 15, 0.8);
+  border: 2px solid var(--text);
+  color: var(--text);
+  border-radius: 7px;
+  padding: 8px 12px;
+  font-family: var(--pix);
+  font-size: 11px;
+}
+.retreat:hover:not(:disabled) {
+  background: var(--text);
+  color: #111;
+}
+.retreat:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}

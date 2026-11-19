@@ -1,0 +1,23 @@
+/* choix de l'outil (panneau de droite) */
+.tools {
+  display: flex;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.tools button {
+  flex: 1;
+  background: var(--panel);
+  color: var(--muted);
+  border: 0;
+  padding: 7px 4px;
+  font-weight: 700;
+  font-size: 12px;
+}
+.tools button + button {
+  border-left: 1px solid var(--line);
+}
+.tools button.on {
+  background: var(--gold);
+  color: #1a1a1a;
+}

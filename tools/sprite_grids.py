@@ -1,6 +1,6 @@
-"""Précalcule la grille de pixels de chaque monstre pour le combat-minage → src/grids.js.
+"""Précalcule la grille de pixels de chaque monstre pour le combat-minage → src/enemies/grids.generated.js.
 
-Le moteur (src/engine.js) reste pur : il ne lit jamais d'image, il lit ces grilles.
+Le moteur (src/mining/strata.engine.js) reste pur : il ne lit jamais d'image, il lit ces grilles.
 Pour chaque pixel opaque du sprite : profondeur (distance au vide, en 4-voisinage),
 contour sombre (croûte) et veine brillante (pixel très saturé et lumineux, ex. cristal du golem).
 
@@ -75,7 +75,7 @@ def main():
     js = ('// Généré par tools/sprite_grids.py depuis assets/sprites/ — ne pas éditer à la main.\n'
           "// '.' vide · 'c' croûte · 'v' veine brillante · sinon chr(48 + profondeur)\n"
           f'export const GRIDS = {{\n{body}\n}};\n')
-    (ROOT / 'src' / 'grids.js').write_text(js, encoding='utf-8')
+    (ROOT / 'src' / 'enemies' / 'grids.generated.js').write_text(js, encoding='utf-8')
     for m, g in grids.items():
         print(m, g['w'], 'x', g['h'], 'opaques', sum(c != '.' for c in g['cells']))
 

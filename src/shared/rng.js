@@ -11,3 +11,6 @@ export function lcg(seed) {
     return s / M;
   };
 }
+
+// hasard des effets visuels (éclats, nombres flottants) : séparé de G.rng, un effet ne consomme jamais un tirage du jeu
+export const fxRandom = lcg(Date.now() % 4294967296);

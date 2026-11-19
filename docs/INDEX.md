@@ -10,7 +10,8 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 - **Prochaine étape** : forge + équipement non permanent (2b), puis mémoire du village par la renommée (2c).
 - **Lore décidé** : le mineur est « le Radoteur », vrai nom Anselme Tardif révélé par une scène (voir `lore.md`). Lieux confirmés : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret), aucune vraie commune ni lieu-dit de ces noms trouvés. **Texte final des 5 écrans de l'intro** écrit dans `lore.md`.
 - **Retenus provisoirement** (à ajuster en testant) : 5 vestiges dans les monstres, 6 répliques de déjà-vu par rang de renommée, carnet des vestiges (`lore.md`).
-- **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/ui/intro.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ». **Héros v3** avec une vraie pioche, **icônes de cases 32×32** sur la carte (repli emoji).
+- **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/intro/intro.view.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ». **Héros v3** avec une vraie pioche, **icônes de cases 32×32** sur la carte (repli emoji).
+- **Code rangé par domaine** (2026-11-19, lot 2 qualité) : `src/<domaine>/` avec suffixes `.data.js` / `.engine.js` / `.view.js` et CSS à côté de sa vue, point d'entrée `src/app/main.js` (liste dans `CLAUDE.md`).
 - Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md` (ordre conseillé : qualité du code → forge 3a → mémoire 3b ; héros selon l'outil en parallèle). Sessions déjà faites (prompts exécutés, état d'avant) : `docs/archive/sessions-faites.md`.
 
 ## docs/design.md — design et formules (long : lire par section)
@@ -19,7 +20,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 | `## Pitch`, `## Décisions prises` | Le concept, les choix fondateurs | à jour |
 | `## Boucle de jeu (v0.3)`, `## Compétences actives`, `## Village`, `## Monstres et trophées` | Règles et formules de la v0.3 | à jour |
 | `## Équilibrage` | Cible de la simu (révisée : 8e-13e, médiane 9-12) et pourquoi | à jour |
-| `## Architecture du code` | Découpage en modules | à jour |
+| `## Architecture du code` | Découpage par domaine (`src/world/`, `hero/`…), suffixes de rôle, sens des imports | à jour |
 | `## Miner les ennemis` | Pivot, mécanique, lore, **étape 1 faite** : règles, **tableau de composition**, résultats de simu ; **étape 2a faite** (`### Étape 2a faite : marteau et coutelas`) : tableau des outils, simu par outil | **référence actuelle** |
 | `## Équipement, forge et mémoire du village — PROPOSITION v3` | Loot unifié, mémoire par renommée (Hameau → Cité), réinfusion −15 %, hauts faits, découpage | validé, à coder (loot remplacé par la composition) |
 | `## Équipement et forge — PROPOSITION v2` | Tableau de loot mesuré, types d'armes, éléments (faiblesses), objets, améliorations +1 à +5 | **en partie dépassé** (garder : types d'armes, faiblesses, objets, améliorations) |
