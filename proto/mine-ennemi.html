@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype — miner les ennemis</title>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14161b;--panel:#1d2028;--line:#323746;--text:#ebe8df;--muted:#9a9eab;--gold:#f0c04a;--danger:#e3625b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:14px}
+.app{max-width:1100px;margin:0 auto;padding:16px}
+h1{font-family:Silkscreen,monospace;color:var(--gold);font-size:20px;margin:0}
+.sub{color:var(--muted);margin:4px 0 14px;line-height:1.5}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:14px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.row b{font-family:Silkscreen,monospace;font-size:11px;color:var(--muted);min-width:70px}
+button{background:#252935;border:1px solid var(--line);color:var(--muted);border-radius:7px;padding:6px 10px;cursor:pointer;font-family:inherit}
+button.on{background:var(--gold);color:#111;border-color:var(--gold)}
+.stage{position:relative;background:linear-gradient(180deg,#8c9bb0 0%,#c8c2b8 55%,#9a8b7b 56%,#6e6257 100%);border-radius:10px;border:1px solid #000;height:620px;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;cursor:crosshair}
+canvas{image-rendering:pixelated}
+#hero{position:absolute;left:24px;bottom:30px;width:96px;image-rendering:pixelated;transition:transform .08s}
+#hero.swing{transform:translateX(18px) rotate(8deg)}
+.hud{position:absolute;left:12px;top:12px;background:rgba(10,11,15,.75);border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.6}
+.bar{height:8px;background:#0e1014;border-radius:4px;overflow:hidden;width:200px;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--danger)}
+.loot div{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #2a2e39}
+.loot .r{color:#7ee0ff}.loot .u{color:#f5e3b5}
+.log{font-size:12px;color:var(--muted);max-height:220px;overflow:auto;line-height:1.5}
+.log .v{color:var(--gold)}
+.note{color:var(--muted);font-size:12px;line-height:1.5;margin-top:10px}
+.float{position:absolute;font-weight:800;font-size:13px;pointer-events:none;text-shadow:0 1px 2px #000;animation:up 1s ease-out forwards}
+@keyframes up{to{transform:translateY(-40px);opacity:0}}
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>Miner les ennemis — prototype</h1>
+  <div class="sub">Chaque monstre est fait de pixels, comme la roche de Little Dig. Le héros creuse automatiquement ; <b>clique sur le monstre</b> pour viser une veine.
+    Ce que tu extrais, tu le gardes. Quand le monstre s'effondre, les pixels non creusés retombent en poussière.</div>
+  <div class="grid">
+    <div class="card">
+      <div class="row"><b>MONSTRE</b><span id="mons"></span></div>
+      <div class="row"><b>OUTIL</b><span id="tools"></span></div>
+      <div class="row"><b>VITESSE</b><span id="speeds"></span></div>
+      <div class="stage" id="stage">
+        <img id="hero" src="../assets/sprites/heros.png" alt="">
+        <canvas id="cv"></canvas>
+        <div class="hud" id="hud"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><b>BUTIN</b></div>
+      <div class="loot" id="loot"></div>
+      <div class="row" style="margin-top:12px"><b>JOURNAL</b></div>
+      <div class="log" id="log"></div>
+      <div class="note" id="toolNote"></div>
+    </div>
+  </div>
+</div>
+<script>
+// ---------- données du prototype ----------
+const MONS = {
+  mulot:   {name:'Mulot dentu', mats:['Cuir','Os','Défense'], tough:1},
+  sanglier:{name:'Sanglier', mats:['Cuir','Os','Défense'], tough:1.2},
+  loup:    {name:'Loup gris', mats:['Fourrure','Os','Griffe'], tough:1.1},
+  golem:   {name:'Golem de pierre', mats:['Minerai','Éclat','Cristal'], tough:1.6},
+  ours:    {name:'Ours ancien (élite)', mats:['Fourrure','Os','Griffe'], tough:1.5, elite:true},
+  gardien: {name:'Gardien du Sablier (boss)', mats:['Éclat','Cristal','Sable du sablier'], tough:1.8, elite:true},
+};
+// pioche : tunnel profond vers la cible ; marteau : cratère, brise les pixels rares ; coutelas : écorche la surface, rapide
+const TOOLS = {
+  pioche:  {name:'Pioche', every:.9, power:60, note:'Creuse un tunnel de 2 pixels vers le point visé : idéale pour atteindre un cœur rare au centre.'},
+  marteau: {name:'Marteau', every:1.4, power:160, note:'Cratère autour de l\'impact : le plus rapide pour abattre, mais 60 % des pixels rares se brisent (perdus).'},
+  coutelas:{name:'Coutelas', every:.45, power:24, note:'Écorche la surface la plus proche avec soin : +50 % de matériau commun, mais atteint rarement le cœur.'},
+};
+const HP = {croute:1, commun:1, peu:2, rare:3, vestige:3};
+const YIELD = {commun:250, peu:60, rare:60, vestige:4};  // pixels pour 1 unité de matériau
+const COLLAPSE = .3;                                      // le monstre s'effondre quand 30 % de ses pixels sont creusés
+const SCALE = 6;
+const VESTIGES = ['ta vieille pioche (boucle 3)', 'une page de ton carnet : « les mulots ont des numéros »', 'le bouton de ton tablier', 'un grain de sable qui tourne à l\'envers'];
+
+let monKey = 'golem', toolKey = 'pioche', speed = 1;
+let M = null, loot = {}, kills = 0, aim = null, t = 0;
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const $ = id => document.getElementById(id);
+const parts = [];
+
+function hsv(r, g, b){
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
+  let h = 0;
+  if (d){ h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; if (h < 0) h += 360; }
+  return {h, s: mx ? d / mx : 0, v: mx / 255};
+}
+// veine brillante : pixel très saturé et lumineux (cristal du golem, cœur du Gardien) → compte comme peu commun
+const isVein = (r, g, b) => { const c = hsv(r, g, b); return c.s >= .7 && c.v >= .7 && ((c.h > 165 && c.h < 250) || (c.h > 38 && c.h < 60)); };
+// strates par profondeur (distance au vide, comme la roche de Little Dig) :
+// contour sombre = croûte ; surface = commun ; 30 % les plus profonds = peu commun ; cœur (1,5 % normal, 5 % élite) = rare
+function stratify(cells, w, h, elite){
+  const depth = new Array(cells.length).fill(0), queue = [];
+  cells.forEach((c, i) => { if (c && [[1,0],[-1,0],[0,1],[0,-1]].some(([dx, dy]) => { const x = c.x + dx, y = c.y + dy; return x < 0 || y < 0 || x >= w || y >= h || !cells[y * w + x]; })){ depth[i] = 1; queue.push(i); } });
+  for (let q = 0; q < queue.length; q++){
+    const i = queue[q], x = i % w, y = (i - x) / w;
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]){
+      const nx = x + dx, ny = y + dy, j = ny * w + nx;
+      if (nx >= 0 && ny >= 0 && nx < w && ny < h && cells[j] && !depth[j]){ depth[j] = depth[i] + 1; queue.push(j); }
+    }
+  }
+  const ds = cells.map((c, i) => c ? depth[i] : 0).filter(Boolean).sort((a, b) => a - b);
+  const q = f => ds[Math.min(ds.length - 1, Math.floor(ds.length * f))];
+  const dRare = q(1 - (elite ? .05 : .015)), dPeu = q(.7);
+  cells.forEach((c, i) => {
+    if (!c) return;
+    c.depth = depth[i];
+    c.cls = c.dark ? 'croute' : depth[i] >= dRare ? 'rare' : (c.vein || depth[i] >= dPeu) ? 'peu' : 'commun';
+  });
+}
+
+function load(key){
+  const img = new Image();
+  img.onload = () => {
+    const w = img.width, h = img.height, off = document.createElement('canvas');
+    off.width = w; off.height = h;
+    const o = off.getContext('2d'); o.drawImage(img, 0, 0);
+    const data = o.getImageData(0, 0, w, h).data, cells = [];
+    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++){
+      const i = (y * w + x) * 4;
+      if (data[i + 3] < 128){ cells.push(null); continue; }
+      cells.push({x, y, col:`rgb(${data[i]},${data[i + 1]},${data[i + 2]})`, dark:hsv(data[i], data[i + 1], data[i + 2]).v < .2, vein:isVein(data[i], data[i + 1], data[i + 2])});
+    }
+    stratify(cells, w, h, MONS[key].elite);
+    cells.forEach(c => { if (c) c.hp = HP[c.cls] * MONS[key].tough; });
+    // un vestige caché au cœur (1 chance sur 3, toujours pour une élite)
+    const solid = cells.filter(Boolean);
+    if (MONS[key].elite || Math.random() < 1 / 3){
+      const cx = solid.reduce((s, c) => s + c.x, 0) / solid.length, cy = solid.reduce((s, c) => s + c.y, 0) / solid.length;
+      const vx = Math.round(cx + (Math.random() * 8 - 4)), vy = Math.round(cy + (Math.random() * 8 - 4));
+      for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++){
+        const c = cells[(vy + dy) * w + vx + dx];
+        if (c){ c.cls = 'vestige'; c.hp = HP.vestige * MONS[key].tough; c.hidden = true; }
+      }
+    }
+    M = {key, w, h, cells, total:solid.length, dug:0, start:performance.now(), vest:VESTIGES[Math.floor(Math.random() * VESTIGES.length)], vestFound:false};
+    cv.width = w * SCALE; cv.height = h * SCALE;
+    aim = null; draw(); hud();
+  };
+  img.src = `../assets/sprites/${key}.png`;
+}
+
+const at = (x, y) => (x < 0 || y < 0 || x >= M.w || y >= M.h) ? null : M.cells[y * M.w + x];
+const exposed = c => [[1,0],[-1,0],[0,1],[0,-1]].some(([dx, dy]) => !at(c.x + dx, c.y + dy));
+function centroid(){
+  const s = M.cells.filter(Boolean);
+  return {x: s.reduce((a, c) => a + c.x, 0) / s.length, y: s.reduce((a, c) => a + c.y, 0) / s.length};
+}
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+// retire de la vie à un pixel ; renvoie la vie réellement consommée
+function hit(c, dmg, tool){
+  const used = Math.min(dmg, c.hp); c.hp -= used;
+  if (c.hp <= 1e-9){
+    M.cells[c.y * M.w + c.x] = null; M.dug++;
+    const shattered = tool === 'marteau' && c.cls === 'rare' && Math.random() < .6;
+    if (c.cls !== 'croute' && !shattered) gain(c.cls);
+    spawn(c, shattered ? '#ffffff' : c.col, c.cls === 'rare' || c.cls === 'vestige');
+    if (c.cls === 'vestige' && !M.vestFound){ M.vestFound = true; logLine(`Vestige d'une boucle passée : ${M.vest}.`, 'v'); }
+  }
+  return used;
+}
+function gain(cls){
+  const mons = MONS[M.key], name = cls === 'vestige' ? 'Vestige' : mons.mats[{commun:0, peu:1, rare:2}[cls]];
+  const k = name;
+  loot[k] = loot[k] || {px:0, cls};
+  loot[k].px += cls === 'commun' && toolKey === 'coutelas' ? 1.5 : 1;   // dépeçage soigné
+}
+
+function strike(){
+  const tool = TOOLS[toolKey];
+  const solid = M.cells.filter(Boolean); if (!solid.length) return;
+  const target = aim || centroid();
+  const surf = solid.filter(exposed);
+  let impact = surf.reduce((b, c) => dist(c, target) < dist(b, target) ? c : b, surf[0]);
+  let power = tool.power;
+  if (toolKey === 'coutelas'){
+    // écorche : pixels de surface les plus proches de l'impact
+    const near = surf.sort((a, b) => dist(a, impact) - dist(b, impact));
+    for (const c of near){ if (power <= 0) break; power -= hit(c, power, toolKey); }
+  } else if (toolKey === 'marteau'){
+    const r = 6, zone = solid.filter(c => dist(c, impact) <= r).sort((a, b) => dist(a, impact) - dist(b, impact));
+    for (const c of zone){ if (power <= 0) break; power -= hit(c, power, toolKey); }
+  } else {
+    // pioche : avance vers la cible, sur 2 pixels de large
+    let cur = {x:impact.x, y:impact.y}; let guard = 0;
+    while (power > 0 && guard++ < 200){
+      const dx = Math.sign(Math.round(target.x - cur.x)), dy = Math.sign(Math.round(target.y - cur.y));
+      for (const c of [at(cur.x, cur.y), at(cur.x + (dy ? 1 : 0), cur.y + (dx ? 1 : 0))]) if (c && power > 0) power -= hit(c, power, toolKey);
+      if (at(cur.x, cur.y)) continue;
+      if (!dx && !dy){
+        // cible atteinte : on élargit autour
+        const n = M.cells.filter(Boolean).sort((a, b) => dist(a, cur) - dist(b, cur))[0]; if (!n) break; cur = {x:n.x, y:n.y};
+      } else cur = {x:cur.x + dx, y:cur.y + dy};
+    }
+  }
+  flash(impact);
+  $('hero').classList.add('swing'); setTimeout(() => $('hero').classList.remove('swing'), 90);
+  if (M.dug >= M.total * COLLAPSE) collapse();
+}
+
+function collapse(){
+  const left = M.cells.filter(Boolean);
+  left.forEach(c => spawn(c, '#8a8580', false));
+  kills++;
+  const secs = ((performance.now() - M.start) / 1000 * speed).toFixed(1);
+  logLine(`${MONS[M.key].name} s'effondre après ${secs} s (×1). ${left.length} pixels retombent en poussière.`);
+  M.cells = M.cells.map(() => null);
+  setTimeout(() => load(monKey), 700);
+}
+
+// ---------- rendu ----------
+function spawn(c, col, shine){
+  parts.push({x:(c.x + .5) * SCALE, y:(c.y + .5) * SCALE, vx:(Math.random() - .5) * 3, vy:-Math.random() * 4 - 1, col, life:1, shine});
+}
+function flash(c){
+  const f = document.createElement('div'); f.className = 'float';
+  const r = cv.getBoundingClientRect(), s = $('stage').getBoundingClientRect();
+  f.style.left = (r.left - s.left + c.x * SCALE) + 'px'; f.style.top = (r.top - s.top + c.y * SCALE - 10) + 'px';
+  f.textContent = '⛏'; $('stage').appendChild(f); setTimeout(() => f.remove(), 1000);
+}
+function draw(){
+  ctx.clearRect(0, 0, cv.width, cv.height);
+  if (!M) return;
+  for (const c of M.cells){
+    if (!c) continue;
+    // un vestige ne se révèle que lorsqu'il touche le vide (comme une pépite dans la roche)
+    const reveal = c.cls === 'vestige' && exposed(c);
+    ctx.fillStyle = reveal ? (Math.floor(t * 6) % 2 ? '#ffd76a' : '#b8862b') : c.col;
+    ctx.fillRect(c.x * SCALE, c.y * SCALE, SCALE, SCALE);
+    if (c.cls === 'rare' && exposed(c) && Math.floor(t * 4 + c.x) % 5 === 0){ ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.fillRect(c.x * SCALE, c.y * SCALE, SCALE, SCALE); }
+  }
+  if (aim){ ctx.strokeStyle = '#f0c04a'; ctx.lineWidth = 2; ctx.strokeRect(aim.x * SCALE - 6, aim.y * SCALE - 6, 12, 12); }
+  for (const p of parts){ ctx.globalAlpha = Math.max(0, p.life); ctx.fillStyle = p.shine && Math.random() < .5 ? '#fff' : p.col; ctx.fillRect(p.x, p.y, SCALE, SCALE); }
+  ctx.globalAlpha = 1;
+}
+function hud(){
+  if (!M) return;
+  const mons = MONS[M.key], prog = Math.min(1, M.dug / (M.total * COLLAPSE));
+  $('hud').innerHTML = `<b>${mons.name}</b><br>${M.total} pixels · s'effondre à ${Math.round(COLLAPSE * 100)} % creusé
+    <div class="bar"><i style="width:${(1 - prog) * 100}%"></i></div>Monstres minés : ${kills}`;
+  $('loot').innerHTML = Object.entries(loot).map(([k, v]) => {
+    const n = Math.floor(v.px / YIELD[v.cls]), frac = (v.px % YIELD[v.cls]) / YIELD[v.cls];
+    return `<div class="${v.cls === 'rare' || v.cls === 'vestige' ? 'r' : v.cls === 'peu' ? 'u' : ''}"><span>${k}</span><span>${n} <small style="color:#666">+${Math.round(frac * 100)} %</small></span></div>`;
+  }).join('') || '<div style="color:#666">rien encore</div>';
+}
+function logLine(text, cls){ const d = document.createElement('div'); d.className = cls || ''; d.textContent = text; $('log').prepend(d); }
+
+// ---------- contrôles ----------
+function buttons(el, obj, cur, label, set){
+  $(el).innerHTML = Object.keys(obj).map(k => `<button data-k="${k}" class="${k === cur ? 'on' : ''}">${label(k)}</button>`).join(' ');
+  $(el).onclick = e => { const b = e.target.closest('button'); if (b){ set(b.dataset.k); } };
+}
+function ui(){
+  buttons('mons', MONS, monKey, k => MONS[k].name.split(' (')[0], k => { monKey = k; ui(); load(k); });
+  buttons('tools', TOOLS, toolKey, k => TOOLS[k].name, k => { toolKey = k; ui(); });
+  buttons('speeds', {1:1, 3:3}, String(speed), k => '×' + k, k => { speed = +k; ui(); });
+  $('toolNote').textContent = TOOLS[toolKey].note;
+}
+cv.addEventListener('click', e => {
+  const r = cv.getBoundingClientRect();
+  aim = {x:(e.clientX - r.left) / r.width * M.w, y:(e.clientY - r.top) / r.height * M.h};
+});
+
+let last = performance.now(), acc = 0;
+function loop(now){
+  const dt = Math.min(.1, (now - last) / 1000) * speed; last = now; t += dt;
+  if (M && M.cells.some(Boolean)){ acc += dt; while (acc >= TOOLS[toolKey].every){ acc -= TOOLS[toolKey].every; strike(); } }
+  for (const p of parts){ p.x += p.vx; p.y += p.vy; p.vy += .25; p.life -= .02; }
+  for (let i = parts.length - 1; i >= 0; i--) if (parts[i].life <= 0) parts.splice(i, 1);
+  draw(); hud();
+  requestAnimationFrame(loop);
+}
+ui(); load(monKey); requestAnimationFrame(loop);
+logLine('Choisis un monstre et un outil. Clique sur une veine claire ou brillante pour y creuser.');
+</script>
+</body>
+</html>

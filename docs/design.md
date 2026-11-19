@@ -74,6 +74,44 @@ Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données)
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
 
+## Miner les ennemis — PROPOSITION (pivot « game changer », 2026-11-19)
+
+### Pourquoi
+Retour de Steven après avoir fini la v0.3 : le jeu est plat, il manque de lore, et il est loin de **Little Dig**. L'idée de départ n'était pas d'avoir une mine à part, mais de **miner les ennemis**. Les combats à barre de PV deviennent donc une extraction : chaque monstre est une petite roche vivante, faite de pixels.
+
+Prototype jouable, à part du jeu : `proto/mine-ennemi.html` (en ligne : `/proto/mine-ennemi.html`). Il utilise les vrais sprites.
+
+### La mécanique
+- **Le monstre est sa propre grille de pixels** (son sprite). Chaque pixel a de la vie selon sa strate. Le héros creuse automatiquement (idle) ; le joueur peut **cliquer pour viser** une veine.
+- **Strates par profondeur** (distance au vide, comme la roche de Little Dig) : contour sombre = croûte (rien) ; surface = **commun** (cuir, fourrure, minerai) ; 30 % les plus profonds = **peu commun** (os, éclat) ; cœur = **rare** (1,5 % des pixels d'un monstre normal, **5 % d'une élite**). Les veines brillantes du sprite (cristal bleu du golem, cœur du Gardien) comptent comme peu commun.
+- **On garde ce qu'on extrait.** Le monstre **s'effondre** quand 30 % de ses pixels sont creusés : le reste retombe en poussière, perdu. Le loot n'est plus un tirage au sort : il dépend de **ce qu'on a creusé**.
+- **Les outils deviennent les types d'armes** :
+  | Outil | Rythme | Motif | Identité | Golem (proto, ×1) |
+  |---|---|---|---|---|
+  | Pioche | 0,9 s | tunnel de 2 px vers le point visé | atteint le cœur intact | 16 s · 0,35 cristal |
+  | Marteau | 1,4 s | cratère de rayon 6 | abat le plus vite, brise 60 % des pixels rares | 11 s · 0,15 cristal |
+  | Coutelas | 0,45 s | écorche la surface la plus proche | +50 % de commun, atteint rarement le cœur | 19 s · 0,7 minerai |
+- **Éléments** (v3) deviennent des effets de minage : 🔥 le feu consume les strates molles (chair, cuir) en se propageant ; ❄️ le givre fend la pierre (fissures qui détachent des blocs entiers) ; ⚡ la foudre suit les veines brillantes jusqu'au cœur.
+- Le **combat reste** : les monstres frappent le héros pendant qu'il creuse ; un monstre à moitié creusé frappe moins fort (moins de masse). Le temps de boucle reste la ressource : creuser proprement prend du temps.
+
+### Le lore qui va avec
+- **Les monstres sont faits de temps.** Le sable qui fuit du Sablier fêlé sédimente : les créatures des Prés et des Collines sont des **strates de journées passées** qui ont pris forme. Le mineur fou est le seul qui voit qu'on peut les **creuser**.
+- **Des vestiges de tes boucles passées** sont enfouis dans les monstres : ta vieille pioche, une page de ton carnet (« les mulots ont des numéros »), le bouton de ton tablier… Ce qu'une boucle avale, une autre le rend dans la pierre. C'est aussi la **surprise entre boucles** : les vestiges racontent l'histoire, un fragment à la fois, et certains débloquent des souvenirs (lore) au village.
+- **Le Gardien du Sablier** a un cœur de sablier : le creuser jusqu'au centre, c'est récupérer le premier fragment.
+- La future **mine** (feuille de route) devient la suite logique : le même geste, appliqué à la roche sous le village, où dorment les plus vieilles strates.
+
+### Ce que ça change au plan
+- Le **tableau de loot v3** (commun / peu commun / rare) reste la bonne structure : il devient la **composition** des monstres au lieu d'un tirage. Les élites ont un gros cœur rare (5 %) : c'est le « même loot, mais plus de rare » voulu.
+- Les **types d'armes** et les **éléments** sortent de la fin du plan : ce sont les outils et les effets du minage, ils arrivent avec.
+- **Moteur pur et simulation** : les grilles de pixels sont précalculées depuis les PNG par un outil (`tools/sprite_grids.py` → `src/grids.js`), pour que `src/engine.js` reste sans DOM et que `tools/sim.js` puisse faire creuser le bot dans Node.
+- **Équilibrage** : la vie totale des pixels jusqu'à l'effondrement est calée sur les PV actuels des monstres (même durée de combat), cible inchangée (boss entre la 9e et la 13e boucle).
+
+### Découpage proposé
+1. **Grilles + combat-minage dans le jeu** : `src/grids.js`, strates, pioche seule, clic pour viser, butin extrait (remplace le tirage), simu recalée.
+2. **Outils** pioche / marteau / coutelas (forge et équipement non permanents + mémoire par renommée, v3).
+3. **Vestiges et lore** : vestiges enfouis, souvenirs débloqués au village, villageois aux déjà-vu.
+4. **Éléments** comme effets de minage, puis améliorations et hauts faits.
+
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 
 ### Décisions de Steven (2026-11-12)
