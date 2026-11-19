@@ -2,6 +2,10 @@
 
   pip install playwright && playwright install chromium
   python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png
+
+Captures déterministes : horloge de Playwright (le temps n'avance que quand on le demande) et
+Math.random remplacé par un générateur à graine fixe avant le chargement du jeu. Deux lancements
+sur le même code donnent les mêmes images, au pixel près (comparer avec tools/qa/compare_shots.py).
 """
 import asyncio
 import functools
@@ -12,6 +16,11 @@ from playwright.async_api import async_playwright
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / 'screenshots'
+# même générateur congruentiel que tools/sim.js, graine fixe
+SEEDED_RANDOM = """
+(() => { let s = 12345;
+  Math.random = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296; })();
+"""
 
 
 def serve():
@@ -33,20 +42,22 @@ async def main():
         pg = await b.new_page(viewport={'width': 1280, 'height': 900})
         errors = []
         pg.on('pageerror', lambda e: errors.append(str(e)))
-        await pg.goto(f'http://127.0.0.1:{srv.server_port}/index.html')
-        await pg.wait_for_timeout(800)
+        await pg.add_init_script(SEEDED_RANDOM)
+        await pg.clock.install(time=0)
+        await pg.goto(f'http://127.0.0.1:{srv.server_port}/index.html', wait_until='networkidle')
+        await pg.clock.run_for(800)
         # navigateur neuf = pas de sauvegarde : l'intro s'affiche, on la capture puis on la passe
-        await pg.screenshot(path=str(OUT / 'intro.png'))
+        await pg.screenshot(path=str(OUT / 'intro.png'), animations='disabled')
         await pg.click('#intro')
-        await pg.wait_for_timeout(700)
-        await pg.screenshot(path=str(OUT / 'intro2.png'))
+        await pg.clock.run_for(700)
+        await pg.screenshot(path=str(OUT / 'intro2.png'), animations='disabled')
         await pg.click('.in-skip')
-        await pg.wait_for_timeout(300)
-        await pg.screenshot(path=str(OUT / 'map.png'))
+        await pg.clock.run_for(300)
+        await pg.screenshot(path=str(OUT / 'map.png'), animations='disabled')
         await pg.click('#speed button[data-s="2"]')
         await pg.dblclick('.tile[data-id="4,5"]')
-        await pg.wait_for_timeout(2500)
-        await pg.screenshot(path=str(OUT / 'combat.png'))
+        await pg.clock.run_for(2500)
+        await pg.screenshot(path=str(OUT / 'combat.png'), animations='disabled')
         await b.close()
         srv.shutdown()
         print('erreurs JS :', errors or 'aucune')

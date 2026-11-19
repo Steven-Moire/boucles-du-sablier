@@ -4,14 +4,15 @@ Jeu incrémental / idle à boucle temporelle, jouable dans le navigateur. Projet
 **Toujours répondre en français.** Les textes du jeu sont en français.
 
 ## État actuel (v0.3, découpé en modules)
-Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHub Pages.
+Modules ES natifs, aucune dépendance livrée au joueur, aucun build. Déployé tel quel sur GitHub Pages.
 - `index.html` : squelette HTML, charge `src/style.css` et `src/ui/main.js` (`<script type="module">`).
 - `src/data.js` : données (biomes, types de cases, cases, monstres, rangs, compétences, bâtiments, formules de base).
 - `src/engine.js` : moteur **pur** (aucun accès au DOM), importe `data.js`. `tools/sim.js` l'importe directement pour faire jouer un bot dans Node.
 - `src/dig.js` : combat-minage (pur) — strates, veines au hasard, creusage, extraction. `src/grids.js` : grilles de pixels des monstres, **générées** par `tools/sprite_grids.py` (ne pas éditer à la main). Hasards du minage sur `G.mrng`, séparé de `G.rng` (combats déterministes).
 - `src/ui/` : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`… —, sauvegarde, helpers), `map.js`, `scene.js`, `panel.js` (barre du haut + panneau de droite), `modals.js`, `intro.js` (5 écrans au premier lancement), `digview.js` (monstre dessiné pixel par pixel, clic pour viser, éclats), `main.js` (événements, rendu, boucle principale ; point d'entrée).
   Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
-- `package.json` : seulement `"type": "module"` pour Node (pas de dépendances).
+- `package.json` : `"type": "module"` pour Node, scripts de vérification, et `devDependencies` de lint seulement (ESLint + règles SonarQube, versions exactes, jamais importées par `src/`). `eslint.config.js` : bonnes pratiques, règles SonarQube, séparation des couches (le moteur n'a pas les globals navigateur), cycles d'imports interdits.
+- `tools/qa/` : `check-sim.js` (simu comparée octet pour octet aux références de `tools/qa/ref/`), `compare_shots.py` (captures comparées pixel par pixel).
 - **Docs : lire `docs/INDEX.md` d'abord** (résumé de tout + où se trouve chaque sujet), puis seulement la section utile. Design complet et formules : `docs/design.md` (long, lire par section). Direction artistique : `docs/art-direction.md`. Lore (brouillon) : `docs/lore.md`.
 - **Conversations courtes** : une conversation par sujet (gameplay, graphismes, lore…). Un hook prévient quand le contexte devient lourd (150 k tokens, puis tous les 150 k) : proposer alors un plan découpé en conversations dédiées.
 
@@ -21,7 +22,8 @@ Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHu
   **Cible actuelle : boss entre la 8e et la 13e boucle, médiane entre 9 et 12 (~12-20 min en ×1).** Relancer après toute modif de chiffres.
   `node tools/sim.js --outils` : la même partie avec chaque outil (pioche / marteau / coutelas) gardé du début à la fin.
 - Environnement Python (WSL) : `uv venv .venv && uv pip install -p .venv -r requirements-dev.txt && .venv/bin/playwright install chromium` (une fois : `sudo .venv/bin/playwright install-deps chromium`).
-- Vérif visuelle : `.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/`, et liste les erreurs JS.
+- Qualité du code : `npm install` une fois (outils de lint, ~60 Mo dans `node_modules/`, non versionné), puis `npm run lint` et `npm run check` (lint + simu identique aux références). Refactoring : les références ne bougent pas ; changement de gameplay voulu : `node tools/qa/check-sim.js --update` dans le même commit.
+- Vérif visuelle : `.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/`, et liste les erreurs JS. Captures déterministes (horloge Playwright, `Math.random` à graine fixe) ; comparer à des captures d'avant : `.venv/bin/python tools/qa/compare_shots.py <dossier> [--tol 0.05]`.
 - Sprites : prompts et seeds retenues dans `tools/sprites.json`. Forge tourne sous Windows (API sur :7860) → lancer depuis Windows :
   `python tools/sd_generate.py <nom> -n 6` (variantes brutes dans `sd_raw/`), noter la meilleure seed dans `sprites.json`, puis `python tools/sd_generate.py --build` (→ `assets/sprites/`).
   À la main : `python tools/pixelize.py <image SD> assets/sprites/<nom>.png --size 48 --palette docs/palette.hex --bg auto --outline`.

@@ -2,5 +2,18 @@
   "name": "boucles-du-sablier",
   "private": true,
   "type": "module",
-  "description": "Modules ES natifs, aucun build. Le package.json sert seulement a Node (tools/sim.js)."
+  "description": "Modules ES natifs, aucun build, rien n'est livré au joueur depuis node_modules. Les devDependencies servent seulement à vérifier le code (lint) ; Node fait tourner tools/sim.js.",
+  "scripts": {
+    "lint": "eslint . --max-warnings 0",
+    "sim": "node tools/sim.js",
+    "check:sim": "node tools/qa/check-sim.js",
+    "check": "npm run lint && npm run check:sim"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.14.0",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-sonarjs": "4.2.2",
+    "globals": "17.13.0"
+  }
 }

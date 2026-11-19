@@ -34,4 +34,5 @@ Pixel art façon Little Dig, le héros, tailles des sprites, palette Endesga 64,
 ## Ailleurs
 - `CLAUDE.md` : architecture du code, commandes, règles de travail, feuille de route.
 - `tools/sprites.json` : prompts, modèles et seeds de tous les visuels (sprites, fonds, intro).
+- Qualité du code : `npm run lint` (`eslint.config.js`, règles SonarQube, couches) et `npm run check` (+ simu comparée aux références de `tools/qa/ref/`) ; règles détaillées dans `.claude/rules/javascript/` (local), audit complet avec le skill `/js-quality`.
 - `proto/mine-ennemi.html` : prototype du minage avec marteau et coutelas.
