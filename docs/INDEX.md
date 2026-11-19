@@ -8,7 +8,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 - **Équilibrage** : boss entre la 9e et la 13e boucle (`node tools/sim.js`), inchangé depuis la v0.3.
 - **Prochaine étape** : outils (pioche / marteau / coutelas) + forge + équipement non permanent + mémoire du village par la renommée.
 - **Lore décidé** : le mineur est « le Radoteur », vrai nom Anselme Tardif révélé par une scène (voir `lore.md`). Lieux proposés : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret), à confirmer.
-- **Questions ouvertes** : confirmation des lieux, intro (images générées dans `sd_raw/intro_*`, à trier).
+- **Questions ouvertes** : confirmation des lieux, intro (30 images générées dans `sd_raw/intro_*`, à trier). Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md`.
 
 ## docs/design.md — design et formules (long : lire par section)
 | Section (titre à chercher) | Contenu | Statut |

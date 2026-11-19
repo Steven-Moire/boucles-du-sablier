@@ -32,11 +32,7 @@ Mets à jour docs/lore.md et docs/INDEX.md, commit et push. Ne touche pas au cod
 
 ## 2. Graphismes
 
-**État** : sprites v2 du héros et des 7 monstres (Juggernaut XI + LoRA Pixel Art XL), fonds de combat v1. **Intro** : 5 scènes générées dans `sd_raw/intro_*` en deux réglages (`pxl_*` = Juggernaut + LoRA, `v1_turbo_*` = DreamShaper Turbo sans LoRA) ; au 19/11 il manquait encore `v1_turbo` pour `intro_fele` (2) et `intro_reveil` (3). Pour la terminer si besoin :
-```
-python tools/sd_generate.py intro_fele intro_reveil -n 3 --profile v1_turbo
-```
-(les images déjà présentes sont sautées).
+**État** : sprites v2 du héros et des 7 monstres (Juggernaut XI + LoRA Pixel Art XL), fonds de combat v1. **Intro** : 5 scènes générées dans `sd_raw/intro_*`, **génération terminée** (30 images : 3 variantes par scène et par réglage, `pxl_*` = Juggernaut + LoRA, `v1_turbo_*` = DreamShaper Turbo sans LoRA), à trier. Pour d'autres variantes : `python tools/sd_generate.py intro_<scène> -n 3 --seed <nouvelle seed>`.
 
 **Prompt à coller** :
 ```
