@@ -80,5 +80,5 @@ Mélancolique mais drôle. Le mineur est un peu fou à force de revivre la même
 
 ## Questions ouvertes
 - Vestiges, répliques et carnet retenus provisoirement : à revoir une fois en jeu.
-- Le héros se souvient-il un peu, par exemple via le bestiaire présenté comme « son carnet » ?
-- La fin : réparer le Sablier, ou apprendre à vivre avec la boucle ?
+- **Le bestiaire est « son carnet »** (Steven : oui, le héros le garde). Explication proposée, à valider : **c'est le village qui le garde**. Chaque matin, le veilleur (ou la boulangère) le lui rend : « Tiens, tu l'as encore oublié hier. » La mémoire reste dehors, chez les autres, ce qui respecte l'inversion. Le geste évolue avec la renommée, de la méfiance (« c'est à vous, ça ? ») à l'habitude.
+- **Fin provisoire (2026-11-19)** : réparer le Sablier en réunissant ses fragments. « Apprendre à vivre avec la boucle » reste possible plus tard (seconde fin, ou fin secrète à Griselune).

@@ -24,7 +24,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 | `## Backlog` | Renvoi vers la feuille de route | à jour |
 
 ## docs/lore.md — lore (court)
-Le mineur (Radoteur → Anselme Tardif, scène de la boulangère, pioche gravée), l'accroche et **le texte final des 5 écrans de l'intro**, les lieux (confirmés, vérifiés), **5 vestiges, 6 répliques de déjà-vu et le carnet des vestiges** (retenus provisoirement), les points de vigilance pour les noms, pourquoi le village se souvient et pas le héros, le Sablier et ses fragments, le ton (mélancolique mais drôle), questions ouvertes (carnet du héros, fin). Le lore « monstres faits de temps sédimenté » et les vestiges sont dans `design.md` → `## Miner les ennemis` → `### Le lore qui va avec`.
+Le mineur (Radoteur → Anselme Tardif, scène de la boulangère, pioche gravée), l'accroche et **le texte final des 5 écrans de l'intro**, les lieux (confirmés, vérifiés), **5 vestiges, 6 répliques de déjà-vu et le carnet des vestiges** (retenus provisoirement), les points de vigilance pour les noms, pourquoi le village se souvient et pas le héros, le Sablier et ses fragments, le ton (mélancolique mais drôle), le bestiaire comme carnet gardé par le village (à valider), la fin provisoire (réparer le Sablier). Le lore « monstres faits de temps sédimenté » et les vestiges sont dans `design.md` → `## Miner les ennemis` → `### Le lore qui va avec`.
 
 ## docs/art-direction.md — direction artistique (court)
 Pixel art façon Little Dig, le héros, tailles des sprites, palette Endesga 64, pipeline Stable Diffusion (Juggernaut XI + LoRA Pixel Art XL), suivi des assets (seeds dans `tools/sprites.json`).
