@@ -1,5 +1,5 @@
-import {BIOMES, MATS, MONSTERS, RANK, RES, TILES, TILE_MAP, TYPES, UPGRADES, xpNeeded} from '../data.js';
-import {abandon, buy, canExplore, explore, heroAtLevel, heroBase, isExplorable, startLoop, upgradeState} from '../engine.js';
+import {BIOMES, MATS, MONSTERS, RANK, RES, TILES, TILE_MAP, TOOLS, TYPES, UPGRADES, xpNeeded} from '../data.js';
+import {abandon, buy, canExplore, explore, heroAtLevel, heroBase, isExplorable, setTool, startLoop, upgradeState} from '../engine.js';
 import {$, S, anyUpgrade, fmt, loopFresh, pct, saveMeta, setHTML} from './state.js';
 import {segBar} from './scene.js';
 import {openMonster} from './modals.js';
@@ -64,8 +64,17 @@ function tileHTML(){
   const again = doneNow;
   const hint = !reason ? (again ? `<div class="note">${t.type === 'spring' ? 'Échange du temps de boucle contre des PV.' : t.waves ? 'Ré-exploration : pas de renommée, mais XP, butins et chance de trophée 🏆. Coûte du temps de boucle.' : 'Ré-exploration : récolte à nouveau. Coûte du temps de boucle.'}</div>`
     : !m.everCompleted[t.id] ? `<div class="note">Première exploration : +${3*t.lvl} ⭐</div>` : '') : `<div class="note">${reason}</div>`;
+  if (t.waves) h += toolsHTML();
   h += `<button class="btn gold" data-act="explore" ${canExplore(S.G, t.id) ? '' : 'disabled'}>${again ? (t.type === 'spring' ? 'SE REPOSER' : 'RÉ-EXPLORER') : 'EXPLORER'}</button>${hint}</div>`;
   return h;
+}
+// choix de l'outil avant d'entrer sur une case de combat (l'action en cours garde le sien)
+function toolsHTML(){
+  const cur = S.G.meta.tool, a = S.G.run.action;
+  const busy = a && a.tool !== cur ? `<br>Le combat en cours garde ${TOOLS[a.tool].icon} ${TOOLS[a.tool].name.toLowerCase()} : le nouvel outil servira à la case suivante.` : '';
+  return `<div class="divh"><span>OUTIL</span></div><div class="tools">${Object.entries(TOOLS).map(([k, o]) =>
+    `<button data-tool="${k}" class="${k === cur ? 'on' : ''}" title="${o.desc}">${o.icon} ${o.name}</button>`).join('')}</div>
+    <div class="note">${TOOLS[cur].desc}${busy}</div>`;
 }
 function logHTML(){ return `<div class="sec"><h3>JOURNAL</h3><div class="log">${S.G.run.log.map(l => `<div class="${l.cls || ''}">${l.text}</div>`).join('')}</div></div>`; }
 function exploreHTML(){
@@ -120,6 +129,7 @@ $('pane').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || b.disabled) return;
   if (b.dataset.act === 'explore') explore(S.G, S.selected);
   else if (b.dataset.act === 'abandon') abandon(S.G);
+  else if (b.dataset.tool){ setTool(S.G, b.dataset.tool); saveMeta(); }
   else if (b.dataset.act === 'tab-village') S.tab = 'village';
   else if (b.dataset.buy){ if (buy(S.G, b.dataset.buy)){ saveMeta(); if (loopFresh()) startLoop(S.G); } }
   else if (b.dataset.mon) openMonster(b.dataset.mon, +b.dataset.lvl || null);

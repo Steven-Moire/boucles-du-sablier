@@ -1,6 +1,6 @@
 // Combat-minage (moteur pur, sans DOM) : chaque monstre est sa grille de pixels, les dégâts la creusent.
 // Les hasards du minage passent par un générateur à part (G.mrng) : les combats restent identiques à la v0.3.
-import {COMPOSITION, DIG, MONSTERS, STRATA} from './data.js';
+import {COMPOSITION, DEFAULT_TOOL, DIG, MONSTERS, STRATA, TOOLS} from './data.js';
 import {GRIDS} from './grids.js';
 
 const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
@@ -64,33 +64,62 @@ const exposed = (d, i) => {
   return N4.some(([dx, dy]) => { const nx = x + dx, ny = y + dy; return nx < 0 || ny < 0 || nx >= d.w || ny >= d.h || !d.cls[ny * d.w + nx]; });
 };
 
-// Ordre de creusage pour la pioche : tunnel de ~2 px depuis la surface la plus proche jusqu'à la cible,
-// puis cratère qui s'élargit autour de la cible.
-export function aimDig(d, target){
-  const solid = solidOf(d);
-  if (!solid.length) return;
-  const pos = i => ({x:i % d.w, y:Math.floor(i / d.w)});
-  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
-  const entry = pos(solid.filter(i => exposed(d, i)).reduce((b, i) => dist(pos(i), target) < dist(pos(b), target) ? i : b));
+const pos = (d, i) => ({x:i % d.w, y:Math.floor(i / d.w)});
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+
+// Pioche : tunnel de ~2 px depuis la surface la plus proche jusqu'à la cible, puis cratère qui s'élargit autour de la cible.
+function orderPioche(d, solid, entry, target){
   const vx = target.x - entry.x, vy = target.y - entry.y, L2 = vx * vx + vy * vy || 1;
   const tunnel = [], rest = [];
   for (const i of solid){
-    const p = pos(i), t = Math.max(0, Math.min(1, ((p.x - entry.x) * vx + (p.y - entry.y) * vy) / L2));
+    const p = pos(d, i), t = Math.max(0, Math.min(1, ((p.x - entry.x) * vx + (p.y - entry.y) * vy) / L2));
     const off = Math.hypot(p.x - entry.x - t * vx, p.y - entry.y - t * vy);
     if (off <= 1.05) tunnel.push({i, k:t}); else rest.push({i, k:dist(p, target)});
   }
   tunnel.sort((a, b) => a.k - b.k); rest.sort((a, b) => a.k - b.k);
-  d.order = tunnel.concat(rest).map(o => o.i);
+  return tunnel.concat(rest).map(o => o.i);
+}
+
+// Profondeur de chaque pixel solide : distance (4-voisins) au vide le plus proche, 0 = pixel exposé.
+function layers(d, solid){
+  const L = new Array(d.cls.length).fill(-1), queue = solid.filter(i => exposed(d, i));
+  queue.forEach(i => { L[i] = 0; });
+  for (const i of queue){                          // parcours en largeur : for...of voit les ajouts en cours de route
+    const x = i % d.w, y = (i - x) / d.w;
+    for (const [dx, dy] of N4){
+      const nx = x + dx, ny = y + dy, j = ny * d.w + nx;
+      if (nx >= 0 && ny >= 0 && nx < d.w && ny < d.h && d.cls[j] && L[j] < 0){ L[j] = L[i] + 1; queue.push(j); }
+    }
+  }
+  return L;
+}
+
+// Marteau : cratère rond autour du point d'impact en surface (sans viser en profondeur).
+// Coutelas : écorchure large et peu profonde (une couche de profondeur « coûte » 4 px de distance).
+const SKIN_DEPTH = 4;
+function orderByKey(d, solid, key){
+  return solid.map(i => ({i, k:key(i)})).sort((a, b) => a.k - b.k).map(o => o.i);
+}
+
+// Ordre de creusage selon l'outil de la grille (d.tool), à partir de la surface la plus proche du point visé.
+export function aimDig(d, target){
+  const solid = solidOf(d);
+  if (!solid.length) return;
+  const entry = pos(d, solid.filter(i => exposed(d, i)).reduce((b, i) => dist(pos(d, i), target) < dist(pos(d, b), target) ? i : b));
+  if (d.tool === 'marteau') d.order = orderByKey(d, solid, i => dist(pos(d, i), entry));
+  else if (d.tool === 'coutelas'){ const L = layers(d, solid); d.order = orderByKey(d, solid, i => dist(pos(d, i), entry) + SKIN_DEPTH * L[i]); }
+  else d.order = orderPioche(d, solid, entry, target);
   d.pos = 0;
   d.target = target;
 }
 
 // Grille d'un monstre qui apparaît : strates de base + veine au hasard + cible au hasard.
-export function makeDig(e, r){
+// tool : outil du héros pour cette case (motif de creusage, cœur brisé, écorchure).
+export function makeDig(e, r, tool = DEFAULT_TOOL){
   const b = baseStrata(e.id);
   if (!b) return null;
   const comp = COMPOSITION[e.id];
-  const d = {w:b.w, h:b.h, cls:b.cls.slice(), hp:null, px:{}, budget:0, k:0, order:[], pos:0, target:null};
+  const d = {w:b.w, h:b.h, cls:b.cls.slice(), hp:null, px:{}, budget:0, k:0, order:[], pos:0, target:null, tool};
   if (comp.veine && !comp.veine.sprite) carveVein(d, Math.round(comp.veine.frac * b.count), r);
   d.hp = d.cls.map(c => c ? STRATA[c].hp : 0);
   const total = d.hp.reduce((s, h) => s + h, 0);
@@ -99,9 +128,10 @@ export function makeDig(e, r){
   return d;
 }
 
-// Creuse avec les dégâts d'un coup ; renvoie les index des pixels retirés (pour l'UI).
-export function dig(d, dmg){
-  const out = [];
+// Creuse avec les dégâts d'un coup ; renvoie les pixels retirés (idx) et ceux brisés par le marteau (broken), pour l'UI.
+// r (G.mrng) n'est tiré que si l'outil brise le cœur : la pioche ne consomme aucun hasard ici.
+export function dig(d, dmg, r){
+  const out = [], broken = [], tool = TOOLS[d.tool] || TOOLS[DEFAULT_TOOL];
   d.budget += dmg * d.k;
   while (d.budget > 1e-9 && d.pos < d.order.length){
     const i = d.order[d.pos], c = d.cls[i];
@@ -110,10 +140,12 @@ export function dig(d, dmg){
     d.hp[i] -= use; d.budget -= use;
     if (d.hp[i] > 1e-9) break;
     d.cls[i] = null; d.pos++;
-    if (c !== 'croute') d.px[c] = (d.px[c] || 0) + 1;
     out.push(i);
+    if (c === 'croute') continue;
+    if (c === 'rare' && tool.shatter && r() < tool.shatter){ broken.push(i); continue; }
+    d.px[c] = (d.px[c] || 0) + (c === 'commun' ? tool.skin : 1);
   }
-  return out;
+  return {idx:out, broken};
 }
 
 // Matériaux extraits à la mort : pixels / rendement, la fraction restante devient une chance.

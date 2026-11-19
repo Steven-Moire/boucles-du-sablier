@@ -66,7 +66,8 @@ Stats au niveau L : `PV = (12 + 8(L−1)) × mult`, `puissance = (3 + 1,6(L−1)
 | Gardien du Sablier (boss) | Collines | Fragment de sablier | 100 % | +15 s de boucle |
 
 ## Équilibrage (bot, `node tools/sim.js`, 10 parties)
-Le boss tombe entre la 8e et la 13e boucle, soit environ 12 à 20 min de jeu en ×1. Cible à conserver : 9 à 13 boucles.
+Le boss tombe entre la 8e et la 13e boucle, soit environ 12 à 20 min de jeu en ×1. **Cible (révisée le 2026-11-19) : boss entre la 8e et la 13e boucle, médiane entre 9 et 12.**
+Pourquoi : la série `9 13 10 12 9 12 8 9 12 9` est identique depuis le prototype v0.3 (vérifié sur a625c8a → 6f6844a → 3fab3e6 → 69b808d → main) ; le 8 vient d'une graine chanceuse, ce n'est pas une régression. Le remonter par les chiffres pousserait la graine à 13 vers 14 : on élargit la cible plutôt que de déplacer l'écart. À recaler après la mémoire du village (étape 2c), qui changera la courbe de progression.
 
 ## Architecture du code (étape 1 de la feuille de route, faite)
 Le jeu est découpé en modules ES natifs, sans build : `src/data.js` (données), `src/engine.js` (moteur pur, testable dans Node), `src/ui/*.js` (rendu et interactions). Le découpage est mécanique : aucune règle ni aucun chiffre n'a changé.
@@ -146,8 +147,31 @@ C'est l'ordre de grandeur visé par la v3 (communs abondants, rares rythmés par
 
 #### Pour plus tard
 - Améliorations de **visée** : lampe de prospection (révèle le cœur), priorité automatique (veine / cœur / rien), ou au contraire « laisser le hasard ».
-- Outils marteau et coutelas (le prototype `proto/mine-ennemi.html` les a déjà).
+- ~~Outils marteau et coutelas~~ : faits, voir l'étape 2a ci-dessous.
 - Sprites plus grands en combat (×3) si le minage manque de lisibilité.
+
+### Étape 2a faite : marteau et coutelas (2026-11-19)
+Règles en place (`TOOLS` dans `src/data.js`) : on **choisit l'outil avant d'entrer sur une case de combat** (panneau de droite, sous les ennemis). L'action en cours garde l'outil avec lequel elle a commencé ; le choix est mémorisé (`meta.tool`). Combat repris des « Types d'armes » de la v2, motif de creusage repris du prototype :
+| Outil | Attaque toutes les | Dégâts | Bonus | Motif de creusage | Effet sur le butin |
+|---|---|---|---|---|---|
+| ⛏️ Pioche | 0,9 s | ×1 | — | tunnel de ~2 px jusqu'au point visé, puis cratère | atteint le cœur intact |
+| 🔨 Marteau | 1,4 s | ×1,5 | ignore 2 d'armure | cratère rond autour de l'impact en surface | **60 % des pixels de cœur se brisent** (perdus, éclats blancs) |
+| 🔪 Coutelas | 0,6 s | ×0,7 | +5 % de critique | écorchure large et peu profonde (1 couche de profondeur = 4 px de distance) | **+50 % de matériau commun**, n'atteint presque jamais la profondeur ni le cœur |
+
+Les multiplicateurs s'appliquent aussi aux compétences (Coup puissant, Tourbillon). La pioche vaut ×1 partout et ne tire aucun hasard de plus : **la simulation par défaut est identique octet pour octet**. La casse du marteau est tirée sur `G.mrng`.
+
+#### Simulation (`node tools/sim.js --outils` : le bot garde le même outil toute la partie)
+| Outil | Boss à la boucle | Min ×1 | Matériaux au boss (médiane) |
+|---|---|---|---|
+| ⛏️ Pioche | 9 13 10 12 9 12 8 9 12 9 (méd. 9,5) | 12-20 | 🟫 208 · 🐺 96 · 🧱 29 · 🦴 118 · 🔹 22 · 🦷 11 · 🐾 6 · 💎 1 · 🔥 26 · ❄️ 31 · ⚡ 48 · ⏳ 1 |
+| 🔨 Marteau | 8 10 9 12 9 9 9 9 8 8 (méd. 9) | 11-18 | 🟫 222 · 🐺 101 · 🧱 31 · 🦴 96 · 🔹 16 · 🦷 3 · 🐾 2 · 💎 0 · 🔥 22 · ❄️ 27 · ⚡ 32 · ⏳ 1 |
+| 🔪 Coutelas | 10 12 12 9 8 11 11 10 10 11 (méd. 10,5) | 13-19 | 🟫 333 · 🐺 150 · 🧱 67 · 🦴 1 · 🔹 3 · 🦷 0 · 🐾 0 · 💎 0 · 🔥 19 · ❄️ 19 · ⚡ 1 · ⏳ 0 |
+
+Lecture : le marteau abat plus vite (surtout golems, ours, boss grâce à l'armure ignorée) mais ruine les rares ; le coutelas est le « farm » de communs ; la pioche reste l'outil des rares et des veines. Les trois restent dans la cible. Le choix prendra tout son sens avec la forge (2b), quand les rares et les essences auront un usage.
+
+#### Pour plus tard
+- Sprite du héros selon l'outil (il tient toujours une pioche).
+- Le bot ne change pas d'outil selon la case : un bot « malin » (marteau sur les élites, coutelas en farm) mesurerait l'écart de maîtrise.
 
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 
@@ -221,7 +245,7 @@ Chaque haut fait donne de la renommée une fois (donc de la mémoire), parfois u
 | Briseur de sablier | vaincre le Gardien | +50 ⭐ (en plus de l'actuel) |
 
 ### Inchangé depuis la v2
-Types d'armes (rapide / équilibrée / lourde), liste des objets, amélioration +1 à +5 (niveau max = niveau du bâtiment Forge) : les coûts en matériaux seront recalés sur le nouveau loot. Cible de simulation inchangée : boss entre la 9e et la 13e boucle.
+Types d'armes (rapide / équilibrée / lourde), liste des objets, amélioration +1 à +5 (niveau max = niveau du bâtiment Forge) : les coûts en matériaux seront recalés sur le nouveau loot. Cible de simulation : boss entre la 8e et la 13e boucle, médiane 9-12 (révisée le 2026-11-19).
 
 ### Sauvegarde
 Champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.mats = {}`, `meta.items = {}` (objets permanents, avec `lvl` et `elem`), `meta.equip`, `bestiary[id].kills = 0`, `meta.feats = {}`. Les objets non encore mémorisés vivent dans `run` (perdus en fin de boucle).
@@ -328,7 +352,7 @@ Un élément s'**infuse** dans une arme à la forge (un seul à la fois, rempla�
 Avec l'option 2, un seuil d'élite au-delà de 2 repousse les armes de l'Ours après le boss. Elle demande un compteur `bestiary[id].kills` (nouveau champ, défaut 0).
 
 ### Équilibrage
-- Cible inchangée : **boss entre la 9e et la 13e boucle** dans `node tools/sim.js`. Le bot forgera, améliorera et infusera selon une règle simple : l'arme la plus forte contre la zone visée, puis les améliorations les moins chères.
+- Cible : **boss entre la 8e et la 13e boucle, médiane 9-12** dans `node tools/sim.js`. Le bot forgera, améliorera et infusera selon une règle simple : l'arme la plus forte contre la zone visée, puis les améliorations les moins chères.
 - Leviers dans l'ordre : chances de drop, puis coûts d'amélioration, puis bonus des objets. Les bâtiments ne bougent pas.
 
 ### Sauvegarde

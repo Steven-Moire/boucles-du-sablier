@@ -18,7 +18,8 @@ Modules ES natifs, aucune dépendance, aucun build. Déployé tel quel sur GitHu
 ## Commandes
 - Jouer en local : `python -m http.server` puis http://localhost:8000 (les modules ES ne se chargent **pas** en ouvrant `index.html` en `file://`).
 - Équilibrage : `node tools/sim.js` → affiche la trace d'une partie, la boucle où le boss tombe sur 10 graines, puis les matériaux extraits au boss (médiane).
-  **Cible actuelle : boss entre la 9e et la 13e boucle (~15-20 min en ×1).** Relancer après toute modif de chiffres.
+  **Cible actuelle : boss entre la 8e et la 13e boucle, médiane entre 9 et 12 (~12-20 min en ×1).** Relancer après toute modif de chiffres.
+  `node tools/sim.js --outils` : la même partie avec chaque outil (pioche / marteau / coutelas) gardé du début à la fin.
 - Environnement Python (WSL) : `uv venv .venv && uv pip install -p .venv -r requirements-dev.txt && .venv/bin/playwright install chromium` (une fois : `sudo .venv/bin/playwright install-deps chromium`).
 - Vérif visuelle : `.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/`, et liste les erreurs JS.
 - Sprites : prompts et seeds retenues dans `tools/sprites.json`. Forge tourne sous Windows (API sur :7860) → lancer depuis Windows :

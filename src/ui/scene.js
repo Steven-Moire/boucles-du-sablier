@@ -1,5 +1,5 @@
 import {BIOMES, SKILLS, TILE_MAP} from '../data.js';
-import {buildSegments, retreat, skillUnlocked} from '../engine.js';
+import {actionTool, buildSegments, heroEvery, retreat, skillUnlocked} from '../engine.js';
 import {$, S, SCENE_BG, fmt, sceneBgOk, setHTML} from './state.js';
 import {segFill} from './map.js';
 import {consumeEvents, render} from './main.js';
@@ -61,9 +61,10 @@ export function renderScene(){
   $('heroLv').textContent = h.lvl;
   $('heroHpBar').style.width = (h.hp / h.maxHp * 100) + '%';
   $('heroHpTxt').textContent = `${fmt(h.hp)} / ${h.maxHp}`;
-  $('heroSwing').style.width = (a && a.phase === 'fight' ? Math.min(1, a.heroT / h.speed) * 100 : 0) + '%';
+  const every = heroEvery(S.G), tool = actionTool(S.G);          // cadence de l'outil de la case en cours
+  $('heroSwing').style.width = (a && a.phase === 'fight' ? Math.min(1, a.heroT / every) * 100 : 0) + '%';
   // compétences
-  const sk = [`<div class="skill" title="Attaque — toutes les ${h.speed} s"><span>⚔️</span><div class="cd" style="--p:${a && a.phase === 'fight' ? 1 - Math.min(1, a.heroT / h.speed) : 0}"></div></div>`];
+  const sk = [`<div class="skill" title="${tool.name} — frappe toutes les ${every.toFixed(2)} s"><span>${tool.icon}</span><div class="cd" style="--p:${a && a.phase === 'fight' ? 1 - Math.min(1, a.heroT / every) : 0}"></div></div>`];
   for (const k in SKILLS){
     const s = SKILLS[k];
     if (!skillUnlocked(S.G.meta, k)){ sk.push(`<div class="skill lock" title="${s.name} — débloqué par : ${s.unlock.txt}">🔒</div>`); continue; }

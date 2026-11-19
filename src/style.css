@@ -202,6 +202,12 @@ button{font-family:inherit;cursor:pointer}
 .unit .chip-px{position:absolute;width:4px;height:4px;pointer-events:none;animation:chipfall .7s ease-in forwards;z-index:2}
 @keyframes chipfall{0%{transform:translate(0,0)}30%{transform:translate(calc(var(--dx) * .5),-14px)}100%{transform:translate(var(--dx),40px);opacity:0}}
 .float.f-loot{color:#9fe3ff;font-size:15px}
+.unit .chip-px.broke{width:6px;height:6px;box-shadow:0 0 4px #fff}
+/* choix de l'outil (panneau de droite) */
+.tools{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tools button{flex:1;background:var(--panel);color:var(--muted);border:0;padding:7px 4px;font-weight:700;font-size:12px}
+.tools button+button{border-left:1px solid var(--line)}
+.tools button.on{background:var(--gold);color:#1a1a1a}
 .mats{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:12px;color:var(--muted)}
 .mats b{color:var(--text)}
 /* intro (premier lancement) */

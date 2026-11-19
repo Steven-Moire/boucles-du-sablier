@@ -3,10 +3,11 @@ import * as engine from '../src/engine.js';
 import * as data from '../src/data.js';
 const E = {...data, ...engine};
 
-function runBot(seed, maxLoops = 60, verbose = false){
+function runBot(seed, maxLoops = 60, verbose = false, tool = null){
   let s = seed; const rng = () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296;
   let ms = seed ^ 0x5bd1e995; const mrng = () => (ms = (ms * 1664525 + 1013904223) % 4294967296) / 4294967296;   // minage
   const G = E.createGame(null, rng, mrng);
+  if (tool) E.setTool(G, tool);                                     // --outils : le bot garde cet outil toute la partie
   let totalTime = 0, bossLoop = null;
   for (let loop = 1; loop <= maxLoops; loop++){
     // boucle : explorer la case accessible de plus bas niveau (récolte en dernier choix)
@@ -36,8 +37,19 @@ function runBot(seed, maxLoops = 60, verbose = false){
   }
   return {bossLoop, totalTime: Math.round(totalTime), mats:{...G.meta.mats}};
 }
-runBot(42, 60, true);
-const res = [1,2,3,4,5,6,7,8,9,10].map(s => runBot(s * 7919));
-console.log('\nBoss vaincu à la boucle :', res.map(r => r.bossLoop).join(' '), '| temps de jeu ×1 (min) :', res.map(r => (r.totalTime/60).toFixed(0)).join(' '));
 const med = a => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
-console.log('Matériaux extraits au boss (médiane) :', Object.keys(E.MATS).map(k => `${E.MATS[k].icon} ${med(res.map(r => r.mats[k] || 0))}`).join('  '));
+const SEEDS = [1,2,3,4,5,6,7,8,9,10].map(s => s * 7919);
+const matsLine = res => Object.keys(E.MATS).map(k => `${E.MATS[k].icon} ${med(res.map(r => r.mats[k] || 0))}`).join('  ');
+if (process.argv.includes('--outils')){
+  // node tools/sim.js --outils : la même partie avec chaque outil gardé du début à la fin
+  for (const k in E.TOOLS){
+    const res = SEEDS.map(s => runBot(s, 60, false, k));
+    console.log(`\n${E.TOOLS[k].icon} ${E.TOOLS[k].name} — boss à la boucle : ${res.map(r => r.bossLoop).join(' ')} | min ×1 : ${res.map(r => (r.totalTime/60).toFixed(0)).join(' ')}`);
+    console.log('   matériaux au boss (médiane) :', matsLine(res));
+  }
+} else {
+  runBot(42, 60, true);
+  const res = SEEDS.map(s => runBot(s));
+  console.log('\nBoss vaincu à la boucle :', res.map(r => r.bossLoop).join(' '), '| temps de jeu ×1 (min) :', res.map(r => (r.totalTime/60).toFixed(0)).join(' '));
+  console.log('Matériaux extraits au boss (médiane) :', matsLine(res));
+}

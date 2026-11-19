@@ -7,7 +7,7 @@ La conversation du 12 au 19/11/2026 a dépassé 600 k tokens de contexte. La sui
 Rappels valables partout :
 - Stable Diffusion (Forge) doit tourner pour toute génération d'image : API sur http://127.0.0.1:7860.
 - Jouer en local : `python -m http.server` puis http://localhost:8000.
-- Vérifier : `node tools/sim.js` (boss entre la 9e et la 13e boucle) et `.venv/bin/python tools/screenshot.py` depuis WSL (aucune erreur JS).
+- Vérifier : `node tools/sim.js` (boss entre la 8e et la 13e boucle, médiane 9-12) et `.venv/bin/python tools/screenshot.py` depuis WSL (aucune erreur JS).
 - Le hook de budget prévient dès 150 k tokens : à ce moment-là, clore la conversation et en ouvrir une autre.
 
 ---

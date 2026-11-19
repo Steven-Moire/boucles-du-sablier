@@ -1,5 +1,5 @@
 // Moteur pur : aucun accès au DOM. rng injectable, émet des G.events que l'UI consomme.
-import {BASE_LOOP_TIME, HERO_BASE, HERO_PER_LVL, MATS, MONSTERS, RANK, RES, REST_RATE, SKILLS, TILE_MAP, UPGRADES, VILLAGE, neighbors, xpNeeded} from './data.js';
+import {BASE_LOOP_TIME, DEFAULT_TOOL, HERO_BASE, HERO_PER_LVL, MATS, MONSTERS, RANK, RES, REST_RATE, SKILLS, TILE_MAP, TOOLS, UPGRADES, VILLAGE, neighbors, xpNeeded} from './data.js';
 import {aimDig, dig, extract, makeDig} from './dig.js';
 
 export function monsterStats(id, L){
@@ -12,7 +12,7 @@ export function monsterStats(id, L){
 
 // ======================= MOTEUR =======================
 export function newMeta(){
-  const m = {v:1, loop:1, renown:0, gold:0, wood:0, ore:0, upgrades:{}, discovered:{}, everCompleted:{}, bestiary:{}, chests:{}, trophies:{}, mats:{}, bossKilled:false};
+  const m = {v:1, loop:1, renown:0, gold:0, wood:0, ore:0, upgrades:{}, discovered:{}, everCompleted:{}, bestiary:{}, chests:{}, trophies:{}, mats:{}, bossKilled:false, tool:DEFAULT_TOOL};
   m.discovered[VILLAGE] = true; neighbors(VILLAGE).forEach(n => m.discovered[n] = true);
   return m;
 }
@@ -30,6 +30,7 @@ export function skillUnlocked(meta, k){ const u = SKILLS[k].unlock; return !u ||
 // mrng : hasards du minage (veines, cible, extraction), séparés de rng pour que les combats ne changent pas
 export function createGame(meta, rng, mrng){
   meta = meta || newMeta(); meta.trophies = meta.trophies || {}; meta.mats = meta.mats || {};
+  if (!TOOLS[meta.tool]) meta.tool = DEFAULT_TOOL;           // sauvegardes d'avant les outils
   const G = {meta, rng: rng || Math.random, mrng: mrng || Math.random, run:null, events:[]};
   startLoop(G);
   return G;
@@ -71,7 +72,7 @@ export function buildSegments(t){
 export function explore(G, id){
   if (!canExplore(G, id)) return false;
   const t = TILE_MAP[id], again = G.run.completed.has(id);
-  G.run.action = {id, again, segs:buildSegments(t), seg:-1, phase:'walk', t:0, dur:.5, enemies:null, prevAt:G.run.heroAt};
+  G.run.action = {id, again, segs:buildSegments(t), seg:-1, phase:'walk', t:0, dur:.5, enemies:null, prevAt:G.run.heroAt, tool:G.meta.tool};
   G.run.heroAt = id;
   log(G, again ? `Retour à ${t.name} (farm).` : `En route vers ${t.name}.`);
   G.events.push({type:'explore', id});
@@ -120,7 +121,7 @@ export function nextSegment(G){
   if (a.seg >= a.segs.length){ completeTile(G); return; }
   const s = a.segs[a.seg];
   if (s.kind === 'fight'){
-    a.enemies = s.mons.map(id => { const e = monsterStats(id, t.lvl); e.hp = e.maxHp; e.t = -G.rng() * .4; e.dig = makeDig(e, G.mrng); return e; });
+    a.enemies = s.mons.map(id => { const e = monsterStats(id, t.lvl); e.hp = e.maxHp; e.t = -G.rng() * .4; e.dig = makeDig(e, G.mrng, a.tool); return e; });
     a.heroT = 0; a.phase = 'fight';
     for (const e of a.enemies){
       const b = G.meta.bestiary[e.id] || (G.meta.bestiary[e.id] = {seen:false, killed:false});
@@ -132,14 +133,26 @@ export function nextSegment(G){
     if (s.kind === 'rest') log(G, 'Le héros se repose à la source…', 'v');
   }
 }
+// outil du héros pendant l'action en cours (pioche par défaut, ×1 partout : combats identiques à la v0.3)
+export const actionTool = G => TOOLS[(G.run.action && G.run.action.tool) || DEFAULT_TOOL];
+// temps entre deux attaques de base du héros avec son outil
+export const heroEvery = G => G.run.hero.speed * actionTool(G).every;
 export function strike(G, src, att, tgtKey, def, mult, sure){
+  const tool = src === 'hero' ? actionTool(G) : null, skill = mult !== 1;
+  if (tool) mult *= tool.dmg;
   const hitChance = Math.max(.1, Math.min(.98, .85 + att.acc - def.dodge));
   if (!sure && G.rng() >= hitChance){ G.events.push({type:'miss', src, tgt:tgtKey}); return; }
-  const crit = G.rng() < att.crit;
-  const dmg = Math.max(1, Math.round((att.pow * mult - def.arm) * (crit ? 1.5 : 1)));
-  def.hp -= dmg; G.events.push({type:'hit', src, tgt:tgtKey, dmg, crit, skill:mult !== 1});
-  if (def.dig){ const idx = dig(def.dig, dmg); if (idx.length) G.events.push({type:'dig', tgt:tgtKey, idx, id:def.id, w:def.dig.w}); }
+  const crit = G.rng() < (tool ? att.crit + tool.crit : att.crit);
+  const arm = tool && tool.pierce ? Math.max(0, def.arm - tool.pierce) : def.arm;
+  const dmg = Math.max(1, Math.round((att.pow * mult - arm) * (crit ? 1.5 : 1)));
+  def.hp -= dmg; G.events.push({type:'hit', src, tgt:tgtKey, dmg, crit, skill});
+  if (def.dig){
+    const {idx, broken} = dig(def.dig, dmg, G.mrng);
+    if (idx.length) G.events.push({type:'dig', tgt:tgtKey, idx, broken, id:def.id, w:def.dig.w});
+  }
 }
+// choix de l'outil pour les prochaines cases (l'action en cours garde le sien)
+export function setTool(G, key){ if (TOOLS[key]) G.meta.tool = key; }
 // le joueur vise un point (coordonnées dans la grille du sprite) sur l'ennemi i
 export function aimAt(G, i, x, y){
   const a = G.run.action, e = a && a.phase === 'fight' && a.enemies && a.enemies[i];
@@ -150,8 +163,9 @@ export function fightStep(G, dt){
   const r = G.run, a = r.action, h = r.hero;
   // attaque de base
   a.heroT += dt;
-  while (a.heroT >= h.speed){
-    a.heroT -= h.speed; const i = firstAlive(a); if (i < 0) break;
+  const every = heroEvery(G);
+  while (a.heroT >= every){
+    a.heroT -= every; const i = firstAlive(a); if (i < 0) break;
     strike(G, 'hero', h, 'e' + i, a.enemies[i], 1, false);
     if (resolveDeaths(G)) return;
   }

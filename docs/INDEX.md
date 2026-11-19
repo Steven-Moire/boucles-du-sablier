@@ -4,9 +4,10 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 
 ## État du jeu en une minute (2026-11-19)
 - **v0.3 + combat-minage** : carte à cases (Prés de l'Aube, Collines grises), boucle de 75 s, village (Entraîneur, Forge, Horloge), bestiaire, trophées.
-- **Combat-minage (fait)** : les monstres sont des grilles de pixels qu'on creuse ; on garde ce qu'on extrait (cuir, os, défense, fourrure, griffe, pierre, éclat, cristal, essences 🔥 ❄️ ⚡, sable). Pioche seule pour l'instant, clic pour viser.
-- **Équilibrage** : boss entre la 9e et la 13e boucle (`node tools/sim.js`), inchangé depuis la v0.3.
-- **Prochaine étape** : outils (pioche / marteau / coutelas) + forge + équipement non permanent + mémoire du village par la renommée.
+- **Combat-minage (fait)** : les monstres sont des grilles de pixels qu'on creuse ; on garde ce qu'on extrait (cuir, os, défense, fourrure, griffe, pierre, éclat, cristal, essences 🔥 ❄️ ⚡, sable). Clic pour viser.
+- **Outils (étape 2a, faite)** : ⛏️ pioche (atteint le cœur), 🔨 marteau (lourd, ignore 2 d'armure, brise 60 % du cœur), 🔪 coutelas (rapide, +50 % de commun), choisis avant chaque case de combat (`meta.tool`).
+- **Équilibrage** : cible révisée le 2026-11-19 = boss entre la 8e et la 13e boucle, médiane 9-12 (`node tools/sim.js` ; `--outils` pour comparer les outils). Le 8 existait depuis la v0.3.
+- **Prochaine étape** : forge + équipement non permanent (2b), puis mémoire du village par la renommée (2c).
 - **Lore décidé** : le mineur est « le Radoteur », vrai nom Anselme Tardif révélé par une scène (voir `lore.md`). Lieux confirmés : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret), aucune vraie commune ni lieu-dit de ces noms trouvés. **Texte final des 5 écrans de l'intro** écrit dans `lore.md`.
 - **Retenus provisoirement** (à ajuster en testant) : 5 vestiges dans les monstres, 6 répliques de déjà-vu par rang de renommée, carnet des vestiges (`lore.md`).
 - **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/ui/intro.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ». **Héros v3** avec une vraie pioche, **icônes de cases 32×32** sur la carte (repli emoji).
@@ -17,9 +18,9 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 |---|---|---|
 | `## Pitch`, `## Décisions prises` | Le concept, les choix fondateurs | à jour |
 | `## Boucle de jeu (v0.3)`, `## Compétences actives`, `## Village`, `## Monstres et trophées` | Règles et formules de la v0.3 | à jour |
-| `## Équilibrage` | Cible de la simu | à jour |
+| `## Équilibrage` | Cible de la simu (révisée : 8e-13e, médiane 9-12) et pourquoi | à jour |
 | `## Architecture du code` | Découpage en modules | à jour |
-| `## Miner les ennemis` | Pivot, mécanique, lore, **étape 1 faite** : règles, **tableau de composition**, résultats de simu, « pour plus tard » | **référence actuelle** |
+| `## Miner les ennemis` | Pivot, mécanique, lore, **étape 1 faite** : règles, **tableau de composition**, résultats de simu ; **étape 2a faite** (`### Étape 2a faite : marteau et coutelas`) : tableau des outils, simu par outil | **référence actuelle** |
 | `## Équipement, forge et mémoire du village — PROPOSITION v3` | Loot unifié, mémoire par renommée (Hameau → Cité), réinfusion −15 %, hauts faits, découpage | validé, à coder (loot remplacé par la composition) |
 | `## Équipement et forge — PROPOSITION v2` | Tableau de loot mesuré, types d'armes, éléments (faiblesses), objets, améliorations +1 à +5 | **en partie dépassé** (garder : types d'armes, faiblesses, objets, améliorations) |
 | `## Backlog` | Renvoi vers la feuille de route | à jour |

@@ -98,6 +98,18 @@ export const STRATA = {
 // effondrement : part de la vie totale des pixels à creuser pour abattre le monstre (calée sur ses PV) ;
 // peu : part des pixels profonds en strate « profondeur » ; core : part en cœur selon le rang (le rare vient surtout des élites)
 export const DIG = {collapse:.3, peu:.1, core:{normal:.005, elite:.08, boss:.1}};
+// outils (= types d'armes, v2) : every = multiplicateur du temps entre deux attaques du héros (0,9 s de base),
+// dmg = multiplicateur de dégâts, crit = critique en plus, pierce = armure ignorée ;
+// shatter = part des pixels de cœur brisés (perdus), skin = pixels de surface comptés en plus
+export const TOOLS = {
+  pioche:  {name:'Pioche', icon:'⛏️', every:1, dmg:1, crit:0, pierce:0, shatter:0, skin:1,
+    desc:'Équilibrée. Creuse un tunnel jusqu\'au point visé : atteint le cœur intact.'},
+  marteau: {name:'Marteau', icon:'🔨', every:14/9, dmg:1.5, crit:0, pierce:2, shatter:.6, skin:1,
+    desc:'Lourd : frappe toutes les 1,4 s pour ×1,5, ignore 2 d\'armure. Cratère à l\'impact : 60 % du cœur se brise.'},
+  coutelas:{name:'Coutelas', icon:'🔪', every:2/3, dmg:.7, crit:.05, pierce:0, shatter:0, skin:1.5,
+    desc:'Rapide : frappe toutes les 0,6 s pour ×0,7, +5 % de critique. Écorche la surface : +50 % de matériau commun.'},
+};
+export const DEFAULT_TOOL = 'pioche';
 // composition : matériau de chaque strate ; veine.sprite = les veines brillantes du sprite,
 // sinon veine.frac = part des pixels en veine, tracée au hasard à chaque apparition
 export const COMPOSITION = {

@@ -63,15 +63,17 @@ export function onDigClick(ev){
   aimAt(S.G, +cv.dataset.e, (ev.clientX - r.left) / r.width * g.w, (ev.clientY - r.top) / r.height * g.h);
 }
 
-// Éclats : quelques pixels retirés jaillissent du monstre avec leur couleur
-export function digParticles(unit, id, w, idx){
+// Éclats : quelques pixels retirés jaillissent du monstre avec leur couleur ; ceux que le marteau a brisés, en blanc
+export function digParticles(unit, id, w, idx, broken = []){
   const cv = unit && unit.querySelector('canvas.dig'), src = sprites[id];
   if (!cv || !src) return;
-  const ox = cv.offsetLeft, oy = cv.offsetTop, pick = idx.length > 10 ? idx.filter((_, k) => k % Math.ceil(idx.length / 10) === 0) : idx;
+  const shattered = new Set(broken);
+  const ox = cv.offsetLeft, oy = cv.offsetTop, pick = idx.length > 10 ? idx.filter((i, k) => k % Math.ceil(idx.length / 10) === 0 || shattered.has(i)) : idx;
   for (const i of pick){
     const x = i % w, y = (i - x) / w, p = document.createElement('i');
-    p.className = 'chip-px';
-    p.style.cssText = `left:${ox + x * SCALE}px;top:${oy + y * SCALE}px;background:rgb(${src.data[i * 4]},${src.data[i * 4 + 1]},${src.data[i * 4 + 2]});--dx:${(Math.random() * 2 - 1) * 30}px`;
+    const bg = shattered.has(i) ? '#ffffff' : `rgb(${src.data[i * 4]},${src.data[i * 4 + 1]},${src.data[i * 4 + 2]})`;
+    p.className = shattered.has(i) ? 'chip-px broke' : 'chip-px';
+    p.style.cssText = `left:${ox + x * SCALE}px;top:${oy + y * SCALE}px;background:${bg};--dx:${(Math.random() * 2 - 1) * 30}px`;
     unit.appendChild(p); setTimeout(() => p.remove(), 700);
   }
 }
