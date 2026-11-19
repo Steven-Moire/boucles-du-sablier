@@ -6,6 +6,14 @@
 Au pied des Collines grises, le hameau des Heurelles vit de sa mine, Grésille. Le Radoteur creuse plus profond que tout le monde, obsédé par une veine qui scintille dans les strates les plus anciennes. Un matin, sa pioche perce une chambre oubliée. Au centre se trouve un immense **Sablier** de pierre et de verre. Un coup de pioche de trop le fêle.
 Depuis, la journée recommence.
 
+## L'intro : texte final des 5 écrans (2026-11-19)
+Une image par écran (`sd_raw/intro_*`, clé dans `tools/sprites.json`), un clic pour passer.
+1. **`intro_hameau`** — « Au pied des Collines grises, le hameau des Heurelles vit de sa mine, Grésille. On y compte mal les jours, mais on y creuse bien. »
+2. **`intro_veine`** — « Le Radoteur creuse plus profond que tout le monde. Il suit une veine qui brille et parle à sa pioche, qui a le bon goût de ne jamais répondre. »
+3. **`intro_chambre`** — « Un matin, la roche cède sur une chambre oubliée. Au milieu, un Sablier plus vieux que le village. »
+4. **`intro_fele`** — « Un coup de pioche de trop. Le verre se fend, et le sable se met à fuir. »
+5. **`intro_reveil`** — « Le lendemain, c'était hier. Le Radoteur ne s'en souvient pas. Le village, un peu. »
+
 ## Pourquoi le village se souvient, et pas le héros
 Le sable qui s'échappe de la fissure retombe sur le hameau. À chaque boucle, les habitants gardent un peu plus de souvenirs, flous mais tenaces, du mineur et de ce qu'il a fait. Lui, en revanche, se réveille chaque matin l'esprit « rembobiné ».
 → C'est ce qui justifie la mécanique : **la renommée, c'est la mémoire que le village a de toi.** Plus les gens se souviennent, plus ils t'aident : l'entraîneur reprend là où vous en étiez, le forgeron garde tes plans.
@@ -23,14 +31,41 @@ Le sable qui s'échappe de la fissure retombe sur le hameau. À chaque boucle, l
 - **La révélation est une scène, pas une notification** : au début d'une boucle, dans un moment calme, une habitante qu'il croise chaque matin (la boulangère) lui lance « Bonjour, Anselme », sans prévenir. Ensuite seulement, le nom change à l'écran pour de bon, et un **haut fait secret** s'allume en écho (affiché « ??? » dans la liste avant). Un indice discret prépare le moment (« Ils hésitent sur ton nom… »). Après, certains villageois changent leur façon de l'appeler.
 - **Son nom est gravé au dos de sa pioche depuis le début, illisible** ; il devient lisible à la révélation. Se marie avec les vestiges retrouvés dans les monstres.
 
-## Les lieux (répartition proposée par le conseil le 2026-11-19, à confirmer)
-Steven garde trois noms ; le conseil s'accorde à 2 voix sur 3 pour chacun :
+## Les lieux (confirmés par Steven le 2026-11-19)
+Répartition proposée par le conseil (2 voix sur 3 pour chacun), confirmée telle quelle :
 - **Les Heurelles : le hameau.** On y compte mal les jours ; c'est là qu'Anselme se réveille chaque matin. Doux, pluriel, un peu moqueur, crédible comme vrai toponyme : il tient d'être lu à chaque boucle.
 - **Grésille : la mine.** Le grès (sable devenu pierre), le crissement sous la pioche, le Sablier qui crépite sous terre.
 - **Griselune : un lieu secret ou une époque tardive.** Mystérieux, presque trop beau pour être vrai : le contraste est voulu. Placé loin de Grésille (même attaque « Gr- ») et des Collines grises (même racine).
 - La chambre du Sablier garde un nom nu : « la Chambre ».
 Accroche possible : « Aux Heurelles, on compte mal les jours ; à Grésille, on les creuse ; et sous la lune de Griselune, ils s'entassent. »
-À vérifier avant d'adopter : aucune vraie commune ou lieu-dit de ces noms.
+**Vérification (recherche web, 2026-11-19)** : aucune commune ni aucun lieu-dit trouvé sous ces trois noms. Les homonymes les plus proches, sans risque de confusion : Les Hérolles (lieu-dit de Coulonges, Vienne), Grézillé (commune déléguée de Gennes-Val-de-Loire, Maine-et-Loire), le quartier des Grésilles à Dijon (au pluriel, avec un « s »), Griselles (communes de Côte-d'Or et du Loiret). Il n'existe pas d'annuaire complet des lieux-dits : un micro-toponyme cadastral reste possible, mais rien d'assez connu pour gêner.
+
+## Vestiges et déjà-vu : propositions du conseil (2026-11-19, à choisir par Steven)
+Conseil à quatre voix (Claude, conteur, joueur, sceptique). Ce qui suit est la synthèse ; rien n'est en jeu.
+
+### 5 vestiges cachés dans les monstres
+Règle du sceptique, adoptée par la synthèse : **des objets banals et un peu drôles, un seul qui fait mal** ; un vestige est un reste d'une journée passée, pas un message adressé au joueur ; le lien avec Anselme reste suggéré, jamais expliqué.
+| # | Vestige | Monstre | Texte affiché | Souvenir au village | Voix |
+|---|---|---|---|---|---|
+| 1 | Clé de la lampe de Grésille | Mulot dentu (dès la boucle 1-2 : le plus fréquent, sert de tuto) | « Elle ouvre la lampe de la mine. Tu l'as perdue un matin. Lequel ? » | Le veilleur de la mine : « Quelqu'un descendait toujours avant l'aube. » | conteur, joueur (placement), sceptique (une clé) |
+| 2 | Croûton de pain | Sanglier | « Encore croustillant. Ça ne devrait pas. » | La boulangère met un pain de côté, sans savoir pour qui (prépare la révélation du nom) | **3 voix** (Claude, conteur, sceptique) |
+| 3 | Page de carnet et crayon rongé | Loup gris | « Mulot n° 212. Il m'a reconnu. » | Un enfant se met à numéroter les poules | **3 voix** (Claude, conteur, joueur) |
+| 4 | Un gant de laine, seul | Golem de pierre | « Taille large. Ravaudé trois fois, chaque fois par une main différente. » | (le seul qui fait mal) le village l'a raccommodé à chaque boucle sans le savoir | **3 voix** sur le gant (conteur, joueur, sceptique), 2 sur le Golem |
+| 5 | La pioche gravée, nom presque lisible | Ours ancien (élite, vers la boucle 7-9, juste avant la révélation) | « Un nom, au dos. Presque lisible. » | Débloque la scène « Bonjour, Anselme » | **3 voix** (Claude, conteur, joueur) |
+- Le **Gardien du Sablier ne cache aucun vestige** (sceptique) : il garde le fragment, c'est assez.
+- Écartés : le sablier miniature (un clin d'œil au temps de trop), le gant d'enfant (pathos qui casse le ton), le bouton de tablier (gardé en réserve pour une suite).
+- Lisibilité (joueur) : un **Carnet des vestiges** avec 5 silhouettes grisées « ? » et un indice sur le monstre hôte (« quelque chose brille dans un loup ») ; un pixel qui scintille dans le sable récompense la visée au clic. Les vestiges survivent à la boucle. Risque : un vestige trop tardif ou trop facile à rater passe inaperçu.
+
+### 6 répliques de déjà-vu, une par rang de renommée
+Rangs : Hameau (0) → Village (40) → Bourg (100) → Ville (200) → Cité (350), puis après la révélation du nom.
+1. **Hameau**, le veilleur : « Encore toi, le Radoteur ? Tu radotes même ton chemin. »
+2. **Village**, le forgeron : « Pas la peine de me dire où est la mine. Tu y vas tous les jours. »
+3. **Bourg**, un enfant : « Tu comptes les mulots ? Moi aussi. J'en suis à onze. »
+4. **Ville**, la boulangère : « Je garde un pain pour toi. Va savoir pourquoi. »
+5. **Cité**, l'entraîneur : « Tu me dis toujours la même chose. Je commence à l'aimer. »
+6. **Après la révélation**, le veilleur : « Bonne journée, Anselme. Celle-ci, je la garde. »
+- Garde-fou du sceptique : une réplique vue 50 fois devient du bruit. **Une seule par boucle, à l'arrivée au village**, et à terme 1 ou 2 variantes par rang tirées au hasard.
+- Variantes en réserve : « T'as déjà dit ça. Hier. Ou demain ? » (joueur), « Ta pioche, tu la poses toujours au même endroit. Je me demande si c'est toi ou elle. » (sceptique), « Bonjour, Anselme. Tu as l'air fatigué. » (joueur).
 
 ## Points de vigilance pour tous les noms
 - Pas de mièvrerie : les diminutifs en -ette, -ou, -ille basculent vite dans le gnangnan ; rester mélancolique.
@@ -42,6 +77,6 @@ Accroche possible : « Aux Heurelles, on compte mal les jours ; à Grésille, on
 Mélancolique mais drôle. Le mineur est un peu fou à force de revivre la même journée : il parle à sa pioche et numérote les mulots. Les villageois ont des déjà-vu de plus en plus précis (« On s'est déjà parlé, non ? Tu vas encore me demander du minerai… »).
 
 ## Questions ouvertes
-- Les trois noms de lieux : voir « Les lieux » (répartition proposée par le conseil, à confirmer par Steven).
+- Choisir parmi les vestiges et répliques proposés par le conseil (voir plus haut).
 - Le héros se souvient-il un peu, par exemple via le bestiaire présenté comme « son carnet » ?
 - La fin : réparer le Sablier, ou apprendre à vivre avec la boucle ?
