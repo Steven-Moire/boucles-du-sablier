@@ -1,2 +1,3 @@
 pillow
 playwright
+ruff==0.16.0

@@ -1,0 +1,13 @@
+# Python de tools/ : lint et mise en forme (jamais à la main), lancés par `npm run lint`.
+# Version épinglée dans requirements-dev.txt.
+line-length = 120 # comme Prettier (.prettierrc.json)
+target-version = "py310" # le .venv WSL tourne en Python 3.10
+extend-exclude = ["*.md"] # ruff formate aussi le Python des blocs Markdown : le Markdown reste à Prettier
+
+[lint]
+# Docstrings (D1), imports triés (I), complexité (C901, seuil par défaut 10), pycodestyle (E, W),
+# pyflakes (F), bugbear (B), simplifications (SIM), syntaxe moderne (UP) : les règles du lot 7.
+select = ["D1", "I", "C901", "E", "F", "W", "B", "SIM", "UP"]
+
+[format]
+quote-style = "single" # comme Prettier et le code existant
