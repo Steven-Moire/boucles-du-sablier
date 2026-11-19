@@ -91,7 +91,7 @@ export function drawDig(cv, e, t) {
 export function onDigClick(ev) {
   const cv = ev.target.closest('canvas.dig'),
     a = S.G.run.action;
-  const e = cv && a && a.enemies && a.enemies[+cv.dataset.e];
+  const e = cv && a?.enemies?.[+cv.dataset.e];
   if (!e) return; // entre deux vagues : rien à viser
   const r = cv.getBoundingClientRect(),
     g = GRIDS[e.id];
@@ -100,7 +100,7 @@ export function onDigClick(ev) {
 
 // Éclats : quelques pixels retirés jaillissent du monstre avec leur couleur ; ceux que le marteau a brisés, en blanc
 export function digParticles(unit, id, w, idx, broken = []) {
-  const cv = unit && unit.querySelector('canvas.dig'),
+  const cv = unit?.querySelector('canvas.dig'),
     src = sprites[id];
   if (!cv || !src) return;
   const shattered = new Set(broken);

@@ -18,7 +18,7 @@ export function strike(G, src, att, tgtKey, def, mult, sure) {
     return;
   }
   const crit = G.rng() < (tool ? att.crit + tool.crit : att.crit);
-  const arm = tool && tool.pierce ? Math.max(0, def.arm - tool.pierce) : def.arm;
+  const arm = tool?.pierce ? Math.max(0, def.arm - tool.pierce) : def.arm;
   const dmg = Math.max(1, Math.round((att.pow * mult - arm) * (crit ? 1.5 : 1)));
   def.hp -= dmg;
   G.events.push({type: 'hit', src, tgt: tgtKey, dmg, crit, skill});
@@ -30,8 +30,8 @@ export function strike(G, src, att, tgtKey, def, mult, sure) {
 // le joueur vise un point (coordonnées dans la grille du sprite) sur l'ennemi i
 export function aimAt(G, i, x, y) {
   const a = G.run.action,
-    e = a && a.phase === 'fight' && a.enemies && a.enemies[i];
-  if (e && e.hp > 0 && e.dig) aimDig(e.dig, {x, y});
+    e = a?.phase === 'fight' && a.enemies?.[i];
+  if (e?.hp > 0 && e.dig) aimDig(e.dig, {x, y});
 }
 export const firstAlive = a => a.enemies.findIndex(e => e.hp > 0);
 // un pas de combat : attaque de base, compétences automatiques, puis ennemis ; s'arrête dès que le combat finit

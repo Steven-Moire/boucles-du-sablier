@@ -28,7 +28,7 @@ export function skillUnlocked(meta, k) {
 }
 // outil du héros pendant l'action en cours (pioche par défaut, ×1 partout : combats identiques à la v0.3)
 // hors action : l'outil choisi pour la prochaine case (affichage)
-export const actionTool = G => TOOLS[(G.run.action && G.run.action.tool) || G.meta.tool] || TOOLS[DEFAULT_TOOL];
+export const actionTool = G => TOOLS[G.run.action?.tool || G.meta.tool] || TOOLS[DEFAULT_TOOL];
 // temps entre deux attaques de base du héros avec son outil
 export const heroEvery = G => G.run.hero.speed * actionTool(G).every;
 // choix de l'outil pour les prochaines cases (l'action en cours garde le sien)

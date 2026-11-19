@@ -37,7 +37,7 @@ export function baseStrata(id) {
     sy += y;
     count++;
     if (ch === 'c') cls[i] = 'croute';
-    else if (ch === 'v') cls[i] = comp.veine && comp.veine.sprite ? 'veine' : 'peu';
+    else if (ch === 'v') cls[i] = comp.veine?.sprite ? 'veine' : 'peu';
     else deep.push({i, d: ch.charCodeAt(0) - 48, x, y});
   }
   const cx = sx / count,

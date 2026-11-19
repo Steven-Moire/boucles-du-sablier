@@ -45,7 +45,7 @@ function enemyButtonHTML(id, t, m, all) {
   const cnt = all.filter(f => f === id).length,
     times = cnt > 1 ? ' ×' + cnt : '',
     tr = m.trophies[id] ? ' 🏆' : '';
-  const isSeen = b && b.seen;
+  const isSeen = b?.seen;
   const label = isSeen ? `${mm.por} ${mm.name}${times}${tr}` : '???' + times;
   const unk = isSeen ? '' : ' unk';
   return `<button class="enemy${unk}${cls}" data-mon="${id}" data-lvl="${t.lvl}"><b>${label}</b><span>${RANK[mm.rank].label} · Niveau ${t.lvl}</span></button>`;

@@ -10,7 +10,7 @@ export function segBar(t, a, done) {
   let cells = '';
   for (let i = 0; i < n; i++) {
     if (done) cells += '<i class="f"></i>';
-    else if (a && a.id === t.id) {
+    else if (a?.id === t.id) {
       if (i < a.seg) cells += '<i class="f"></i>';
       else if (i === a.seg) cells += `<i class="cur" style="--p:${Math.round(segFill(a) * 100)}%"></i>`;
       else cells += '<i></i>';

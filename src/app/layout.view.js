@@ -29,7 +29,7 @@ export function renderTop() {
   $('loopLbl').textContent = `⏳ BOUCLE ${m.loop}`;
   $('timeBar').style.width = (r.timeLeft / r.timeMax) * 100 + '%';
   $('timeVal').textContent = `${r.timeLeft.toFixed(1)} s`;
-  const fighting = r.action && r.action.phase === 'fight';
+  const fighting = r.action?.phase === 'fight';
   const h = r.hero;
   setHTML(
     $('viewtabs'),

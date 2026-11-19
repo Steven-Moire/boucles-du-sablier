@@ -12,7 +12,7 @@ const unknownMonHTML = mm =>
   `<div class="mon unk"><span>???</span><span class="tag">${RANK[mm.rank].label}</span></div>`;
 // où trouver un trophée pas encore obtenu : révélé à la première victoire sur son monstre
 function trophySource(mm, b) {
-  if (b && b.killed) return `Sur ${mm.name} · ${Math.round(mm.trophy.chance * 100)} %`;
+  if (b?.killed) return `Sur ${mm.name} · ${Math.round(mm.trophy.chance * 100)} %`;
   return 'Source inconnue';
 }
 
@@ -27,7 +27,7 @@ export function bestiaryHTML() {
   for (const id in MONSTERS) {
     const b = m.bestiary[id],
       mm = MONSTERS[id];
-    h += b && b.seen ? seenMonHTML(id, mm, b.killed, m.trophies[id]) : unknownMonHTML(mm);
+    h += b?.seen ? seenMonHTML(id, mm, b.killed, m.trophies[id]) : unknownMonHTML(mm);
   }
   h += `<div class="note">Une fiche se révèle à la première rencontre, les butins à la première victoire.</div></div>`;
   const nT = Object.keys(m.trophies).length,

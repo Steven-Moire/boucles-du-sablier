@@ -96,7 +96,7 @@ function renderTile(id, r, a, up) {
     disc = S.G.meta.discovered[id];
   d.parentNode.style.visibility = disc ? 'visible' : 'hidden';
   const done = r.completed.has(id),
-    here = a && a.id === id,
+    here = a?.id === id,
     can = canExplore(S.G, id) && !done;
   d.className = tileClass(id, t, done || here || can, can);
   d.querySelector('.ck').textContent = done && t.type !== 'village' ? '✓' : '';

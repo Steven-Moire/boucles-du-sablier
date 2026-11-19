@@ -32,7 +32,7 @@ const PHASE_TEXT = {
 };
 const PHASE_BAR_HTML = '<div class="bar thin"><i id="phaseBar" style="background:var(--gold)"></i></div>';
 const MAP_BUTTON_HTML = '<button class="btn small" data-view="map" style="margin-top:12px">VOIR LA CARTE</button>';
-const isFight = a => !!a && a.phase === 'fight';
+const isFight = a => a?.phase === 'fight';
 const hasEnemies = a => isFight(a) && !!a.enemies;
 
 function sceneTile(a) {
@@ -66,7 +66,7 @@ function enemyUnitHTML(e, i) {
   return `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${digPortrait(e, i)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`;
 }
 function phaseIcon(a) {
-  if (a.phase === 'harvest') return a.segs[a.seg] && a.segs[a.seg].res === 'ore' ? '⛏️' : '🪓';
+  if (a.phase === 'harvest') return a.segs[a.seg]?.res === 'ore' ? '⛏️' : '🪓';
   return PHASE_ICON[a.phase] || '…';
 }
 // message affiché quand il n'y a pas d'ennemis : {big, txt, bar}
@@ -149,7 +149,7 @@ function renderSkills(r, a, tool, every) {
 function renderRetreat(r, a) {
   const btn = $('retreatBtn');
   btn.disabled = !a || !!r.over;
-  btn.textContent = a && a.phase === 'rest' ? 'REPRENDRE LA ROUTE' : 'BATTRE EN RETRAITE';
+  btn.textContent = a?.phase === 'rest' ? 'REPRENDRE LA ROUTE' : 'BATTRE EN RETRAITE';
 }
 export function renderScene() {
   const r = S.G.run,
