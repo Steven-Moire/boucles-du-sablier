@@ -7,6 +7,9 @@
 # Sous Windows, le Pillow compresse avec zlib-ng : PNG aux octets différents, comparer les pixels (compare_shots.py).
 # Réécrit src/enemies/grids.generated.js en place (en LF) : git status doit rester propre.
 set -u
+# Même sortie partout : Python en UTF-8 même quand Windows redirige la console (sinon cp1252),
+# sha256sum en mode texte (sous Windows, le mode binaire par défaut ajoute un « * » devant le nom).
+export PYTHONUTF8=1
 L=${1:?usage : bash tools/qa/check-tools.sh <etiquette> [python]}
 R="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$R" || exit 1
@@ -14,7 +17,9 @@ P=${2:-.venv/bin/python}
 O=screenshots/qa-$L
 rm -rf "$O"; mkdir -p "$O"
 LOG=$O/log.txt
-run() { echo "\$ $*" >>"$LOG"; "$@" >>"$LOG" 2>&1; echo "-> code $?" >>"$LOG"; }
+# Sortie ramenée en LF : sous Windows, Python écrit \r\n sur une sortie redirigée (et diff / cmp / grep
+# de Git Bash cachent ces \r : vérifier en octets bruts).
+run() { echo "\$ $*" >>"$LOG"; "$@" 2>&1 | tr -d '\r' >>"$LOG"; echo "-> code ${PIPESTATUS[0]}" >>"$LOG"; }
 
 # 1. --build complet, sortie redirigée vers le dossier ignoré
 run $P -c "
@@ -45,7 +50,7 @@ for c in [(0, 0, 0), (255, 255, 255), (120, 80, 40), (30, 200, 180), (250, 10, 9
 "
 # 5. sprite_grids (réécrit src/enemies/grids.generated.js en place)
 run $P tools/sprite_grids.py
-sha256sum src/enemies/grids.generated.js >>"$LOG"
+sha256sum -t src/enemies/grids.generated.js >>"$LOG"
 # 6. compare_shots : identique, différent, absent, --tol, sans argument
 A=$O/cs/a; B=$O/cs/b; C=$O/cs/c
 mkdir -p $A $B $C
@@ -61,5 +66,5 @@ run $P tools/qa/compare_shots.py $A $C
 run $P tools/qa/compare_shots.py $A $B --tol 50
 run $P tools/qa/compare_shots.py
 # Empreintes de tout ce qui a été écrit
-(cd "$O" && find . -type f ! -name log.txt ! -name sha.txt | sort | xargs sha256sum) >"$O/sha.txt"
+(cd "$O" && find . -type f ! -name log.txt ! -name sha.txt | sort | xargs sha256sum -t) >"$O/sha.txt"
 echo "fini : $O"

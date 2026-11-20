@@ -76,7 +76,7 @@ def generate(spec, name, n, url, seed0=None, profile=None):
         tag = profile or cfg.get('name')
         dst = RAW / name / (f'{tag}_{seed}.png' if tag else f'{seed}.png')
         if dst.exists():
-            print('déjà là', dst.relative_to(ROOT))
+            print('déjà là', dst.relative_to(ROOT).as_posix())
             continue
         payload = {
             'prompt': f'{cfg.get("prefix", "")}{style}, {a["prompt"]}{lora}',
@@ -97,7 +97,7 @@ def generate(spec, name, n, url, seed0=None, profile=None):
         img = post(url.rstrip('/') + f'/sdapi/v1/{endpoint}', payload)['images'][0]
         dst.parent.mkdir(parents=True, exist_ok=True)
         dst.write_bytes(base64.b64decode(img.split(',', 1)[-1]))
-        print('écrit', dst.relative_to(ROOT))
+        print('écrit', dst.relative_to(ROOT).as_posix())
 
 
 def build(spec):
@@ -110,7 +110,7 @@ def build(spec):
             continue
         src = RAW / name / f'{a["seed"]}.png'
         if not src.exists():
-            print('manquant', src.relative_to(ROOT))
+            print('manquant', src.relative_to(ROOT).as_posix())
             continue
         dst = OUT / f'{name}.png'
         sprite = a['kind'] != 'bg'
@@ -127,7 +127,7 @@ def build(spec):
             crop=sprite,
             line=sprite,
         )
-        print('écrit', dst.relative_to(ROOT), size)
+        print('écrit', dst.relative_to(ROOT).as_posix(), size)
 
 
 if __name__ == '__main__':
