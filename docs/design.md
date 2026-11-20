@@ -456,4 +456,4 @@ Nouveaux champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.
 4. Éléments et infusions.
 
 ## Backlog
-Voir la feuille de route dans `docs/INDEX.md`. Prochaines étapes : découper le code, ajouter l'équipement et la forge à recettes, donner un rôle à la renommée, puis la mine.
+Voir la feuille de route dans `docs/INDEX.md` et les prompts dans `PROCHAINES-SESSIONS.md`. Faits : découpage du code, combat-minage (étape 1), outils (2a), forge à recettes et outil conseillé (2b). Prochaines étapes : améliorations dans les paliers (3a2), puis mémoire du village par la renommée (3b).
