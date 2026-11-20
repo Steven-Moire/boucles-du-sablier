@@ -1,0 +1,7 @@
+# Source des dépendances Python de dev (paquets directs seulement, versions exactes).
+# requirements-dev.txt en est généré (graphe complet + hashes) : ne jamais l'éditer à la main.
+# Après modif, depuis la racine, regénérer puis resynchroniser les deux venvs (commandes dans CLAUDE.md) :
+#   uv pip compile --universal --generate-hashes --python-version 3.10 requirements-dev.in -o requirements-dev.txt
+pillow==12.3.0
+playwright==1.65.1
+ruff==0.16.0

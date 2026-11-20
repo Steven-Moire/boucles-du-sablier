@@ -12,7 +12,7 @@ Ce fichier résume tous les docs en une page. **Lire celui-ci d'abord**, puis se
 - **Retenus provisoirement** (à ajuster en testant) : 5 vestiges dans les monstres, 6 répliques de déjà-vu par rang de renommée, carnet des vestiges (`lore.md`).
 - **Intro intégrée** : 5 écrans au premier lancement et après « Réinitialiser la sauvegarde » (`src/intro/intro.view.js`, images `assets/sprites/intro_*.png`, seeds dans `sprites.json`), passable d'un clic ou avec « Passer ». **Héros v3** avec une vraie pioche, **icônes de cases 32×32** sur la carte (repli emoji).
 - **Code rangé par domaine** (2026-11-19, lot 2 qualité) : `src/<domaine>/` avec suffixes `.data.js` / `.engine.js` / `.view.js` et CSS à côté de sa vue, point d'entrée `src/app/main.js` (liste dans `CLAUDE.md`).
-- Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md` (qualité du code : reste la session J, fichier verrouillé avec hashes ; ordre conseillé : J → forge 3a → mémoire 3b ; héros selon l'outil en parallèle). Sessions déjà faites (prompts exécutés, état d'avant) : `docs/archive/sessions-faites.md`.
+- Prompts des prochaines conversations : `PROCHAINES-SESSIONS.md` (qualité du code faite, J comprise : dépendances Python verrouillées avec hashes ; ordre conseillé : forge 3a → mémoire 3b ; héros selon l'outil en parallèle). Sessions déjà faites (prompts exécutés, état d'avant) : `docs/archive/sessions-faites.md`.
 
 ## docs/design.md — design et formules (long : lire par section)
 | Section (titre à chercher) | Contenu | Statut |

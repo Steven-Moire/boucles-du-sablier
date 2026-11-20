@@ -10,7 +10,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const IS_WINDOWS = process.platform === 'win32';
 const VENV = IS_WINDOWS ? '.venv-win' : '.venv';
 const RUFF = IS_WINDOWS ? join(ROOT, VENV, 'Scripts', 'ruff.exe') : join(ROOT, VENV, 'bin', 'ruff');
-const SETUP = `uv venv ${VENV} && uv pip install -p ${VENV} -r requirements-dev.txt`;
+const SETUP = `uv venv ${VENV} && uv pip sync -p ${VENV} --require-hashes requirements-dev.txt`;
 
 if (!existsSync(RUFF)) {
   console.error(`ruff introuvable dans ${VENV}/ (${RUFF}).\nCréer le venv depuis la racine du projet : ${SETUP}`);

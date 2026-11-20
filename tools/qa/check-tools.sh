@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-# Lance les scripts Python de tools/ (sous WSL, .venv en 3.10) et écrit sorties + empreintes.
-# Usage (WSL, depuis la racine) : bash tools/qa/check-tools.sh <etiquette>
+# Lance les scripts Python de tools/ avec le Python d'un venv et écrit sorties + empreintes.
+# Usage (depuis la racine) : bash tools/qa/check-tools.sh <etiquette> [python]
+#   python par défaut : .venv/bin/python (WSL, 3.10) ; Windows (Git Bash) : .venv-win/Scripts/python.exe (3.12).
 #   → screenshots/qa-<etiquette>/ (dossier ignoré par git) : log.txt (sorties, codes) et sha.txt (empreintes).
 # Lancer avant puis après un changement, et comparer log.txt (au nom du dossier près) et sha.txt.
-# Réécrit src/enemies/grids.generated.js en place : git status doit rester propre.
+# Sous Windows, le Pillow compresse avec zlib-ng : PNG aux octets différents, comparer les pixels (compare_shots.py).
+# Réécrit src/enemies/grids.generated.js en place (en LF) : git status doit rester propre.
 set -u
-L=${1:?usage : bash tools/qa/check-tools.sh <etiquette>}
+L=${1:?usage : bash tools/qa/check-tools.sh <etiquette> [python]}
 R="$(cd "$(dirname "$0")/../.." && pwd)"
 cd "$R" || exit 1
-P=.venv/bin/python
+P=${2:-.venv/bin/python}
 O=screenshots/qa-$L
 rm -rf "$O"; mkdir -p "$O"
 LOG=$O/log.txt

@@ -92,7 +92,7 @@ def main():
         "// '.' vide · 'c' croûte · 'v' veine brillante · sinon chr(48 + profondeur)\n"
         f'export const GRIDS = {{\n{body}\n}};\n'
     )
-    (ROOT / 'src' / 'enemies' / 'grids.generated.js').write_text(js, encoding='utf-8')
+    (ROOT / 'src' / 'enemies' / 'grids.generated.js').write_text(js, encoding='utf-8', newline='\n')
     for m, g in grids.items():
         print(m, g['w'], 'x', g['h'], 'opaques', sum(c != '.' for c in g['cells']))
 
