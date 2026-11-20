@@ -1,13 +1,14 @@
 Bot malin : marteau sur élites, boss et golems, coutelas en farm, pioche sinon.
-B 1 death  lvl3 cases:2 maxNiv:2 ⭐13 🪙25 🪵0 🪨0 upg:{} 🏆1
-B 2 death  lvl5 cases:5 maxNiv:3 ⭐36 🪙44 🪵1 🪨0 upg:{"entraineur":2} 🏆1
-B 3 time   lvl6 cases:9 maxNiv:4 ⭐98 🪙124 🪵3 🪨1 upg:{"entraineur":4} 🏆1
-B 4 time   lvl7 cases:11 maxNiv:5 ⭐128 🪙151 🪵4 🪨1 upg:{"entraineur":6,"forge":1,"horloge":1} 🏆1
-B 5 time   lvl8 cases:12 maxNiv:6 ⭐146 🪙137 🪵7 🪨1 upg:{"entraineur":8,"forge":1,"horloge":2} 🏆3
-B 6 death  lvl7 cases:12 maxNiv:6 ⭐146 🪙146 🪵4 🪨2 upg:{"entraineur":9,"forge":1,"horloge":3} 🏆3
-B 7 time   lvl8 cases:13 maxNiv:7 ⭐177 🪙177 🪵7 🪨4 upg:{"entraineur":10,"forge":2,"horloge":3} 🏆3
-B 8 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙298 🪵6 🪨6 upg:{"entraineur":10,"forge":3,"horloge":4} 🏆3
-B 9 time   lvl9 cases:15 maxNiv:8 ⭐272 🪙321 🪵1 🪨4 upg:{"entraineur":11,"forge":4,"horloge":5} 🏆4
+B 1 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙32 🪵1 🪨0 upg:{} 🏆0
+B 2 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙48 🪵2 🪨0 upg:{"entraineur":2} 🏆0
+B 3 time   lvl6 cases:8 maxNiv:4 ⭐86 🪙125 🪵4 🪨1 upg:{"entraineur":4} 🏆1
+B 4 time   lvl7 cases:10 maxNiv:5 ⭐113 🪙147 🪵2 🪨2 upg:{"entraineur":6,"forge":1,"horloge":1} 🏆1
+B 5 time   lvl7 cases:11 maxNiv:5 ⭐128 🪙133 🪵5 🪨1 upg:{"entraineur":8,"forge":2,"horloge":1} 🏆1
+B 6 time   lvl8 cases:12 maxNiv:6 ⭐146 🪙154 🪵9 🪨4 upg:{"entraineur":9,"forge":2,"horloge":2} 🏆4
+B 7 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙250 🪵2 🪨6 upg:{"entraineur":9,"forge":3,"horloge":4} 🏆4
+B 8 time   lvl9 cases:13 maxNiv:7 ⭐198 🪙277 🪵3 🪨3 upg:{"entraineur":10,"forge":4,"horloge":4} 🏆5
+B 9 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙287 🪵9 🪨8 upg:{"entraineur":11,"forge":4,"horloge":4} 🏆5
+B10 time   lvl9 cases:16 maxNiv:8 ⭐275 🪙472 🪵7 🪨8 upg:{"entraineur":11,"forge":5,"horloge":5} 🏆6
 
-Boss vaincu à la boucle : 10 9 10 10 11 8 8 8 10 7 | temps de jeu ×1 (min) : 15 13 15 14 15 13 12 12 15 11
-Matériaux extraits au boss (médiane) : 🟫 200  🐺 99  🧱 34  🦴 97  🔹 14  🦷 7  🐾 3  💎 1  🔥 23  ❄️ 28  ⚡ 35  ⏳ 0
+Boss vaincu à la boucle : 9 11 10 12 10 8 9 12 11 10 | temps de jeu ×1 (min) : 14 16 15 17 14 12 13 18 18 16
+Matériaux extraits au boss (médiane) : 🟫 219  🐺 113  🧱 41  🦴 105  🔹 17  🦷 5  🐾 2  💎 1  🔥 27  ❄️ 34  ⚡ 39  ⏳ 0

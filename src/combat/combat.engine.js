@@ -8,6 +8,9 @@ import {aimDig, dig, extract} from '../mining/dig.engine.js';
 import {addRes, endLoop, log, randInt} from '../world/loop.engine.js';
 import {nextSegment} from '../world/explore.engine.js';
 
+// dégâts variables : chaque coup (héros et monstres) vaut entre ×0,8 et ×1,2 de la puissance, avant l'armure
+const DMG_SPREAD = 0.2;
+const dmgRoll = G => 1 - DMG_SPREAD + 2 * DMG_SPREAD * G.rng();
 export function strike(G, src, att, tgtKey, def, mult, sure) {
   const tool = src === 'hero' ? actionTool(G) : null,
     skill = mult !== 1;
@@ -19,7 +22,7 @@ export function strike(G, src, att, tgtKey, def, mult, sure) {
   }
   const crit = G.rng() < (tool ? att.crit + tool.crit : att.crit);
   const arm = tool?.pierce ? Math.max(0, def.arm - tool.pierce) : def.arm;
-  const dmg = Math.max(1, Math.round((att.pow * mult - arm) * (crit ? 1.5 : 1)));
+  const dmg = Math.max(1, Math.round((att.pow * mult * dmgRoll(G) - arm) * (crit ? 1.5 : 1)));
   def.hp -= dmg;
   G.events.push({type: 'hit', src, tgt: tgtKey, dmg, crit, skill});
   if (def.dig) {

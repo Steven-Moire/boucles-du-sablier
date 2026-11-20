@@ -180,6 +180,14 @@ Lecture : le marteau abat plus vite (surtout golems, ours, boss grâce à l'armu
 - **Prix de forge** : prix plein à chaque boucle en 2b ; la « reforge » bon marché (le village garde le patron) est reportée en 3b, avec un conseil élargi.
 - **Armes et outils** : l'outil **est** l'arme. Idée de Steven : des **paliers qui se chevauchent** (le coutelas de base monte à +5, un coutelas de palier supérieur monte à +10 et son +3 vaut le +5 du palier de base) ; pareil pour les armures. **Validé le 2026-11-20** : en 2b, la forge fabrique les paliers (le doublon outil / arme disparaît : forger, c'est faire le palier suivant d'un outil) ; les améliorations à l'intérieur d'un palier font l'objet d'une session à part (`PROCHAINES-SESSIONS.md` → 3a2).
 
+#### Dégâts variables (2026-11-20, pour la sensation)
+Chaque coup (héros et monstres, compétences comprises) vaut entre **×0,8 et ×1,2** de la puissance, tiré sur `G.rng`, avant l'armure : `dégâts = max(1, arrondi((puissance × mult × tirage − armure) × crit))`. Même moyenne, donc pas un levier d'équilibrage (mesuré sur 30 graines : médiane et fourchette inchangées) ; les leviers seront débattus dans une session dédiée. Simu après l'ajout (les tableaux ci-dessus datent d'avant) :
+| Bot | Boss à la boucle | Min ×1 | Matériaux au boss (médiane) |
+|---|---|---|---|
+| Par défaut (pioche) | 8 9 12 11 9 10 11 9 9 9 (méd. 9) | 13-19 | 🟫 185 · 🐺 84 · 🧱 23 · 🦴 110 · 🔹 20 · 🦷 11 · 🐾 6 · 💎 2 · 🔥 23 · ❄️ 27 · ⚡ 42 · ⏳ 1 |
+| Malin | 9 11 10 12 10 8 9 12 11 10 (méd. 10) | 12-18 | 🟫 219 · 🐺 113 · 🧱 41 · 🦴 105 · 🔹 17 · 🦷 5 · 🐾 2 · 💎 1 · 🔥 27 · ❄️ 34 · ⚡ 39 · ⏳ 0 |
+| `--outils` marteau seul | 14 10 7 9 8 9 11 8 11 8 | 11-21 | (hors cible aux deux bouts : outil gardé toute la partie, pas un vrai joueur) |
+
 #### Sous-étape 1 faite : bot malin (`node tools/sim.js --malin`)
 Le bot choisit l'outil avant chaque case : 🔨 marteau si la case a une élite, le boss ou un golem ; 🔪 coutelas pour farmer une case déjà faite dans la boucle ; ⛏️ pioche sinon. La sortie par défaut est inchangée (références `tools/qa/ref/sim.txt` et `sim-outils.txt` identiques, nouvelle référence `sim-malin.txt`).
 | Bot | Boss à la boucle | Min ×1 | Matériaux au boss (médiane) |
