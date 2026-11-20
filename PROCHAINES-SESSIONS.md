@@ -73,12 +73,24 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 **Ordre conseillé (20/11, révisé)** : leviers d'équilibrage (3a1) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
 
 ### 3a1. Leviers d'équilibrage (avant 3a2)
-Décidé le 20/11 après le conseil de la 3a2 (mesures dans `docs/design.md` → `### Étape 3a2`) : toute amélioration d'outil qui se sent sort de la cible (le bot malin est déjà au bord bas), et les armures ne servent à rien parce que les boucles finissent par le temps, pas par la mort. Il faut d'abord de la marge et un rôle à la survie.
+**Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a1`) : pente de puissance des monstres 1,6 → 2,4 retenue (les deux bots dans la cible avec et sans la 3a2, la mort revient, l'armure compte), **pas encore codée**. Bot moyen validé, Dernier Grain au sablier, effets par emplacement renvoyés en 3b.
+**Sous-étape 1 — pente 2,4** (si elle n'a pas été codée dans la conversation du conseil) :
 ```
-Lis docs/INDEX.md, puis dans docs/design.md seulement « Équilibrage », « Étape 2b faite » (dégâts variables, forge) et « Étape 3a2 » (conseil, mesures, idées de Steven). Lis docs/outillage.md pour la simu et docs/design.md « Architecture du code » pour l'architecture.
-Tour de table avec /conseil (élargi) sur les leviers d'équilibrage : lesquels utiliser pour tenir la cible (PV et puissance des monstres, coûts du village, temps de boucle, forge…) et ceux qui n'en sont pas (les dégâts variables gardent la moyenne). Point de départ mesuré : à partir de la 3e boucle, plus de 90 % des boucles finissent par le temps, donc PV et armure ne servent presque à rien et seule la puissance compte. À débattre avec mes idées : armures avec des modificateurs qui font gagner du temps ou rendent le danger réel (épines…), compétences de déplacement ou d'exploration (levier pour ralentir ou accélérer), monstres qui apparaissent sur une case avec une chance au lieu d'y être toujours (des zones plutôt que des cases fixes).
-Propose-moi des chiffres mesurés avec node tools/sim.js --graines 30 (bot par défaut et bot malin) avant de les coder, avec assez de marge pour que les améliorations de la 3a2 puissent se sentir (+0,6 de puissance par niveau au moins).
-Puis une mécanique à la fois, jouable à chaque étape. Simu dans la cible, sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape, demande-moi avant de pousser.
+Lis docs/INDEX.md, puis dans docs/design.md seulement « Monstres et trophées », « Équilibrage » et « Étape 3a1 » (mesures, décisions). Lis docs/outillage.md pour la simu.
+Passe la pente de puissance des monstres de 1,6 à 2,4 dans monsterStats (src/enemies/enemies.engine.js). Vérifie dans le vrai code les mesures du banc (node tools/sim.js --graines 30, bot par défaut et --malin : médiane, fourchette, graines hors cible) et la part de boucles finies par la mort à partir de la 3e ; dis-moi tout écart avec le tableau de la 3a1 avant de continuer.
+Références de la simu mises à jour (node tools/qa/check-sim.js --update, explication dans le message), npm run check, formule à jour dans « Monstres et trophées » et résultats dans « Étape 3a1 », docs/INDEX.md, commit, demande-moi avant de pousser.
+```
+**Sous-étape 2 — bot moyen** (après la pente) :
+```
+Lis docs/INDEX.md, docs/outillage.md (simu), puis dans docs/design.md seulement « Étape 2b faite » (sous-étape 1 : bot malin) et « Étape 3a1 » (le joueur du conseil : un humain joue moins bien que le bot malin).
+Ajoute à tools/sim.js un bot « moyen » (--moyen, combinable avec --graines N), qui joue comme un humain attentif mais imparfait. Propose-moi d'abord sa règle en 3 lignes (par exemple : suit l'outil conseillé du carnet une case sur deux, revient au village sous 30 % de PV, forge ce qu'il peut sans ordre optimal) et attends mon accord. Le hasard du bot passe par un générateur à graine à part (jamais G.rng ni G.mrng, pour ne pas changer les combats).
+Sortie par défaut et --malin inchangées (npm run check), nouvelle référence sim-moyen.txt, résultats sur 30 graines (médiane, fourchette, part de morts) dans « Étape 3a1 », docs/outillage.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
+```
+**Sous-étape 3 — Dernier Grain** (après le bot moyen) :
+```
+Lis docs/INDEX.md, docs/lore.md (le ton), puis dans docs/design.md seulement « Boucle de jeu », « Compétences actives » et « Étape 3a1 » (décision : Dernier Grain dans les 10 derniers pour cent du sablier). Lis docs/design.md « Architecture du code ».
+Le Dernier Grain : dans les 10 derniers pour cent du temps de boucle, le joueur peut engager un pari (plus de puissance, mais la boucle s'arrête au prochain coup reçu). Propose-moi d'abord les chiffres (bonus de puissance, déclenchement manuel ou automatique, ce que fait chaque bot) mesurés avec node tools/sim.js --graines 30 (défaut, malin, moyen s'il existe), et un texte dans le ton (le conteur l'a nommé « le Dernier Grain »).
+Moteur pur (événement dans G.events, l'UI l'affiche), sauvegarde compatible, simu dans la cible, docs/design.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
 ```
 
 ### 3a2. Améliorations à l'intérieur des paliers (après 3a1)
@@ -92,7 +104,9 @@ Puis une mécanique à la fois, jouable à chaque étape. Simu dans la cible (bo
 ### 3b. Mémoire du village par la renommée
 ```
 Lis docs/INDEX.md, puis dans docs/design.md seulement « Équipement, forge et mémoire du village — PROPOSITION v3 » (sous-sections « Mémoire du village », « Hauts faits », « Sauvegarde ») et « Étape 2b faite » (forge, sous-étape 2 ; réserve de Steven : reforger à chaque boucle peut devenir répétitif, à poser au joueur du conseil). Lis docs/design.md « Architecture du code » pour l'architecture.
+Lis aussi « Étape 3a1 » (décisions de Steven : effets par emplacement, habits de base, PNJ et quêtes secondaires).
 Étape 2c : les rangs du village (Hameau → Cité) rendent permanents, dans l'ordre, l'arme, l'armure, l'accessoire, puis les améliorations. Idée de Steven (20/11) : la permanence des améliorations passe par une barre de relation avec le forgeron (il garde tes armes parce qu'il te connaît), à relier aux rangs. Une mécanique à la fois, jouable à chaque étape.
+Idée de Steven (20/11, après la 3a1), à mettre au centre du conseil : le héros a des habits de base (torse, bottes…) qu'on améliore, chaque emplacement avec ses effets propres (épines sur le torse, vitesse sur les bottes…, liste d'effets à proposer et à mesurer : épines à 30 % = une boucle gagnée, à 60 % trop fort). La permanence d'une boucle à l'autre arrive vers la 3e-5e boucle, parce que le héros a parlé aux PNJ et fait des quêtes secondaires ; le jeu dit clairement au joueur que les quêtes secondaires donnent du confort de jeu. Questions au conseil : les recettes actuelles (tablier, manteau, plastron) deviennent-elles des améliorations des habits de base ? que coûte une quête en temps de boucle ? quelle permanence à quelle boucle, mesurée avec la simu ?
 Avant de coder, conseil élargi sur la « reforge » (reportée de la 2b) : prix plein à chaque boucle (fait en 2b) ou première forge chère puis reforge à ~25 % parce que le village garde le patron (`meta.known`), avec reforge automatique en lot au début de la boucle ? Le sceptique objecte que la permanence (dès la 2e-6e boucle) rend la reforge transitoire ; le conteur et le joueur y voient la mémoire du village rendue concrète, et utile pour les emplacements pas encore mémorisés.
 Puis recale la cible d'équilibrage : la permanence accélère la progression, propose-moi une nouvelle cible chiffrée avec la simu (bot par défaut et bot malin) avant de toucher aux chiffres.
 Annonce le périmètre en 5 lignes avant de coder, sauvegarde compatible, docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
@@ -117,5 +131,6 @@ Simu identique (npm run check : le moteur ne change pas de comportement), captur
 ```
 
 Ensuite (conversations à part) : visée utile (idée 3), vestiges dans les cœurs (idée 5, avec le lore), Cartographe (idée 4).
+Reportés par la 3a1 (20/11, mesures dans `docs/design.md` → `### Étape 3a1`) : courbe des monstres par zone (un palier par zone plus une courbe douce dans la zone, quand les mondes arriveront) ; rencontres en zones en « graine du jour » déterministe (idée du conteur) ; compétences de déplacement (levier faible tant que la mort domine).
 
 **Commandes utiles** : `node tools/sim.js` après chaque changement de chiffres ; `.venv/bin/python tools/screenshot.py` (WSL) ; prototype à comparer : `/proto/mine-ennemi.html`.

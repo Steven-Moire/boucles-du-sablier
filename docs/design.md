@@ -264,6 +264,41 @@ Le carnet ne tire aucun hasard : la simulation est identique octet pour octet.
 - Reforger à chaque boucle peut devenir répétitif (réserve de Steven) : à soumettre au joueur du conseil de la 3b (reforge, mémoire du village).
 - Le bot malin suit sa propre règle (marteau sur les élites) ; un bot qui suit le carnet (pioche sur les élites pour les rares) mesurerait mieux l'idée 2.
 
+### Étape 3a1 : leviers d'équilibrage — conseil et mesures (2026-11-20)
+Rien n'est codé : mesures sur une copie du moteur (banc jetable, chiffres injectés), à confirmer dans le vrai code.
+#### Conseil élargi
+- **Accord** des quatre voix : le premier levier est la **puissance des monstres par niveau** (le levier « mort ») ; les PV des monstres sont le levier « temps ». Les dégâts variables ne sont pas un levier (même moyenne), les rencontres aléatoires viennent en dernier.
+- Le conteur : « le temps qui s'écoule, c'est le Sablier qui gagne ; la mort, c'est le monde qui mord » ; lore : plus on creuse, plus le temps sédimenté est dense et rend les coups ; pas de « +secondes » sur une armure (le temps appartient à l'Horloge et au Sablier) ; rencontres en « graine du jour » qui revient (« mardi, il y a toujours le blaireau »). Le joueur : 25 à 40 % de morts après la 3e boucle, au-delà de 50 % le joueur croit perdre son temps ; armures qui changent la façon de jouer ; un bot « moyen » en plus du bot malin. Le sceptique : un seul chiffre d'abord (la pente), épines et déplacement sont de la puissance ou du temps déguisés, rencontres aléatoires = variance en plus ; mesurer la part de morts **et** la médiane.
+- **Désaccord** : les épines (puissance déguisée pour le sceptique ; vrai lien survie / vitesse pour le joueur et le conteur).
+
+#### Mesures (30 graines, deux bots ; « morts » = part des boucles finies par la mort à partir de la 3e)
+« 3a2 » = approchée par +0,6 de puissance par niveau de Forge (jusqu'à +5), gratuite : borne haute.
+| Réglage | Bot par défaut | Bot malin | Morts |
+|---|---|---|---|
+| Aujourd'hui (pente 1,6) | méd. 10 [7-13], 3 hors cible | méd. 9 [6-11], 6 hors | 7-9 % |
+| idem + 3a2 | méd. 8, 8 hors | méd. 8, 14 hors | 9 % |
+| Pente 2,0 | méd. 10, 1 hors | méd. 9, 4 hors | 27-30 % |
+| Pente 2,2 | méd. 10, 1 hors | méd. 9, 3 hors | 41-48 % |
+| **Pente 2,4** | **méd. 11 [8-14], 1 hors** | **méd. 10 [8-12], 0 hors** | 56 % |
+| **Pente 2,4 + 3a2** | **méd. 10, 0 hors** | **méd. 10, 1 hors** | 61-65 % |
+| Pente 2,2, PV par niveau 8 → 9 (+ 3a2) | méd. 12, 3 hors (11, 2 hors) | méd. 10, 1 hors (10, 0 hors) | 40 % (47 %) |
+| Pente 2,5 et plus | le bot par défaut sort par le haut | | 70 % et plus |
+| Courbes de même valeur au niveau 8 : `8,08 × ln L` / `(L−1)^0,8` / `(L−1)^1,2` | méd. 18 / 13 / 10 | méd. 17 / 12 / 9 (+ 3a2 : 8, 11 hors) | 90 / 70 / 40 % |
+
+Lecture :
+- **La survie reprend un rôle** : à pente 2,4, +2 d'armure de départ fait gagner 2 boucles au malin et divise ses morts par 2,5 (22 % au lieu de 57 %) ; à pente 1,6, la même armure ne sert presque qu'aux boucles 1-2. Conséquence pour la 3a2 : les niveaux d'armure compteront, il faudra des pas petits.
+- **Tout se joue aux niveaux 2 à 5** : une courbe concave (log) durcit les premières cases et fait un mur, une convexe laisse le début facile et ne laisse plus de marge. La droite à 2,4 est la meilleure, avec un seul chiffre.
+- **Épines** (30 % des dégâts reçus renvoyés, en permanence) : une boucle gagnée, comme un bon objet ; 60 % : trop fort (12 graines hors cible pour le malin). Elles ne marchent que si le héros encaisse.
+- **Marche** (0,5 s par case aujourd'hui) : deux fois plus vite fait gagner une boucle à pente 1,6, presque rien à pente 2,4 (la mort domine) : levier faible pour l'instant.
+- La part de morts du bot (56 %) est une borne haute : il ne bat jamais en retraite.
+
+#### Décisions de Steven (2026-11-20)
+- **Pente de puissance des monstres 1,6 → 2,4** (`monsterStats`), une sous-étape à elle seule.
+- **Bot « moyen »** validé (un humain joue moins bien que le bot malin), règle à fixer avant de le coder.
+- **Dernier Grain** (idée du conteur) : un pari dans les **10 derniers pour cent du sablier** (pas sous 25 % de PV : à pente 2,4, il se déclencherait presque à chaque boucle) : plus de puissance, mais la boucle s'arrête au prochain coup reçu. Chiffres à mesurer.
+- **Effets par emplacement** : pas d'épines sur l'armure actuelle seule ; une liste d'effets, chaque emplacement a les siens (épines sur le torse, vitesse sur les bottes…). Le héros a des **habits de base** qu'on améliore ; la permanence d'une boucle à l'autre arrive **vers la 3e-5e boucle**, débloquée en parlant aux PNJ et par des quêtes secondaires, présentées au joueur comme du **confort de jeu**. À travailler avec la 3b.
+- **Plus tard** : un palier par zone plus une courbe douce dans la zone (demande la zone dans le calcul des stats, à mesurer quand les mondes arriveront) ; rencontres en zones en « graine du jour » déterministe ; compétences de déplacement (à revoir quand la marche comptera).
+
 ### Étape 3a2 : améliorations dans les paliers — conseil et mesures (2026-11-20, en attente des leviers)
 Rien n'est codé : mesures faites sur une copie du moteur (banc jetable), à refaire dans le vrai code quand la 3a2 reprendra.
 #### Conseil élargi
