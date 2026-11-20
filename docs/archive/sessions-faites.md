@@ -288,3 +288,20 @@ Garde-fous communs (à rappeler dans chaque prompt) : refactoring pur, aucun cha
 **J. Fichier verrouillé avec hashes** : faite le 20/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). `requirements-dev.in` (3 épingles, source éditée) → `requirements-dev.txt` **généré** (`uv pip compile --universal --generate-hashes --python-version 3.10`, 4 paquets dont `greenlet==3.5.6`, valable WSL 3.10 et Windows 3.12), venvs installés par `uv pip sync --require-hashes`. `check-tools.sh <étiquette> [python]` se lance aussi depuis Windows ; `sprite_grids.py` écrit en LF partout.
 
 **F. Polices dans le dépôt** : faite le 19/11 (compte rendu et prompt dans `docs/archive/sessions-faites.md`). `assets/fonts/` (Inter variable + Silkscreen 400 / 700, `latin`, OFL), `src/shared/fonts.css` chargée en premier par `index.html` et le prototype ; plus aucune requête externe, captures du jeu identiques.
+
+## Lore — prompt d'origine de la section 1 (fait le 19/11, archivé le 20/11)
+Fait : lieux confirmés et vérifiés, texte final des 5 écrans de l'intro, 5 vestiges et 6 répliques de déjà-vu (retenus provisoirement), tout dans `docs/lore.md`.
+
+**État** : le mineur est décidé (« le Radoteur », vrai nom Anselme Tardif révélé par la scène de la boulangère, nom gravé au dos de sa pioche). Trois noms de lieux proposés par le conseil, **à confirmer** : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret / époque tardive). Points de vigilance sur les noms dans `docs/lore.md`.
+
+**Prompt à coller** :
+```
+Lis docs/INDEX.md, puis docs/lore.md en entier (il est court). On travaille le lore des Boucles du Sablier.
+1. Je confirme / modifie la répartition des lieux : [Les Heurelles = hameau, Grésille = mine, Griselune = lieu secret] (à compléter).
+2. Vérifie qu'aucune vraie commune ni aucun lieu-dit français ne porte ces trois noms (recherche web), et dis-moi ce que tu trouves.
+3. Écris le texte final des 5 écrans de l'intro (voir docs/lore.md → L'accroche) avec les noms retenus : une ou deux phrases courtes par écran, ton mélancolique mais drôle.
+4. Propose avec /conseil 5 vestiges de boucles passées à cacher dans les monstres, et 6 répliques de déjà-vu de villageois qui évoluent avec la renommée (du « Radoteur » moqueur au « Anselme » tendre).
+Mets à jour docs/lore.md et docs/INDEX.md, commit et push. Ne touche pas au code du jeu.
+```
+
+**Fichiers utiles** : `docs/INDEX.md`, `docs/lore.md`, `docs/design.md` → section `### Le lore qui va avec`, skill `/conseil`.

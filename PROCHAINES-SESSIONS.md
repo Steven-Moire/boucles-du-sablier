@@ -2,7 +2,7 @@
 
 Chaque conversation repart de `docs/INDEX.md` (qui résume tout) sans relire l'historique. Ce qui est déjà fait (prompts exécutés, état d'avant) est archivé dans `docs/archive/sessions-faites.md`.
 
-**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Gameplay 3a → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
+**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Gameplay 3a → 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
 
 Rappels valables partout :
 - Stable Diffusion (Forge) doit tourner pour toute génération d'image : API sur http://127.0.0.1:7860.
@@ -14,19 +14,17 @@ Rappels valables partout :
 
 ## 1. Lore
 
-**État** : le mineur est décidé (« le Radoteur », vrai nom Anselme Tardif révélé par la scène de la boulangère, nom gravé au dos de sa pioche). Trois noms de lieux proposés par le conseil, **à confirmer** : Les Heurelles (hameau), Grésille (mine), Griselune (lieu secret / époque tardive). Points de vigilance sur les noms dans `docs/lore.md`.
+**État (20/11)** : sessions faites (prompt d'origine dans `docs/archive/sessions-faites.md`) : mineur décidé (« le Radoteur », vrai nom Anselme Tardif), lieux confirmés et vérifiés (Les Heurelles, Grésille, Griselune), texte final des 5 écrans de l'intro (intégré au jeu), 5 vestiges et 6 répliques de déjà-vu **retenus provisoirement**, carnet des vestiges. Tout est dans `docs/lore.md`.
 
-**Prompt à coller** :
+**Prochaine session lore — prompt à coller** :
 ```
-Lis docs/INDEX.md, puis docs/lore.md en entier (il est court). On travaille le lore des Boucles du Sablier.
-1. Je confirme / modifie la répartition des lieux : [Les Heurelles = hameau, Grésille = mine, Griselune = lieu secret] (à compléter).
-2. Vérifie qu'aucune vraie commune ni aucun lieu-dit français ne porte ces trois noms (recherche web), et dis-moi ce que tu trouves.
-3. Écris le texte final des 5 écrans de l'intro (voir docs/lore.md → L'accroche) avec les noms retenus : une ou deux phrases courtes par écran, ton mélancolique mais drôle.
-4. Propose avec /conseil 5 vestiges de boucles passées à cacher dans les monstres, et 6 répliques de déjà-vu de villageois qui évoluent avec la renommée (du « Radoteur » moqueur au « Anselme » tendre).
-Mets à jour docs/lore.md et docs/INDEX.md, commit et push. Ne touche pas au code du jeu.
+Lis docs/INDEX.md, puis docs/lore.md en entier (il est court) et, dans docs/design.md, seulement « Étape 2b en cours » (outil conseillé dans le bestiaire). On travaille le lore des Boucles du Sablier.
+1. Scribes du carnet (idée du conseil du 20/11) : un scribe par rang de monstre (le boulanger pour les normaux, une vieille pour les élites, un enfant pour le boss), chacun avec sa voix pour écrire les notes et l'outil conseillé du bestiaire, à relier à la question ouverte « le bestiaire est son carnet, gardé par le village » de docs/lore.md. Tour de table avec /conseil élargi : noms des scribes (points de vigilance des noms dans docs/lore.md, vérifier qu'aucun n'est une vraie commune), leur ton, et 2 notes d'exemple par monstre (une après une victoire, une « en négatif » après une défaite : « pas la pioche »).
+2. Relis les 5 vestiges et les 6 répliques de déjà-vu retenus provisoirement : à garder, ajuster ou remplacer ?
+Mets à jour docs/lore.md et docs/INDEX.md, commit, demande-moi avant de pousser. Ne touche pas au code du jeu.
 ```
 
-**Fichiers utiles** : `docs/INDEX.md`, `docs/lore.md`, `docs/design.md` → section `### Le lore qui va avec`, skill `/conseil`.
+**Fichiers utiles** : `docs/INDEX.md`, `docs/lore.md`, `docs/design.md` → `### Le lore qui va avec` et `### Étape 2b en cours`, skill `/conseil`.
 
 ---
 
@@ -67,9 +65,9 @@ Aussi : un **bot qui change d'outil selon la case** dans `tools/sim.js` (aujourd
 **Sujets reportés le 20/11 (à caser)** :
 - **Multi-prestige** façon Increlution : un seul boss ne fait pas un vrai jeu ; la boucle est un premier prestige, il en faut d'autres au-dessus (conseil élargi, avant les mondes / époques de la feuille de route).
 - **Leviers d'équilibrage** (conseil élargi) : quels leviers utiliser pour tenir la cible (PV et puissance des monstres, coûts du village, temps de boucle, forge…), et ceux qui n'en sont pas (les dégâts variables gardent la moyenne). Avec `node tools/sim.js --graines 30` et les deux bots.
-- **Scribes du carnet** (lore, conseil élargi) : un scribe par rang de monstre (le boulanger pour les normaux, une vieille pour les élites, un enfant pour le boss), chaque écriture a sa voix.
+- **Scribes du carnet** : casé dans la section 1 (Lore).
 
-**Ordre conseillé (20/11)** : 3a → 3a2 → 3b. Avant : d'abord la session 4 (qualité du code, simu identique), puis 3a, puis 3b. La session graphismes « héros selon l'outil » est indépendante.
+**Ordre conseillé (20/11)** : 3a → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
 
 ### 3a. Forge et équipement non permanent
 ```
