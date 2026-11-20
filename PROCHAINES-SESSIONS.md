@@ -68,7 +68,7 @@ Aussi : un **bot qui change d'outil selon la case** dans `tools/sim.js` (aujourd
 - **Multi-prestige** façon Increlution : un seul boss ne fait pas un vrai jeu ; la boucle est un premier prestige, il en faut d'autres au-dessus (conseil élargi, avant les mondes / époques de la feuille de route).
 - **Scribes du carnet** (lore, conseil élargi) : un scribe par rang de monstre (le boulanger pour les normaux, une vieille pour les élites, un enfant pour le boss), chaque écriture a sa voix.
 
-**Ordre conseillé** : d'abord la session 4 (qualité du code, simu identique), puis 3a, puis 3b. La session graphismes « héros selon l'outil » est indépendante.
+**Ordre conseillé (20/11)** : 3a → 3a2 → 3b. Avant : d'abord la session 4 (qualité du code, simu identique), puis 3a, puis 3b. La session graphismes « héros selon l'outil » est indépendante.
 
 ### 3a. Forge et équipement non permanent
 ```
@@ -78,6 +78,14 @@ Lis docs/INDEX.md, puis dans docs/design.md seulement : « Étape 2a faite : mar
 2. Forge : objets (arme, armure, accessoire) forgés avec les matériaux extraits, recettes qui demandent des rares ou beaucoup de communs (idée 2), équipement perdu à la fin de la boucle (non permanent).
 3. Outil conseillé par monstre dans la fiche du bestiaire, révélé après N victoires (idée 1).
 Avant de coder, annonce-moi le périmètre (fichiers touchés) en 5 lignes. Simu dans la cible (boss 8e-13e boucle, médiane 9-12, avec le bot par défaut et le bot malin), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
+```
+
+### 3a2. Améliorations à l'intérieur des paliers (après 3a)
+Décidé le 20/11 : en 3a, la forge fabrique des **paliers** d'outils et d'armures (l'outil est l'arme). Idée de Steven : des paliers qui se chevauchent, le palier de base monte à +5, le suivant à +10 et son +3 vaut le +5 du palier de base, et ainsi de suite.
+```
+Lis docs/INDEX.md, puis dans docs/design.md seulement « Étape 2b » (décisions, forge et paliers faits) et, dans la v2, « Amélioration à la forge ». Lis CLAUDE.md pour l'architecture.
+Avant de coder, tour de table avec /conseil (élargi) sur les améliorations à l'intérieur des paliers : niveaux max par palier (+5, +10, +15 ?), chevauchement (le +3 d'un palier vaut le max du palier d'avant ?), coûts (or + matériaux, rares pour les derniers niveaux), lien avec le niveau du bâtiment Forge, ce qui arrive aux améliorations en fin de boucle (perdues tant que la 3b ne les rend pas permanentes). Propose-moi des chiffres mesurés avec la simu avant de les coder.
+Puis une mécanique à la fois, jouable à chaque étape. Simu dans la cible (bot par défaut et bot malin), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape, demande-moi avant de pousser.
 ```
 
 ### 3b. Mémoire du village par la renommée
