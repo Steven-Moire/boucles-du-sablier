@@ -3,6 +3,7 @@ import {VILLAGE, neighbors} from './world.data.js';
 import {DEFAULT_TOOL, SKILLS, TOOLS} from '../hero/hero.data.js';
 import {UPGRADES} from '../village/village.data.js';
 import {heroAtLevel, heroBase} from '../hero/hero.engine.js';
+import {cleanSlots, wearForged} from '../village/forge.engine.js';
 
 // ======================= MOTEUR =======================
 export function newMeta() {
@@ -20,6 +21,9 @@ export function newMeta() {
     chests: {},
     trophies: {},
     mats: {},
+    equip: {},
+    forge: {},
+    recent: {},
     bossKilled: false,
     tool: DEFAULT_TOOL,
   };
@@ -33,6 +37,10 @@ export function createGame(meta, rng, mrng) {
   meta.trophies = meta.trophies || {};
   meta.mats = meta.mats || {};
   if (!TOOLS[meta.tool]) meta.tool = DEFAULT_TOOL; // sauvegardes d'avant les outils
+  // forge (2b) : sauvegardes d'avant la forge, ou recette inconnue
+  meta.equip = cleanSlots(meta.equip);
+  meta.forge = cleanSlots(meta.forge);
+  meta.recent = cleanSlots(meta.recent);
   const G = {meta, rng: rng || Math.random, mrng: mrng || Math.random, run: null, events: []};
   startLoop(G);
   return G;
@@ -92,6 +100,7 @@ export function endLoop(G, reason, enemyName) {
 }
 export function newLoop(G) {
   G.meta.loop++;
+  wearForged(G.meta); // l'équipement de la boucle finie est perdu, celui forgé pour celle-ci est porté
   startLoop(G);
 }
 export function abandon(G) {

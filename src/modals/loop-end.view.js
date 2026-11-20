@@ -1,6 +1,15 @@
 import {S, anyUpgrade} from '../shared/state.js';
 import {$} from '../shared/dom.js';
 import {gotText} from '../shared/format.js';
+import {RECIPES} from '../village/forge.data.js';
+
+// équipement forgé porté pendant la boucle : il s'use avec elle (non permanent en 2b)
+function wornOutHTML(equip) {
+  const ids = Object.values(equip);
+  if (!ids.length) return '';
+  const names = ids.map(id => `${RECIPES[id].icon} ${RECIPES[id].name}`).join(', ');
+  return `<div class="note">Ton équipement s'use avec la boucle : ${names}. Reforge-le à la forge du village.</div>`;
+}
 
 // ---------- fin de boucle, boss vaincu ----------
 export function openLoopEnd() {
@@ -22,6 +31,7 @@ export function openLoopEnd() {
       <div>🪵 +${g.wood} · 🪨 +${g.ore}<span>Matériaux</span></div>${gotText(g.mats) ? `<div style="grid-column:1/-1">${gotText(g.mats)}<span>Extrait des monstres</span></div>` : ''}<div>🗺️ +${g.tiles} · 📖 +${g.monsters} · 🏆 +${g.trophies}<span>Cases · fiches · trophées</span></div>
     </div>
     <div class="note">Le héros oublie son niveau. Toi, tu gardes la carte, le bestiaire, les trophées et le village.</div>
+    ${wornOutHTML(S.G.meta.equip)}
     ${
       anyUpgrade()
         ? '<button class="btn" data-newloop data-go="village">❗ AMÉLIORER LE VILLAGE D\'ABORD</button><button class="btn small" data-newloop>NOUVELLE BOUCLE ⟳</button>'

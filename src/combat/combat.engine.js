@@ -22,7 +22,8 @@ export function strike(G, src, att, tgtKey, def, mult, sure) {
   }
   const crit = G.rng() < (tool ? att.crit + tool.crit : att.crit);
   const arm = tool?.pierce ? Math.max(0, def.arm - tool.pierce) : def.arm;
-  const dmg = Math.max(1, Math.round((att.pow * mult * dmgRoll(G) - arm) * (crit ? 1.5 : 1)));
+  const pow = tool ? att.pow + tool.pow : att.pow;
+  const dmg = Math.max(1, Math.round((pow * mult * dmgRoll(G) - arm) * (crit ? 1.5 : 1)));
   def.hp -= dmg;
   G.events.push({type: 'hit', src, tgt: tgtKey, dmg, crit, skill});
   if (def.dig) {

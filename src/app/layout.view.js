@@ -3,6 +3,7 @@ import {abandon, startLoop} from '../world/loop.engine.js';
 import {explore} from '../world/explore.engine.js';
 import {setTool} from '../hero/hero.engine.js';
 import {buy} from '../village/village.engine.js';
+import {forgeItem, repeatForge} from '../village/forge.engine.js';
 import {S, anyUpgrade, loopFresh, saveMeta} from '../shared/state.js';
 import {$, setHTML} from '../shared/dom.js';
 import {fmt} from '../shared/format.js';
@@ -83,6 +84,12 @@ const PANES = {explore: exploreHTML, village: villageHTML};
 export function renderPane() {
   setHTML($('pane'), (PANES[S.tab] || bestiaryHTML)());
 }
+// achat d'un bâtiment ou forge : sauvegarde, et si le héros n'est pas parti, il repart avec (stats recalculées)
+function afterVillageChange(isDone) {
+  if (!isDone) return;
+  saveMeta();
+  if (loopFresh()) startLoop(S.G);
+}
 $('pane').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (!b || b.disabled) return;
@@ -92,11 +99,9 @@ $('pane').addEventListener('click', e => {
     setTool(S.G, b.dataset.tool);
     saveMeta();
   } else if (b.dataset.act === 'tab-village') S.tab = 'village';
-  else if (b.dataset.buy) {
-    if (buy(S.G, b.dataset.buy)) {
-      saveMeta();
-      if (loopFresh()) startLoop(S.G);
-    }
-  } else if (b.dataset.mon) openMonster(b.dataset.mon, +b.dataset.lvl || null);
+  else if (b.dataset.buy) afterVillageChange(buy(S.G, b.dataset.buy));
+  else if (b.dataset.forge) afterVillageChange(forgeItem(S.G, b.dataset.forge, loopFresh()));
+  else if (b.dataset.reforge !== undefined) afterVillageChange(repeatForge(S.G, loopFresh()));
+  else if (b.dataset.mon) openMonster(b.dataset.mon, +b.dataset.lvl || null);
   requestRender();
 });

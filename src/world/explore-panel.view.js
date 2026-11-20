@@ -2,6 +2,7 @@
 import {BIOMES, TILE_MAP, TYPES} from './world.data.js';
 import {TOOLS, xpNeeded} from '../hero/hero.data.js';
 import {MONSTERS, RANK} from '../enemies/enemies.data.js';
+import {RECIPES} from '../village/forge.data.js';
 import {canExplore, isExplorable} from './explore.engine.js';
 import {S, anyUpgrade} from '../shared/state.js';
 import {fmt, pct} from '../shared/format.js';
@@ -122,7 +123,12 @@ function toolsHTML() {
         `<button data-tool="${k}" class="${k === cur ? 'on' : ''}" title="${o.desc}">${o.icon} ${o.name}</button>`,
     )
     .join('')}</div>
-    <div class="note">${TOOLS[cur].desc}${busy}</div>`;
+    <div class="note">${TOOLS[cur].desc}${forgedToolText(cur)}${busy}</div>`;
+}
+// palier forgé de l'outil choisi (porté pendant cette boucle)
+function forgedToolText(key) {
+  const r = RECIPES[S.G.meta.equip[key]];
+  return r ? `<br>Forgé : <b>${r.name}</b>. ${r.desc}` : '';
 }
 const logLine = l => `<div class="${l.cls || ''}">${l.text}</div>`;
 function logHTML() {

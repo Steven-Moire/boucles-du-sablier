@@ -197,6 +197,38 @@ Le bot choisit l'outil avant chaque case : 🔨 marteau si la case a une élite,
 
 Lecture : bien choisir son outil fait gagner ~2 boucles au plus rapide et resserre l'écart (11-15 min au lieu de 12-20). Une graine sort de la cible (7e boucle) : **à recaler avec la forge**, qui accélère encore. Le marteau sur les élites coûte des rares (🦷 7 au lieu de 11, 🐾 3 au lieu de 6) : si les recettes demandent des rares, le bon choix sur les élites devient la pioche, ce qui est le but de l'idée 2.
 
+#### Sous-étape 2 faite : forge à recettes, non permanente (2026-11-20)
+Décisions de Steven (2026-11-20) : l'outil est l'arme, **chaque outil a ses propres paliers** (la 2b ajoute le palier II de chacun, forgés séparément) ; les recettes ne coûtent **que des matériaux extraits**, jamais d'or (l'or reste pour les bâtiments) ; une recette se **découvre à la première victoire** contre les monstres qui fournissent ses matériaux. Réserve de Steven : reforger à chaque boucle risque d'être répétitif, **à soumettre au joueur du conseil de la 3b** (reforge, mémoire du village) ; en attendant, un bouton « Refaire la même forge ».
+
+Règles en place (`src/village/forge.data.js`, `forge.engine.js`) :
+- La forge ouvre avec le bâtiment Forge (20 ⭐). **Un objet par emplacement** : un par outil (palier II), une armure, un accessoire.
+- Un objet forgé sert pendant **la boucle suivante** (ou tout de suite si le héros n'est pas encore parti, comme les bâtiments), puis **s'use** à la fin de cette boucle (le bilan de boucle le dit). Prix plein à chaque fois.
+- Le palier II d'un outil ne joue que **quand cet outil est en main** : sa puissance s'ajoute à celle du héros avant le multiplicateur de l'outil, son critique et son armure ignorée s'ajoutent à ceux de l'outil.
+- « Refaire la même forge » : forge d'un coup la dernière recette de chaque emplacement encore libre, au prix plein.
+- Sauvegarde, `meta.v` reste 1 : `meta.equip` (porté pendant la boucle), `meta.forge` (forgé pour la suivante), `meta.recent` (dernières recettes), `{}` par défaut ; une recette inconnue ou au mauvais emplacement est retirée au chargement.
+
+| Emplacement | Objet | Effet | Recette | Découverte | Pousse à… |
+|---|---|---|---|---|---|
+| ⛏️ Pioche | Pioche à griffes (palier II) | +3 puissance en main | 2 🐾 · 20 🦴 | Ours | pioche sur l'ours |
+| 🔨 Marteau | Marteau de carrier (palier II) | +3 puissance, ignore 1 armure de plus | 30 🧱 · 6 🔹 | Golem | farmer les golems |
+| 🔪 Coutelas | Coutelas d'os (palier II) | +2 puissance, +5 % critique | 3 🦷 · 15 🦴 | Sanglier alpha | pioche sur les alphas |
+| Armure | Tablier de cuir | +15 PV, +1 armure | 60 🟫 | Mulot et Sanglier | coutelas dans les Prés |
+| Armure | Manteau de fourrure | +25 PV, +1 armure, +4 % esquive | 50 🐺 · 1 🐾 | Loup et Ours | coutelas sur les loups |
+| Armure | Plastron de pierre | +20 PV, +3 armure, −3 % esquive | 25 🧱 · 4 🔹 | Golem | golems |
+| Accessoire | Lanterne de mineur | +5 s de boucle | 30 🟫 · 10 🦴 | Sanglier | communs |
+| Accessoire | Collier de crocs | +4 % esquive, +3 % critique | 20 🐺 · 1 🦷 · 1 🐾 | Loup, alpha, Ours | rares |
+| Accessoire | Sablier de poche | +15 s de boucle | 1 ⏳ | Gardien | après le boss |
+
+Le sablier de poche perd le « +10 % d'or » de la v2 (pas de multiplicateur d'or dans le moteur pour un objet d'après-boss).
+
+Simulation : avant chaque boucle, les bots forgent ce qu'ils peuvent payer, dans l'ordre plastron, manteau, tablier, paliers II, collier, lanterne ; le bot par défaut ne forge que le palier de la pioche (il ne change jamais d'outil). Ils forgent en pratique un ou deux objets par boucle (souvent la lanterne, une armure de temps en temps).
+| Bot | Boss à la boucle (10 graines) | Min ×1 | 30 graines (triées) | Matériaux restants au boss (médiane) |
+|---|---|---|---|---|
+| Par défaut | 7 10 11 13 11 9 10 9 10 10 (méd. 10) | 11-20 | 7 à 13, méd. 10 (avant la forge : 6 à 12, méd. 10) | 🟫 37 · 🐺 31 · 🧱 21 · 🦴 64 · 🔹 20 · 🦷 9 · 🐾 1 · 💎 2 |
+| Malin | 6 10 10 10 9 10 8 10 7 9 (méd. 9,5) | 9-16 | 6 à 11, méd. 9 (avant : 7 à 12, méd. 9) | 🟫 39 · 🐺 59 · 🧱 16 · 🦴 40 · 🔹 13 · 🦷 2 · 🐾 0 · 💎 0 |
+
+Lecture : les médianes restent dans la cible (9-12) et la forge ne bouleverse pas l'équilibrage (prix plein, peu d'objets par boucle). Les queues basses (6e-7e boucle) existaient déjà avant la forge sur 30 graines ; la forge en ajoute une pour le malin. À traiter dans la session « leviers d'équilibrage » (`PROCHAINES-SESSIONS.md`), pas en gonflant les recettes. Les matériaux ne s'accumulent plus : ils partent à la forge.
+
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 
 ### Décisions de Steven (2026-11-12)

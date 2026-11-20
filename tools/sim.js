@@ -4,6 +4,7 @@ import * as heroData from '../src/hero/hero.data.js';
 import * as enemiesData from '../src/enemies/enemies.data.js';
 import * as miningData from '../src/mining/mining.data.js';
 import * as villageData from '../src/village/village.data.js';
+import * as forgeData from '../src/village/forge.data.js';
 import * as loop from '../src/world/loop.engine.js';
 import * as exploreEngine from '../src/world/explore.engine.js';
 import * as tickEngine from '../src/world/tick.engine.js';
@@ -13,6 +14,7 @@ import * as strata from '../src/mining/strata.engine.js';
 import * as digEngine from '../src/mining/dig.engine.js';
 import * as combat from '../src/combat/combat.engine.js';
 import * as village from '../src/village/village.engine.js';
+import * as forge from '../src/village/forge.engine.js';
 import {lcg} from '../src/shared/rng.js';
 const E = {
   ...worldData,
@@ -20,6 +22,7 @@ const E = {
   ...enemiesData,
   ...miningData,
   ...villageData,
+  ...forgeData,
   ...loop,
   ...exploreEngine,
   ...tickEngine,
@@ -29,6 +32,7 @@ const E = {
   ...digEngine,
   ...combat,
   ...village,
+  ...forge,
 };
 
 const isHarvest = t => t.type === 'wood' || t.type === 'ore';
@@ -75,7 +79,7 @@ function logLoop(G, loop) {
   const o = G.run.over,
     h = G.run.hero;
   console.log(
-    `B${String(loop).padStart(2)} ${o.reason.padEnd(6)} lvl${h.lvl} cases:${G.run.completed.size - 1} maxNiv:${G.run.maxTile} ⭐${G.meta.renown} 🪙${G.meta.gold} 🪵${G.meta.wood} 🪨${G.meta.ore} upg:${JSON.stringify(G.meta.upgrades)} 🏆${Object.keys(G.meta.trophies).length}`,
+    `B${String(loop).padStart(2)} ${o.reason.padEnd(6)} lvl${h.lvl} cases:${G.run.completed.size - 1} maxNiv:${G.run.maxTile} ⭐${G.meta.renown} 🪙${G.meta.gold} 🪵${G.meta.wood} 🪨${G.meta.ore} upg:${JSON.stringify(G.meta.upgrades)} 🏆${Object.keys(G.meta.trophies).length} équipé:${Object.values(G.meta.equip).join(',') || '-'}`,
   );
 }
 // achats : le moins cher d'abord, en boucle
@@ -86,6 +90,16 @@ function buyAll(G) {
       .sort((a, b) => E.upgradeState(G, a).cost.gold - E.upgradeState(G, b).cost.gold);
     if (!ks.length) return;
     E.buy(G, ks[0]);
+  }
+}
+// forge (2b) : avant chaque boucle, le bot forge dans cet ordre ce qu'il peut payer (une recette par emplacement) ;
+// le bot par défaut ne forge que le palier de son outil (il n'en change jamais), le malin les trois paliers
+const FORGE_ORDER = ['plastron', 'manteau', 'tablier', 'pioche2', 'marteau2', 'coutelas2', 'collier', 'lanterne'];
+function forgeAll(G, smart) {
+  for (const id of FORGE_ORDER) {
+    const r = E.RECIPES[id];
+    if (!smart && r.tier > 1 && r.slot !== G.meta.tool) continue;
+    E.forgeItem(G, id, false);
   }
 }
 function runBot(seed, maxLoops = 60, verbose = false, tool = null, smart = false) {
@@ -101,6 +115,7 @@ function runBot(seed, maxLoops = 60, verbose = false, tool = null, smart = false
     if (verbose) logLoop(G, loop);
     if (bossLoop) break;
     buyAll(G);
+    forgeAll(G, smart);
     E.newLoop(G);
   }
   return {bossLoop, totalTime: Math.round(totalTime), mats: {...G.meta.mats}};
