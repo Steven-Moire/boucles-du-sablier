@@ -323,3 +323,18 @@ Lis docs/INDEX.md, puis dans docs/design.md seulement : « Étape 2a faite : mar
 3. Outil conseillé par monstre dans la fiche du bestiaire (idée 1), règle décidée dans « Étape 2b en cours » : victoires par outil, note dès la 1re victoire ou défaite, outil nommé après 2 outils différents ou au filet (normal 10, élite 2, boss 1).
 Avant de coder, annonce-moi le périmètre (fichiers touchés) en 5 lignes. Simu dans la cible (boss 8e-13e boucle, médiane 9-12, avec le bot par défaut et le bot malin, vérifier aussi avec --graines 30), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
 ```
+
+## Contexte Claude — alléger CLAUDE.md et les règles du 20/11 (session 0, faite)
+
+**Fait le 20/11 (session 0)** : règles chargées à chaque requête passées de 45,8 Ko à 0,6 Ko (seul `common/git-workflow.md` reste sans filtre ; `python/sonarqube.md` et `python/coding-style.md` filtrés sur `tools/**/*.py`, ce dernier réécrit « ruff seul, `ruff.toml` fait foi » après avis du conseil technique : black / isort redondants avec `ruff format` et la règle `I`, annotations et dataclasses frozen retirées faute d'outil qui les vérifie ; checklist de `python/sonarqube.md` purgée de mypy / `make test` ; 17 règles d'atlas déplacées dans `.claude/rules-atlas/` avec un `LISEZMOI.md`, dont `common/coding-style.md` dont l'immutabilité contredit le moteur qui mute `G` et `S`). `CLAUDE.md` de 11,8 à 3,1 Ko : commandes, venv, qualité, `tools/qa/` et sprites dans le nouveau `docs/outillage.md` ; liste des modules dans `docs/design.md` → `### Liste des modules` ; feuille de route dans `docs/INDEX.md`. Chaque ligne de l'ancien `CLAUDE.md` vérifiée retrouvée ailleurs. Hors `.claude/` (non versionné), commit seul.
+
+**Prompt d'origine (section 0)** :
+Décidé le 20/11 : mesuré à chaque requête ~3,5 k tokens pour `CLAUDE.md` (11,6 Ko) et ~13 k pour les règles d'atlas sans filtre `paths:` (`.claude/rules/common/*` 27,5 Ko, `python/import_cascade.md` et `python/sonarqube.md` 14,7 Ko, `everything-claude-code-guardrails.md` 2,3 Ko), en grande partie hors sujet (FastAPI, microservices, CI GitHub Actions, SQL). Les règles `javascript/` ont déjà leur filtre `paths:`.
+```
+Lis CLAUDE.md, CLAUDE.local.md, docs/INDEX.md et la liste de .claude/rules/ (taille et en-tête de chaque fichier, pas tout le contenu).
+Allège le contexte chargé à chaque requête, sans rien perdre :
+1. Règles d'atlas (.claude/ n'est pas versionné : pas de retour git) : un filtre `paths:` sur celles qui servent parfois (ex. python/sonarqube.md et python/coding-style.md sur tools/**/*.py) ; déplace dans .claude/rules-atlas/ (pas de suppression) celles qui ne servent jamais ici (import_cascade, fastapi, github-actions-security, common/security, patterns, performance…). Montre-moi la liste « garder / filtrer / déplacer » avant de toucher.
+2. CLAUDE.md ramené à ~3 Ko : langue, projet en 3 lignes, couches, règles absolues (venv, uniformité, sauvegarde, moteur pur), pointeurs. Le détail part dans des fichiers versionnés : commandes Python, venv, Forge et sprites → docs/outillage.md ; liste des modules → docs/design.md « ## Architecture du code » ; feuille de route → docs/INDEX.md. CLAUDE.md dit « lire docs/outillage.md avant de toucher à tools/ ou aux venv ».
+3. Vérifie que rien n'est perdu (chaque ligne de l'ancien CLAUDE.md retrouvée quelque part), mesure les tailles avant / après, mets à jour docs/INDEX.md, commit, demande-moi avant de pousser.
+```
+

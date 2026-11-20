@@ -70,11 +70,23 @@ Le boss tombe entre la 8e et la 13e boucle, soit environ 12 à 20 min de jeu en 
 Pourquoi : la série `9 13 10 12 9 12 8 9 12 9` est identique depuis le prototype v0.3 (vérifié sur a625c8a → 6f6844a → 3fab3e6 → 69b808d → main) ; le 8 vient d'une graine chanceuse, ce n'est pas une régression. Le remonter par les chiffres pousserait la graine à 13 vers 14 : on élargit la cible plutôt que de déplacer l'écart. À recaler après la mémoire du village (étape 2c), qui changera la courbe de progression.
 
 ## Architecture du code (étape 1 de la feuille de route, faite ; arborescence par domaine le 2026-11-19)
-Le jeu est découpé en modules ES natifs, sans build, **un dossier par domaine** (`src/world/`, `hero/`, `enemies/`, `mining/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`, `app/`). Le suffixe dit le rôle : `*.data.js` (données) ← `*.engine.js` (moteur pur, testable dans Node) ← `*.view.js` (rendu et interactions d'une zone, avec son CSS à côté) ← `app/main.js`. Liste des modules : `CLAUDE.md` ; règles des couches : `.claude/rules/javascript/architecture.md`, vérifiées par `npm run lint`. Les deux découpages (v0.3 monolithique → modules, puis modules → domaines) sont mécaniques : aucune règle ni aucun chiffre n'a changé.
+Le jeu est découpé en modules ES natifs, sans build, **un dossier par domaine** (`src/world/`, `hero/`, `enemies/`, `mining/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`, `app/`). Le suffixe dit le rôle : `*.data.js` (données) ← `*.engine.js` (moteur pur, testable dans Node) ← `*.view.js` (rendu et interactions d'une zone, avec son CSS à côté) ← `app/main.js`. Liste des modules : ci-dessous ; règles des couches : `.claude/rules/javascript/architecture.md`, vérifiées par `npm run lint`. Les deux découpages (v0.3 monolithique → modules, puis modules → domaines) sont mécaniques : aucune règle ni aucun chiffre n'a changé.
 - **Sens des imports, sans cycle** : une vue demande un rendu par `requestRender()` (`shared/render.js`, auquel `app/main.js` s'abonne) au lieu d'importer `main.js` ; `world/tick.engine.js` est le seul module qui importe à la fois le combat et l'exploration. Les 8 cycles d'imports de l'ancien découpage ont disparu.
 - **Simulation** : `node tools/sim.js` importe chaque `*.data.js` et `*.engine.js` (réunis dans un seul objet `E`). Sortie identique octet pour octet à celle de la v0.3 monolithique (boss aux boucles 9 13 10 12 9 12 8 9 12 9).
 - **Sauvegarde** : même clé `boucles-sablier-v01`, même objet `meta` (v1). Vérifié en chargeant une sauvegarde produite par l'ancien moteur.
 - **Jouer en local** demande désormais un serveur HTTP (`python -m http.server`), les modules ne se chargeant pas en `file://`.
+
+### Liste des modules (v0.3, découpée en modules)
+Modules ES natifs, aucune dépendance livrée au joueur, aucun build, aucune ressource externe (le jeu marche hors ligne). Déployé tel quel sur GitHub Pages.
+- `index.html` : squelette HTML, charge d'abord `src/shared/fonts.css` (polices de `assets/fonts/`, woff2 + licences OFL : jamais de Google Fonts ni d'autre CDN), puis les 13 feuilles CSS de zone (dans l'ordre de l'ancien `style.css`, la cascade en dépend) et `src/app/main.js` (`<script type="module">`).
+- `src/` : **un dossier par domaine**, en anglais ; le **suffixe dit le rôle** (règles : `.claude/rules/javascript/architecture.md`) : `*.data.js` (données, n'importent que des données) ← `*.engine.js` (moteur **pur**, aucun DOM) ← `*.view.js` (affichage d'une zone, CSS à côté) ← `app/main.js`.
+  - `world/` : carte et cases (`world.data.js`), une boucle (`loop.engine.js`), explorer une case (`explore.engine.js`), le pas de 50 ms (`tick.engine.js`, seul à importer combat + exploration), carte (`map.view.js`), onglet Exploration (`explore-panel.view.js`).
+  - `hero/` : stats, outils, compétences. `enemies/` : monstres, rangs, composition, bestiaire ; `grids.generated.js` = grilles de pixels **générées** par `tools/sprite_grids.py` (ne pas éditer à la main). `mining/` : combat-minage (strates, veines, creusage, extraction ; vue pixel par pixel `dig.view.js`). `combat/` : coups, compétences, morts, scène. `village/` : bâtiments, forge à recettes (`forge.data.js`, `forge.engine.js`). `intro/` : 5 écrans au premier lancement. `modals/` : fenêtre modale, fin de boucle, fiche d'un monstre.
+  - `shared/` (briques de l'UI, n'importent aucune vue) : `state.js` (état partagé `S` — `S.G`, `S.tab`, `S.view`…), `dom.js` (`$`, `setHTML`, `anim`, `toast`), `templates.js`, `format.js`, `save.js` (seul accès à `localStorage`, renvoie `{ok, error}`), `rng.js` (`lcg(seed)` pour la simu, `fxRandom` : hasard des effets visuels, jamais celui du jeu), `render.js` (`requestRender()` : une vue demande un rendu sans importer `main.js`).
+  - `app/` : assemblage de plusieurs domaines — `main.js` (boucle, rendu, point d'entrée), `events.view.js` (consomme `G.events`), `layout.view.js` (barre du haut, onglets, panneau de droite).
+- Hasards du minage sur `G.mrng`, séparé de `G.rng` (combats déterministes). Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
+- Les sprites sont affichés par l'UI avec repli sur l'emoji si le fichier manque (`spr(clé, emoji)`).
+- Outillage (simu, lint, venv, captures, sprites) : `docs/outillage.md`.
 
 ## Miner les ennemis (pivot « game changer », 2026-11-19 — étape 1 faite)
 
@@ -444,4 +456,4 @@ Nouveaux champs avec valeur par défaut au chargement, `meta.v` reste 1 : `meta.
 4. Éléments et infusions.
 
 ## Backlog
-Voir la feuille de route dans `CLAUDE.md`. Prochaines étapes : découper le code, ajouter l'équipement et la forge à recettes, donner un rôle à la renommée, puis la mine.
+Voir la feuille de route dans `docs/INDEX.md`. Prochaines étapes : découper le code, ajouter l'équipement et la forge à recettes, donner un rôle à la renommée, puis la mine.

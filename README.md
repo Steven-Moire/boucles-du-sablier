@@ -16,4 +16,4 @@ Jeu incrémental à boucle temporelle, dans le navigateur. Le héros revit la m�
 3. L'URL apparaît au bout d'une minute environ. Chaque push sur `main` met le jeu à jour.
 
 ## Développement
-Voir `CLAUDE.md` (commandes, règles, feuille de route) et `docs/`.
+Voir `CLAUDE.md` (règles), `docs/INDEX.md` (résumé, feuille de route) et `docs/outillage.md` (commandes).
