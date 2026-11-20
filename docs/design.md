@@ -176,7 +176,7 @@ Lecture : le marteau abat plus vite (surtout golems, ours, boss grâce à l'armu
 
 ### Étape 2b en cours : forge et outil conseillé (2026-11-20)
 #### Décisions de Steven (2026-11-20, après un conseil)
-- **Outil conseillé dans le bestiaire** : le carnet compte les victoires **par outil** (`bestiary[id].byTool`, `{}` par défaut). Une note dans le ton du carnet apparaît à la première victoire ou défaite (après une défaite, en négatif : « pas la pioche »). L'outil est **nommé** dès que le monstre a été battu avec **2 outils différents** (le carnet compare tes essais), sinon au filet par rang : normal 10, élite 3, boss 2 (le boss sera battu plusieurs fois avec le multi-prestige). Pourquoi : un seuil unique de 10 arrive à la 1re boucle pour le mulot mais jamais avant le boss pour l'ours et le Gardien (mesuré : alpha 1 victoire par boucle, ours ~3 à la 8e boucle).
+- **Outil conseillé dans le bestiaire** : le carnet compte les victoires **par outil** (`bestiary[id].byTool`, `{}` par défaut). Une note dans le ton du carnet apparaît à la première victoire ou défaite (après une défaite, en négatif : « pas la pioche »). L'outil est **nommé** dès que le monstre a été battu avec **2 outils différents** (le carnet compare tes essais), sinon au filet par rang : normal 10, élite 2, boss 1 (Steven : un boss est difficile à battre par principe ; il sera battu plusieurs fois avec le multi-prestige). Pourquoi : un seuil unique de 10 arrive à la 1re boucle pour le mulot mais jamais avant le boss pour l'ours et le Gardien (mesuré : alpha 1 victoire par boucle, ours ~3 à la 8e boucle).
 - **Prix de forge** : prix plein à chaque boucle en 2b ; la « reforge » bon marché (le village garde le patron) est reportée en 3b, avec un conseil élargi.
 - **Armes et outils** : l'outil **est** l'arme. Idée de Steven : des **paliers qui se chevauchent** (le coutelas de base monte à +5, un coutelas de palier supérieur monte à +10 et son +3 vaut le +5 du palier de base) ; pareil pour les armures. **Validé le 2026-11-20** : en 2b, la forge fabrique les paliers (le doublon outil / arme disparaît : forger, c'est faire le palier suivant d'un outil) ; les améliorations à l'intérieur d'un palier font l'objet d'une session à part (`PROCHAINES-SESSIONS.md` → 3a2).
 
@@ -188,7 +188,7 @@ Chaque coup (héros et monstres, compétences comprises) vaut entre **×0,8 et �
 | Malin | 9 11 10 12 10 8 9 12 11 10 (méd. 10) | 12-18 | 🟫 219 · 🐺 113 · 🧱 41 · 🦴 105 · 🔹 17 · 🦷 5 · 🐾 2 · 💎 1 · 🔥 27 · ❄️ 34 · ⚡ 39 · ⏳ 0 |
 | `--outils` marteau seul | 14 10 7 9 8 9 11 8 11 8 | 11-21 | (hors cible aux deux bouts : outil gardé toute la partie, pas un vrai joueur) |
 
-#### Sous-étape 1 faite : bot malin (`node tools/sim.js --malin`)
+#### Sous-étape 1 faite : bot malin (`node tools/sim.js --malin`, combinable avec `--graines N`)
 Le bot choisit l'outil avant chaque case : 🔨 marteau si la case a une élite, le boss ou un golem ; 🔪 coutelas pour farmer une case déjà faite dans la boucle ; ⛏️ pioche sinon. La sortie par défaut est inchangée (références `tools/qa/ref/sim.txt` et `sim-outils.txt` identiques, nouvelle référence `sim-malin.txt`).
 | Bot | Boss à la boucle | Min ×1 | Matériaux au boss (médiane) |
 |---|---|---|---|

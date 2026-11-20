@@ -62,10 +62,11 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 5. Vestiges dans les cœurs : brisés au marteau, récupérés à la pioche.
 Aussi : un **bot qui change d'outil selon la case** dans `tools/sim.js` (aujourd'hui le bot garde un seul outil toute la partie, donc la simu ne mesure pas un joueur qui choisit bien) — à faire en 3a, pour que l'équilibrage de la forge tienne compte des bons choix.
 
-**En cours le 20/11 (3a)** : bot malin fait (`--malin`). Décisions du conseil dans `docs/design.md` → `### Étape 2b en cours`.
+**En cours le 20/11 (3a)** : sous-étape 1 faite (bot malin `--malin`), dégâts variables ×0,8-1,2 (pour la sensation), option `--graines N` de la simu. Boss méd. 9 (bot par défaut) et 10 (malin) sur 10 graines ; sur 30 graines, le bot par défaut tombe parfois à 6 et le malin à 7 : juger l'équilibrage avec `--graines 30`. Décisions du conseil dans `docs/design.md` → `### Étape 2b en cours`. **Reste : sous-étapes 2 (forge des paliers) et 3 (outil conseillé)**, prompt 3a ci-dessous.
 
 **Sujets reportés le 20/11 (à caser)** :
 - **Multi-prestige** façon Increlution : un seul boss ne fait pas un vrai jeu ; la boucle est un premier prestige, il en faut d'autres au-dessus (conseil élargi, avant les mondes / époques de la feuille de route).
+- **Leviers d'équilibrage** (conseil élargi) : quels leviers utiliser pour tenir la cible (PV et puissance des monstres, coûts du village, temps de boucle, forge…), et ceux qui n'en sont pas (les dégâts variables gardent la moyenne). Avec `node tools/sim.js --graines 30` et les deux bots.
 - **Scribes du carnet** (lore, conseil élargi) : un scribe par rang de monstre (le boulanger pour les normaux, une vieille pour les élites, un enfant pour le boss), chaque écriture a sa voix.
 
 **Ordre conseillé (20/11)** : 3a → 3a2 → 3b. Avant : d'abord la session 4 (qualité du code, simu identique), puis 3a, puis 3b. La session graphismes « héros selon l'outil » est indépendante.
@@ -74,10 +75,10 @@ Aussi : un **bot qui change d'outil selon la case** dans `tools/sim.js` (aujourd
 ```
 Lis docs/INDEX.md, puis dans docs/design.md seulement : « Étape 2a faite : marteau et coutelas », « Équipement, forge et mémoire du village — PROPOSITION v3 » et, dans la v2, « Types d'armes », « Objets », « Amélioration à la forge ». Lis la section « 3. Gameplay » de PROCHAINES-SESSIONS.md (idées validées). Lis CLAUDE.md pour l'architecture.
 Étape 2b du combat-minage, une mécanique à la fois, jouable à chaque étape :
-1. Bot malin dans tools/sim.js : il choisit l'outil selon la case (marteau sur les élites et les golems, coutelas en farm de communs, pioche sinon), en option `--malin`, la sortie par défaut reste identique.
+1. (fait le 20/11 : bot malin `--malin`, dégâts variables, `--graines N`) Lis aussi dans docs/design.md « Étape 2b en cours » (décisions du conseil : l'outil est l'arme, forger = fabriquer le palier suivant d'un outil ou d'une armure ; prix plein à chaque boucle, la reforge est pour la 3b).
 2. Forge : objets (arme, armure, accessoire) forgés avec les matériaux extraits, recettes qui demandent des rares ou beaucoup de communs (idée 2), équipement perdu à la fin de la boucle (non permanent).
-3. Outil conseillé par monstre dans la fiche du bestiaire, révélé après N victoires (idée 1).
-Avant de coder, annonce-moi le périmètre (fichiers touchés) en 5 lignes. Simu dans la cible (boss 8e-13e boucle, médiane 9-12, avec le bot par défaut et le bot malin), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
+3. Outil conseillé par monstre dans la fiche du bestiaire (idée 1), règle décidée dans « Étape 2b en cours » : victoires par outil, note dès la 1re victoire ou défaite, outil nommé après 2 outils différents ou au filet (normal 10, élite 2, boss 1).
+Avant de coder, annonce-moi le périmètre (fichiers touchés) en 5 lignes. Simu dans la cible (boss 8e-13e boucle, médiane 9-12, avec le bot par défaut et le bot malin, vérifier aussi avec --graines 30), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
 ```
 
 ### 3a2. Améliorations à l'intérieur des paliers (après 3a)

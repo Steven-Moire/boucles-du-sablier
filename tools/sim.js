@@ -106,7 +106,10 @@ function runBot(seed, maxLoops = 60, verbose = false, tool = null, smart = false
   return {bossLoop, totalTime: Math.round(totalTime), mats: {...G.meta.mats}};
 }
 const med = a => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
-const SEEDS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(s => s * 7919);
+// --graines N : N parties au lieu de 10 (les 10 premières restent les mêmes, sortie par défaut inchangée)
+const argAfter = flag => process.argv[process.argv.indexOf(flag) + 1];
+const N_SEEDS = process.argv.includes('--graines') ? Math.max(1, Number.parseInt(argAfter('--graines'), 10) || 10) : 10;
+const SEEDS = Array.from({length: N_SEEDS}, (_, i) => (i + 1) * 7919);
 const matsLine = res =>
   Object.keys(E.MATS)
     .map(k => `${E.MATS[k].icon} ${med(res.map(r => r.mats[k] || 0))}`)
