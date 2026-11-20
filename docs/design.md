@@ -264,6 +264,36 @@ Le carnet ne tire aucun hasard : la simulation est identique octet pour octet.
 - Reforger à chaque boucle peut devenir répétitif (réserve de Steven) : à soumettre au joueur du conseil de la 3b (reforge, mémoire du village).
 - Le bot malin suit sa propre règle (marteau sur les élites) ; un bot qui suit le carnet (pioche sur les élites pour les rares) mesurerait mieux l'idée 2.
 
+### Étape 3a2 : améliorations dans les paliers — conseil et mesures (2026-11-20, en attente des leviers)
+Rien n'est codé : mesures faites sur une copie du moteur (banc jetable), à refaire dans le vrai code quand la 3a2 reprendra.
+#### Conseil élargi
+- **Accord** des quatre voix : coûts en **matériaux seuls** (la décision de la 2b tient, l'or reste aux bâtiments) ; **plafond = niveau du bâtiment Forge** (l'or gagne un usage visible) ; si les niveaux sont perdus avec l'objet, **les refaire d'un clic** (« Refaire la même forge » rejoue aussi les niveaux).
+- Le conteur : +3 par palier suffit ; « le forgeron garde le geste, pas l'arme » ; habiller les niveaux en mots (coutelas « émoussé, vif, rasoir ») plutôt qu'un « +3 » nu. Le joueur : chevauchement lisible si l'écran montre la **puissance totale** ; rares au dernier niveau seulement ; refaire +1…+5 chaque boucle est une corvée dès la 3e boucle. Le sceptique : niveaux perdus = taxe de clics ; attendre la 3b, ou palier I seul, permanent, sans rares (déjà épuisés au boss).
+- **Décision de Steven** : faire d'abord la session **« Leviers d'équilibrage »** ; la permanence des niveaux demande une raison de lore, une **barre de relation avec le forgeron** (il garde tes armes parce qu'il te connaît), à voir avec la 3b.
+
+#### Mesures (30 graines, deux bots)
+Modèle mesuré : palier I jusqu'à +5, palier II jusqu'à +10, plafond = niveau du bâtiment Forge, niveau n → n+1 = 2 × (n+1) (palier I) ou 3 × (n+1) (palier II) du matériau courant de l'outil (pioche 🦴, marteau 🧱, coutelas 🟫 ; armure : son matériau), + 1 rare au dernier niveau ; le bot achète tout ce qu'il peut après la forge.
+| Gain par niveau (outil / armure) | Niveaux | Bot par défaut | Bot malin |
+|---|---|---|---|
+| Sans amélioration (aujourd'hui) | — | méd. 10, 7-13, 3 hors cible | méd. 9, 6-11, 6 hors cible |
+| +1 puissance / +3 PV +0,2 armure | perdus | méd. 8, 7 hors cible | méd. 7, 17 hors cible |
+| idem | permanents | méd. 8, 10 hors cible | méd. 7, 16 hors cible |
+| outils seuls (armures sans niveaux) | perdus | méd. 8 | méd. 7 |
+| +0,6 palier I, +0,3 palier II / +2 PV (le +5 du palier I = le palier II nu) | perdus | méd. 9 | méd. 8, 9 hors cible |
+| +0,3 palier I, +0,15 palier II / +2 PV | perdus | méd. 9, 3 hors cible | méd. 9, 6 hors cible |
+| idem | permanents | méd. 8 | méd. 8 |
+
+Lecture :
+- **Seules les améliorations d'outil comptent.** Les niveaux d'armure ne déplacent pas le boss. Raison mesurée : à partir de la 3e boucle, plus de 90 % des boucles finissent **par le temps, pas par la mort** (218 sur 234 pour le bot par défaut, 190 sur 207 pour le malin ; aux boucles 1-2, presque toutes finissent par la mort). Survivre ne sert presque à rien, tuer vite sert à tout : PV et armure sont aujourd'hui des stats mortes.
+- Le plafond Forge bride déjà (bâtiment au niveau 1-3 quand les niveaux s'achètent : +1 à +3 atteints), et pourtant +0,4 à +1,2 de puissance avance le boss d'une boucle : le bot malin est déjà au bord bas de la cible.
+- Seuls des pas d'environ +0,3 restent dans la cible, et ils ne se sentent pas (+1,5 au +5, sur environ 27 de puissance au boss). Le chevauchement voulu (le +3 du palier II vaut le +5 du palier I) est alors impossible : le palier II nu (+3) dépasse de loin le palier I à +5.
+- Les niveaux permanents coûtent une boucle de plus partout.
+
+#### Idées de Steven à porter aux leviers (2026-11-20)
+- **Armures utiles** : des modificateurs qui font gagner du temps ou rendent le danger réel (épines…), pour qu'elles entrent dans le min-max.
+- **Compétences de déplacement ou d'exploration** : un levier pour ralentir ou accélérer la progression.
+- **Rencontres** : sur une case, le monstre n'est pas déjà là ; il apparaît avec une chance (des zones plutôt que des cases fixes).
+
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 
 ### Décisions de Steven (2026-11-12)

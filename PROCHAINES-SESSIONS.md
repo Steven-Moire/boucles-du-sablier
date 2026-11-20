@@ -2,7 +2,7 @@
 
 Chaque conversation repart de `docs/INDEX.md` (qui résume tout) sans relire l'historique. Ce qui est déjà fait (prompts exécutés, état d'avant) est archivé dans `docs/archive/sessions-faites.md`.
 
-**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Gameplay 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
+**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Gameplay 3a1 (leviers d'équilibrage) → 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
 
 Rappels valables partout :
 - Stable Diffusion (Forge) doit tourner pour toute génération d'image : API sur http://127.0.0.1:7860.
@@ -68,23 +68,31 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 
 **Sujets reportés le 20/11 (à caser)** :
 - **Multi-prestige** façon Increlution : un seul boss ne fait pas un vrai jeu ; la boucle est un premier prestige, il en faut d'autres au-dessus (conseil élargi, avant les mondes / époques de la feuille de route).
-- **Leviers d'équilibrage** (conseil élargi) : quels leviers utiliser pour tenir la cible (PV et puissance des monstres, coûts du village, temps de boucle, forge…), et ceux qui n'en sont pas (les dégâts variables gardent la moyenne). Avec `node tools/sim.js --graines 30` et les deux bots.
 - **Scribes du carnet** : casé dans la section 1 (Lore).
 
-**Ordre conseillé (20/11)** : 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
+**Ordre conseillé (20/11, révisé)** : leviers d'équilibrage (3a1) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
 
-### 3a2. Améliorations à l'intérieur des paliers (après 3a)
-Décidé le 20/11 : en 3a, la forge fabrique des **paliers** d'outils et d'armures (l'outil est l'arme). Idée de Steven : des paliers qui se chevauchent, le palier de base monte à +5, le suivant à +10 et son +3 vaut le +5 du palier de base, et ainsi de suite.
+### 3a1. Leviers d'équilibrage (avant 3a2)
+Décidé le 20/11 après le conseil de la 3a2 (mesures dans `docs/design.md` → `### Étape 3a2`) : toute amélioration d'outil qui se sent sort de la cible (le bot malin est déjà au bord bas), et les armures ne servent à rien parce que les boucles finissent par le temps, pas par la mort. Il faut d'abord de la marge et un rôle à la survie.
 ```
-Lis docs/INDEX.md, puis dans docs/design.md seulement « Étape 2b faite » (décisions, forge et paliers) et, dans la v2, « Amélioration à la forge ». Lis docs/design.md « Architecture du code » pour l'architecture.
-Avant de coder, tour de table avec /conseil (élargi) sur les améliorations à l'intérieur des paliers : niveaux max par palier (+5, +10, +15 ?), chevauchement (le +3 d'un palier vaut le max du palier d'avant ?), coûts (or + matériaux, rares pour les derniers niveaux), lien avec le niveau du bâtiment Forge, ce qui arrive aux améliorations en fin de boucle (perdues tant que la 3b ne les rend pas permanentes). Propose-moi des chiffres mesurés avec la simu avant de les coder.
+Lis docs/INDEX.md, puis dans docs/design.md seulement « Équilibrage », « Étape 2b faite » (dégâts variables, forge) et « Étape 3a2 » (conseil, mesures, idées de Steven). Lis docs/outillage.md pour la simu et docs/design.md « Architecture du code » pour l'architecture.
+Tour de table avec /conseil (élargi) sur les leviers d'équilibrage : lesquels utiliser pour tenir la cible (PV et puissance des monstres, coûts du village, temps de boucle, forge…) et ceux qui n'en sont pas (les dégâts variables gardent la moyenne). Point de départ mesuré : à partir de la 3e boucle, plus de 90 % des boucles finissent par le temps, donc PV et armure ne servent presque à rien et seule la puissance compte. À débattre avec mes idées : armures avec des modificateurs qui font gagner du temps ou rendent le danger réel (épines…), compétences de déplacement ou d'exploration (levier pour ralentir ou accélérer), monstres qui apparaissent sur une case avec une chance au lieu d'y être toujours (des zones plutôt que des cases fixes).
+Propose-moi des chiffres mesurés avec node tools/sim.js --graines 30 (bot par défaut et bot malin) avant de les coder, avec assez de marge pour que les améliorations de la 3a2 puissent se sentir (+0,6 de puissance par niveau au moins).
+Puis une mécanique à la fois, jouable à chaque étape. Simu dans la cible, sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape, demande-moi avant de pousser.
+```
+
+### 3a2. Améliorations à l'intérieur des paliers (après 3a1)
+**Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a2`) : matériaux seuls, plafond = niveau du bâtiment Forge, niveaux refaits d'un clic s'ils sont perdus ; en attente des leviers (seuls des pas de +0,3 tiennent la cible aujourd'hui, et ils ne se sentent pas). La permanence des niveaux passe par une barre de relation avec le forgeron (lore), à voir avec la 3b.
+```
+Lis docs/INDEX.md, puis dans docs/design.md seulement « Étape 2b faite » (décisions, forge et paliers), « Étape 3a2 » (conseil, mesures) et ce que la session des leviers (3a1) a décidé. Lis docs/design.md « Architecture du code » pour l'architecture.
+Le conseil est fait : reprends ses accords (matériaux seuls, plafond = niveau du bâtiment Forge, « Refaire la même forge » rejoue les niveaux) et refais les mesures du tableau de la 3a2 dans le vrai code, avec les nouveaux leviers : propose-moi des pas qui se sentent et gardent la cible, avec le chevauchement (le +3 d'un palier vaut le max du palier d'avant) si c'est possible, et la façon d'afficher les niveaux (en mots, idée du conteur, ou en nombres avec la puissance totale, idée du joueur).
 Puis une mécanique à la fois, jouable à chaque étape. Simu dans la cible (bot par défaut et bot malin), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape, demande-moi avant de pousser.
 ```
 
 ### 3b. Mémoire du village par la renommée
 ```
 Lis docs/INDEX.md, puis dans docs/design.md seulement « Équipement, forge et mémoire du village — PROPOSITION v3 » (sous-sections « Mémoire du village », « Hauts faits », « Sauvegarde ») et « Étape 2b faite » (forge, sous-étape 2 ; réserve de Steven : reforger à chaque boucle peut devenir répétitif, à poser au joueur du conseil). Lis docs/design.md « Architecture du code » pour l'architecture.
-Étape 2c : les rangs du village (Hameau → Cité) rendent permanents, dans l'ordre, l'arme, l'armure, l'accessoire, puis les améliorations. Une mécanique à la fois, jouable à chaque étape.
+Étape 2c : les rangs du village (Hameau → Cité) rendent permanents, dans l'ordre, l'arme, l'armure, l'accessoire, puis les améliorations. Idée de Steven (20/11) : la permanence des améliorations passe par une barre de relation avec le forgeron (il garde tes armes parce qu'il te connaît), à relier aux rangs. Une mécanique à la fois, jouable à chaque étape.
 Avant de coder, conseil élargi sur la « reforge » (reportée de la 2b) : prix plein à chaque boucle (fait en 2b) ou première forge chère puis reforge à ~25 % parce que le village garde le patron (`meta.known`), avec reforge automatique en lot au début de la boucle ? Le sceptique objecte que la permanence (dès la 2e-6e boucle) rend la reforge transitoire ; le conteur et le joueur y voient la mémoire du village rendue concrète, et utile pour les emplacements pas encore mémorisés.
 Puis recale la cible d'équilibrage : la permanence accélère la progression, propose-moi une nouvelle cible chiffrée avec la simu (bot par défaut et bot malin) avant de toucher aux chiffres.
 Annonce le périmètre en 5 lignes avant de coder, sauvegarde compatible, docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
