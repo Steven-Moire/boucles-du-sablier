@@ -4,8 +4,8 @@
   "type": "module",
   "description": "Modules ES natifs, aucun build, rien n'est livré au joueur depuis node_modules. Les devDependencies servent seulement à vérifier le code (lint) ; Node fait tourner tools/sim.js.",
   "scripts": {
-    "lint": "eslint . --max-warnings 0 && prettier --check . && ruff check . && ruff format --check .",
-    "format": "prettier --write . && ruff format .",
+    "lint": "eslint . --max-warnings 0 && prettier --check . && node tools/qa/ruff.js check . && node tools/qa/ruff.js format --check .",
+    "format": "prettier --write . && node tools/qa/ruff.js format .",
     "sim": "node tools/sim.js",
     "check:sim": "node tools/qa/check-sim.js",
     "check": "npm run lint && npm run check:sim"

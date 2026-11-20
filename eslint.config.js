@@ -30,6 +30,7 @@ export default [
       'screenshots/**',
       'sd_raw/**',
       '.venv/**',
+      '.venv-win/**',
       'assets/**',
       'src/**/*.generated.js',
     ],

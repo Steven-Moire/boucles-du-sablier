@@ -13,4 +13,5 @@ tools/qa/ref/
 # Outillage local et environnements
 .claude/
 .venv/
+.venv-win/
 package-lock.json
