@@ -41,6 +41,7 @@ export function createGame(meta, rng, mrng) {
   meta.equip = cleanSlots(meta.equip);
   meta.forge = cleanSlots(meta.forge);
   meta.recent = cleanSlots(meta.recent);
+  for (const id in meta.bestiary) meta.bestiary[id].byTool ||= {}; // carnet par outil (2b)
   const G = {meta, rng: rng || Math.random, mrng: mrng || Math.random, run: null, events: []};
   startLoop(G);
   return G;

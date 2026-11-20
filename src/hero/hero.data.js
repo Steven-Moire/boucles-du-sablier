@@ -9,6 +9,7 @@ export const xpNeeded = l => Math.round(10 * Math.pow(l, 1.5));
 export const TOOLS = {
   pioche: {
     name: 'Pioche',
+    the: 'la pioche',
     icon: '⛏️',
     every: 1,
     dmg: 1,
@@ -20,6 +21,7 @@ export const TOOLS = {
   },
   marteau: {
     name: 'Marteau',
+    the: 'le marteau',
     icon: '🔨',
     every: 14 / 9,
     dmg: 1.5,
@@ -31,6 +33,7 @@ export const TOOLS = {
   },
   coutelas: {
     name: 'Coutelas',
+    the: 'le coutelas',
     icon: '🔪',
     every: 2 / 3,
     dmg: 0.7,

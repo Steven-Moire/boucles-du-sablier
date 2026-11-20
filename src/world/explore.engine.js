@@ -1,7 +1,7 @@
 // Moteur pur (aucun DOM) : explorer une case, segment par segment (marche, vagues, récolte, repos, trésor).
 import {RES, TILE_MAP, neighbors} from './world.data.js';
 import {addRes, log, randInt} from './loop.engine.js';
-import {monsterStats} from '../enemies/enemies.engine.js';
+import {monsterStats, newBestiaryEntry} from '../enemies/enemies.engine.js';
 import {makeDig} from '../mining/dig.engine.js';
 
 export function isExplorable(G, id) {
@@ -104,7 +104,7 @@ export function nextSegment(G) {
     a.heroT = 0;
     a.phase = 'fight';
     for (const e of a.enemies) {
-      const b = G.meta.bestiary[e.id] || (G.meta.bestiary[e.id] = {seen: false, killed: false});
+      const b = G.meta.bestiary[e.id] || (G.meta.bestiary[e.id] = newBestiaryEntry());
       if (!b.seen) {
         b.seen = true;
         G.run.gains.monsters++;

@@ -174,7 +174,7 @@ Lecture : le marteau abat plus vite (surtout golems, ours, boss grâce à l'armu
 - Sprite du héros selon l'outil (il tient toujours une pioche).
 - ~~Bot qui change d'outil selon la case~~ : fait en 2b (`--malin`, ci-dessous).
 
-### Étape 2b en cours : forge et outil conseillé (2026-11-20)
+### Étape 2b faite : forge et outil conseillé (2026-11-20)
 #### Décisions de Steven (2026-11-20, après un conseil)
 - **Outil conseillé dans le bestiaire** : le carnet compte les victoires **par outil** (`bestiary[id].byTool`, `{}` par défaut). Une note dans le ton du carnet apparaît à la première victoire ou défaite (après une défaite, en négatif : « pas la pioche »). L'outil est **nommé** dès que le monstre a été battu avec **2 outils différents** (le carnet compare tes essais), sinon au filet par rang : normal 10, élite 2, boss 1 (Steven : un boss est difficile à battre par principe ; il sera battu plusieurs fois avec le multi-prestige). Pourquoi : un seuil unique de 10 arrive à la 1re boucle pour le mulot mais jamais avant le boss pour l'ours et le Gardien (mesuré : alpha 1 victoire par boucle, ours ~3 à la 8e boucle).
 - **Prix de forge** : prix plein à chaque boucle en 2b ; la « reforge » bon marché (le village garde le patron) est reportée en 3b, avec un conseil élargi.
@@ -228,6 +228,29 @@ Simulation : avant chaque boucle, les bots forgent ce qu'ils peuvent payer, dans
 | Malin | 6 10 10 10 9 10 8 10 7 9 (méd. 9,5) | 9-16 | 6 à 11, méd. 9 (avant : 7 à 12, méd. 9) | 🟫 39 · 🐺 59 · 🧱 16 · 🦴 40 · 🔹 13 · 🦷 2 · 🐾 0 · 💎 0 |
 
 Lecture : les médianes restent dans la cible (9-12) et la forge ne bouleverse pas l'équilibrage (prix plein, peu d'objets par boucle). Les queues basses (6e-7e boucle) existaient déjà avant la forge sur 30 graines ; la forge en ajoute une pour le malin. À traiter dans la session « leviers d'équilibrage » (`PROCHAINES-SESSIONS.md`), pas en gonflant les recettes. Les matériaux ne s'accumulent plus : ils partent à la forge.
+
+#### Sous-étape 3 faite : outil conseillé dans le bestiaire (2026-11-20)
+Règles en place (`toolAdvice` dans `src/enemies/enemies.engine.js`, `ADVICE` et `RANK[rang].net` dans `enemies.data.js`, section « CARNET » de la fiche d'un monstre) :
+- Le carnet compte les victoires et les défaites **par outil** (`bestiary[id].byTool = {outil: {w, l}}`, `{}` par défaut au chargement) ; la défaite est notée au monstre qui a fait tomber le héros, avec l'outil de l'action en cours.
+- Après la première défaite : note en négatif, « Pas la pioche, en tout cas. » Après la première victoire : « Tombé sous la pioche. », et le carnet attend un autre outil pour comparer.
+- L'outil conseillé est **nommé** dès que le monstre a été battu avec **2 outils différents**, ou au filet de victoires de son rang (normal 10, élite 2, boss 1 ; le compteur `kills` existait déjà, une ancienne sauvegarde voit donc l'outil nommé tout de suite pour les monstres déjà beaucoup battus).
+- **Interprétation à valider par Steven** : l'outil nommé est fixé par monstre dans les données (idée 1 : golem → marteau, loup → coutelas, élites → pioche), pas déduit des victoires du joueur (qui ne reflètent que ses habitudes). Comparer ses essais *déclenche* le conseil, il ne le *choisit* pas.
+
+| Monstre | Outil conseillé | Note du carnet (provisoire, la session lore des scribes la reprendra) |
+|---|---|---|
+| Mulot dentu | 🔪 Coutelas | « Tout en cuir, presque rien au cœur : on l'écorche. » |
+| Sanglier | 🔪 Coutelas | « Du cuir en pagaille sous la soie : le coutelas en tire moitié plus. » |
+| Sanglier alpha | ⛏️ Pioche | « Sa défense dort au cœur : le marteau la brise, la pioche la rapporte. » |
+| Loup gris | 🔪 Coutelas | « Vif et sans armure : on le prend de vitesse, la fourrure vient avec. » |
+| Golem de pierre | 🔨 Marteau | « La pierre se moque des lames : la masse passe outre l'armure. » |
+| Ours ancien | ⛏️ Pioche | « Les griffes sont au fond : creuser droit, sans rien casser. » |
+| Gardien du Sablier | 🔨 Marteau | « On ne vient pas pour le sable : on vient pour qu'il tombe. » |
+
+Le carnet ne tire aucun hasard : la simulation est identique octet pour octet.
+
+#### Pour plus tard
+- Reforger à chaque boucle peut devenir répétitif (réserve de Steven) : à soumettre au joueur du conseil de la 3b (reforge, mémoire du village).
+- Le bot malin suit sa propre règle (marteau sur les élites) ; un bot qui suit le carnet (pioche sur les élites pour les rares) mesurerait mieux l'idée 2.
 
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 

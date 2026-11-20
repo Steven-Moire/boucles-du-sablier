@@ -110,10 +110,22 @@ export const MONSTERS = {
     },
   },
 };
+// net : victoires au bout desquelles le carnet nomme l'outil conseillé même sans comparaison (filet, étape 2b)
 export const RANK = {
-  normal: {label: 'Monstre', xp: 1, renown: 2},
-  elite: {label: 'Élite', xp: 3, renown: 10},
-  boss: {label: 'Boss', xp: 5, renown: 50},
+  normal: {label: 'Monstre', xp: 1, renown: 2, net: 10},
+  elite: {label: 'Élite', xp: 3, renown: 10, net: 2},
+  boss: {label: 'Boss', xp: 5, renown: 50, net: 1},
+};
+
+// outil conseillé par le carnet du bestiaire et sa raison (textes provisoires : la session lore des scribes les reprendra)
+export const ADVICE = {
+  mulot: {tool: 'coutelas', why: "Tout en cuir, presque rien au cœur : on l'écorche."},
+  sanglier: {tool: 'coutelas', why: 'Du cuir en pagaille sous la soie : le coutelas en tire moitié plus.'},
+  sanglier_alpha: {tool: 'pioche', why: 'Sa défense dort au cœur : le marteau la brise, la pioche la rapporte.'},
+  loup: {tool: 'coutelas', why: 'Vif et sans armure : on le prend de vitesse, la fourrure vient avec.'},
+  golem: {tool: 'marteau', why: "La pierre se moque des lames : la masse passe outre l'armure."},
+  ours: {tool: 'pioche', why: 'Les griffes sont au fond : creuser droit, sans rien casser.'},
+  gardien: {tool: 'marteau', why: "On ne vient pas pour le sable : on vient pour qu'il tombe."},
 };
 
 // composition : matériau de chaque strate ; veine.sprite = les veines brillantes du sprite,

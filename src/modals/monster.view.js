@@ -1,7 +1,8 @@
 import {RES, TILES} from '../world/world.data.js';
 import {COMPOSITION, MONSTERS, RANK} from '../enemies/enemies.data.js';
 import {MATS, STRATA} from '../mining/mining.data.js';
-import {monsterStats} from '../enemies/enemies.engine.js';
+import {TOOLS} from '../hero/hero.data.js';
+import {monsterStats, toolAdvice} from '../enemies/enemies.engine.js';
 import {composition} from '../mining/strata.engine.js';
 import {S} from '../shared/state.js';
 import {$} from '../shared/dom.js';
@@ -40,10 +41,31 @@ export function openMonster(id, lvl) {
     `<button class="x" data-close>×</button><div style="text-align:center;font-size:48px">${seen ? spr(id, mm.por) : '❔'}</div><h2>${seen ? mm.name : '???'}</h2><div class="sub">${RANK[mm.rank].label} · Niveau ${L}</div>
     <div class="divh"><span>STATS</span></div>${rows.map(([k, v]) => `<div class="row"><span class="k">${k}</span><b>${v}</b></div>`).join('')}
     ${seen ? '' : '<div class="note">Rencontre-le une fois pour révéler sa fiche.</div>'}
-    ${seen ? compositionHTML(id, b.killed) : ''}
+    ${seen ? compositionHTML(id, b.killed) + carnetHTML(id, b) : ''}
     <div class="divh"><span>BUTINS</span></div>${drops}`;
   S.modalMode = 'monster';
   $('modal').hidden = false;
+}
+// Carnet : outil conseillé (étape 2b) — note après la 1re victoire ou défaite, outil nommé après comparaison ou au filet
+const tally = (byTool, f) =>
+  Object.keys(byTool)
+    .filter(k => byTool[k][f] > 0)
+    .map(k => `${TOOLS[k].icon} ${byTool[k][f]}`)
+    .join(' · ') || '—';
+const CARNET_NOTE = {
+  named: a =>
+    `<div class="row"><span class="k">Outil conseillé</span><b>${TOOLS[a.tool].icon} ${TOOLS[a.tool].name}</b></div><div class="note">« ${a.why} »</div>`,
+  win: a =>
+    `<div class="note">« Tombé sous ${TOOLS[a.tool].the}. » Le carnet attend un autre outil pour comparer (ou encore ${a.left} victoire${a.left > 1 ? 's' : ''}).</div>`,
+  loss: a => `<div class="note">« Pas ${TOOLS[a.tool].the}, en tout cas. »</div>`,
+};
+function carnetHTML(id, b) {
+  const a = toolAdvice(id, b);
+  if (!a) return '';
+  return `<div class="divh"><span>CARNET</span></div>
+    <div class="row"><span class="k">Victoires par outil</span><span>${tally(a.byTool, 'w')}</span></div>
+    <div class="row"><span class="k">Défaites par outil</span><span>${tally(a.byTool, 'l')}</span></div>
+    ${CARNET_NOTE[a.kind](a)}`;
 }
 // Composition d'un monstre : part de chaque strate et matériau extrait (révélé à la première victoire)
 function compositionHTML(id, killed) {

@@ -2,6 +2,7 @@
 import {RES} from '../world/world.data.js';
 import {SKILLS, xpNeeded} from '../hero/hero.data.js';
 import {MONSTERS, RANK} from '../enemies/enemies.data.js';
+import {recordFight} from '../enemies/enemies.engine.js';
 import {MATS} from '../mining/mining.data.js';
 import {actionTool, heroAtLevel, heroEvery, skillUnlocked} from '../hero/hero.engine.js';
 import {aimDig, dig, extract} from '../mining/dig.engine.js';
@@ -114,6 +115,7 @@ function enemyAttacks(G, e, i, dt) {
     strike(G, 'e' + i, e, 'hero', h, 1, false);
     if (h.hp <= 0) {
       h.hp = 0;
+      recordFight(G.meta.bestiary[e.id], actionTool(G).key, false); // le carnet note la défaite et l'outil
       endLoop(G, 'death', e.name);
       return true;
     }
@@ -139,6 +141,17 @@ export function resolveDeaths(G) {
   }
   return false;
 }
+// bestiaire : compteur de victoires, victoire par outil (carnet), renommée de la première victoire
+function noteVictory(G, e, rk) {
+  const b = G.meta.bestiary[e.id];
+  b.kills = (b.kills || 0) + 1;
+  recordFight(b, actionTool(G).key, true);
+  if (!b.killed) {
+    b.killed = true;
+    addRes(G, 'renown', rk.renown);
+    log(G, `Première victoire contre ${e.name} : +${rk.renown} ⭐`, 'g');
+  }
+}
 export function onKill(G, e, i) {
   const h = G.run.hero,
     m = MONSTERS[e.id],
@@ -162,13 +175,7 @@ export function onKill(G, e, i) {
   }
   log(G, msg, 'g');
   G.events.push({type: 'kill', tgt: 'e' + i, got});
-  const b = G.meta.bestiary[e.id];
-  b.kills = (b.kills || 0) + 1;
-  if (!b.killed) {
-    b.killed = true;
-    addRes(G, 'renown', rk.renown);
-    log(G, `Première victoire contre ${e.name} : +${rk.renown} ⭐`, 'g');
-  }
+  noteVictory(G, e, rk);
   if (!G.meta.trophies[e.id] && G.rng() < m.trophy.chance) {
     G.meta.trophies[e.id] = true;
     G.run.gains.trophies++;

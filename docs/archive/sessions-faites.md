@@ -305,3 +305,21 @@ Mets à jour docs/lore.md et docs/INDEX.md, commit et push. Ne touche pas au cod
 ```
 
 **Fichiers utiles** : `docs/INDEX.md`, `docs/lore.md`, `docs/design.md` → section `### Le lore qui va avec`, skill `/conseil`.
+
+---
+
+## Gameplay 3a — forge et outil conseillé du 20/11 (faite, étape 2b)
+
+**État avant la session** : sous-étape 1 faite (bot malin `--malin`, dégâts variables ×0,8-1,2, `--graines N`) ; boss méd. 9 (défaut) et 10 (malin) sur 10 graines.
+
+**Résultat** : sous-étape 2 (forge à recettes non permanente, commit 95c9959) et sous-étape 3 (outil conseillé dans le carnet du bestiaire). Décisions de Steven pendant la session : chaque outil a ses propres paliers (palier II de chacun), recettes en matériaux seulement, découvertes à la première victoire ; « Refaire la même forge » en attendant la 3b. Premiers tests du moteur avec `node:test` (`tests/`, `npm test`, inclus dans `npm run check`). Aussi : prompt de la session 0 (alléger CLAUDE.md et les règles d'atlas, mesures à l'appui).
+
+**Prompt exécuté** :
+```
+Lis docs/INDEX.md, puis dans docs/design.md seulement : « Étape 2a faite : marteau et coutelas », « Équipement, forge et mémoire du village — PROPOSITION v3 » et, dans la v2, « Types d'armes », « Objets », « Amélioration à la forge ». Lis la section « 3. Gameplay » de PROCHAINES-SESSIONS.md (idées validées). Lis CLAUDE.md pour l'architecture.
+Étape 2b du combat-minage, une mécanique à la fois, jouable à chaque étape :
+1. (fait le 20/11 : bot malin `--malin`, dégâts variables, `--graines N`) Lis aussi dans docs/design.md « Étape 2b en cours » (décisions du conseil : l'outil est l'arme, forger = fabriquer le palier suivant d'un outil ou d'une armure ; prix plein à chaque boucle, la reforge est pour la 3b).
+2. Forge : objets (arme, armure, accessoire) forgés avec les matériaux extraits, recettes qui demandent des rares ou beaucoup de communs (idée 2), équipement perdu à la fin de la boucle (non permanent).
+3. Outil conseillé par monstre dans la fiche du bestiaire (idée 1), règle décidée dans « Étape 2b en cours » : victoires par outil, note dès la 1re victoire ou défaite, outil nommé après 2 outils différents ou au filet (normal 10, élite 2, boss 1).
+Avant de coder, annonce-moi le périmètre (fichiers touchés) en 5 lignes. Simu dans la cible (boss 8e-13e boucle, médiane 9-12, avec le bot par défaut et le bot malin, vérifier aussi avec --graines 30), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape et demande-moi avant de pousser.
+```
