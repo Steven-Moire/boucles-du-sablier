@@ -2,13 +2,25 @@
 
 Chaque conversation repart de `docs/INDEX.md` (qui résume tout) sans relire l'historique. Ce qui est déjà fait (prompts exécutés, état d'avant) est archivé dans `docs/archive/sessions-faites.md`.
 
-**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Gameplay 3a → 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
+**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **0 (contexte Claude, court)**, puis **Gameplay 3a → 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
 
 Rappels valables partout :
 - Stable Diffusion (Forge) doit tourner pour toute génération d'image : API sur http://127.0.0.1:7860.
 - Jouer en local : `python -m http.server` puis http://localhost:8000.
 - Vérifier : `node tools/sim.js` (boss entre la 8e et la 13e boucle, médiane 9-12) et `.venv/bin/python tools/screenshot.py` depuis WSL (aucune erreur JS).
 - Le hook de budget prévient dès 150 k tokens : à ce moment-là, clore la conversation et en ouvrir une autre.
+
+---
+
+## 0. Contexte Claude : alléger CLAUDE.md et les règles (à faire en premier, conversation courte)
+Décidé le 20/11 : mesuré à chaque requête ~3,5 k tokens pour `CLAUDE.md` (11,6 Ko) et ~13 k pour les règles d'atlas sans filtre `paths:` (`.claude/rules/common/*` 27,5 Ko, `python/import_cascade.md` et `python/sonarqube.md` 14,7 Ko, `everything-claude-code-guardrails.md` 2,3 Ko), en grande partie hors sujet (FastAPI, microservices, CI GitHub Actions, SQL). Les règles `javascript/` ont déjà leur filtre `paths:`.
+```
+Lis CLAUDE.md, CLAUDE.local.md, docs/INDEX.md et la liste de .claude/rules/ (taille et en-tête de chaque fichier, pas tout le contenu).
+Allège le contexte chargé à chaque requête, sans rien perdre :
+1. Règles d'atlas (.claude/ n'est pas versionné : pas de retour git) : un filtre `paths:` sur celles qui servent parfois (ex. python/sonarqube.md et python/coding-style.md sur tools/**/*.py) ; déplace dans .claude/rules-atlas/ (pas de suppression) celles qui ne servent jamais ici (import_cascade, fastapi, github-actions-security, common/security, patterns, performance…). Montre-moi la liste « garder / filtrer / déplacer » avant de toucher.
+2. CLAUDE.md ramené à ~3 Ko : langue, projet en 3 lignes, couches, règles absolues (venv, uniformité, sauvegarde, moteur pur), pointeurs. Le détail part dans des fichiers versionnés : commandes Python, venv, Forge et sprites → docs/outillage.md ; liste des modules → docs/design.md « ## Architecture du code » ; feuille de route → docs/INDEX.md. CLAUDE.md dit « lire docs/outillage.md avant de toucher à tools/ ou aux venv ».
+3. Vérifie que rien n'est perdu (chaque ligne de l'ancien CLAUDE.md retrouvée quelque part), mesure les tailles avant / après, mets à jour docs/INDEX.md, commit, demande-moi avant de pousser.
+```
 
 ---
 
@@ -32,19 +44,19 @@ Mets à jour docs/lore.md et docs/INDEX.md, commit, demande-moi avant de pousser
 
 **Fait le 19/11** (détails dans l'archive) : intro intégrée, héros v3 avec pioche, icônes de cases 32×32. Reste possible : pioche vraiment sur l'épaule (retouche à la main ou inpainting), ombres grises sous quelques sprites, fonds de scène v2, bâtiments du village.
 
-**Prochain prompt (héros selon l'outil, le plus important des graphismes)** — depuis le 19/11 le héros choisit pioche, marteau ou coutelas avant chaque case (`TOOLS` dans `src/data.js`, `meta.tool`), mais son sprite tient toujours une pioche :
+**Prochain prompt (héros selon l'outil, le plus important des graphismes)** — depuis le 19/11 le héros choisit pioche, marteau ou coutelas avant chaque case (`TOOLS` dans `src/hero/hero.data.js`, `meta.tool`), mais son sprite tient toujours une pioche :
 ```
 Lis docs/INDEX.md puis docs/art-direction.md (court), tools/sprites.json (entrée du héros v3, pxl_1202) et dans docs/design.md la section « Étape 2a faite : marteau et coutelas ». Forge tourne sur :7860.
 1. Génère deux variantes du héros v3, même pose, même tenue, même palette : une avec un marteau de forgeron, une avec un coutelas. Pars du héros v3 en img2img / inpainting (zone de l'outil seulement) pour qu'il reste reconnaissable ; montre-moi une planche de contrôle (3-4 variantes par outil) avant de choisir.
-2. Après mon choix : seeds dans sprites.json, `python tools/sd_generate.py --build` → assets/sprites/hero_marteau.png et hero_coutelas.png (48×48, palette docs/palette.hex).
-3. Intègre-les : la scène de combat affiche le sprite de l'outil de l'action en cours (`actionTool(G)` dans src/engine.js), repli sur le héros pioche si le fichier manque (spr()). Garde la séparation moteur / UI.
+2. Après mon choix : seeds dans sprites.json, `.venv-win\Scripts\python tools/sd_generate.py --build` (Windows) → assets/sprites/hero_marteau.png et hero_coutelas.png (48×48, palette docs/palette.hex).
+3. Intègre-les : la scène de combat affiche le sprite de l'outil de l'action en cours (`actionTool(G)` dans src/hero/hero.engine.js), repli sur le héros pioche si le fichier manque (spr()). Garde la séparation moteur / UI.
 Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et docs/INDEX.md, commit, et demande-moi avant de pousser.
 ```
 
 **Commandes utiles** :
-- générer : `python tools/sd_generate.py <asset> -n 4` (ou `--profile v1_turbo` pour les fonds) ;
-- construire les sprites retenus : `python tools/sd_generate.py --build` ;
-- après tout changement de sprite de monstre : `python tools/sprite_grids.py`, puis `node tools/sim.js`.
+- générer (Windows, Forge) : `.venv-win\Scripts\python tools/sd_generate.py <asset> -n 4` (ou `--profile v1_turbo` pour les fonds) ;
+- construire les sprites retenus : `.venv-win\Scripts\python tools/sd_generate.py --build` ;
+- après tout changement de sprite de monstre : `.venv-win\Scripts\python tools/sprite_grids.py` (ou `.venv/bin/python` sous WSL), puis `node tools/sim.js`.
 
 ---
 
