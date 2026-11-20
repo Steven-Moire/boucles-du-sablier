@@ -41,8 +41,17 @@ function pickTile(G) {
   const farm = E.TILES.filter(t => E.isExplorable(G, t.id) && t.waves).sort((a, b) => b.lvl - a.lvl);
   return farm[0] ?? null;
 }
+// bot malin (--malin) : l'outil selon la case — marteau sur les élites, le boss et les golems,
+// coutelas pour farmer une case déjà faite dans la boucle, pioche sinon
+const tileMonsters = tile => tile.waves.flat().map(id => E.MONSTERS[id]);
+function smartTool(G, tile) {
+  if (!tile.waves) return E.DEFAULT_TOOL;
+  const hard = tileMonsters(tile).some(m => m.rank !== 'normal') || tile.waves.flat().includes('golem');
+  if (hard) return 'marteau';
+  return G.run.completed.has(tile.id) ? 'coutelas' : 'pioche';
+}
 // joue une boucle jusqu'à sa fin ; renvoie le temps de jeu total (ajouté tick par tick, comme avant)
-function playLoop(G, totalTime) {
+function playLoop(G, totalTime, smart = false) {
   let time = totalTime;
   while (!G.run.over) {
     if (!G.run.action) {
@@ -51,6 +60,7 @@ function playLoop(G, totalTime) {
         G.run.over = {reason: 'stuck', gains: G.run.gains};
         break;
       }
+      if (smart) E.setTool(G, smartTool(G, tile));
       E.explore(G, tile.id);
     }
     const before = G.run.timeLeft;
@@ -78,7 +88,7 @@ function buyAll(G) {
     E.buy(G, ks[0]);
   }
 }
-function runBot(seed, maxLoops = 60, verbose = false, tool = null) {
+function runBot(seed, maxLoops = 60, verbose = false, tool = null, smart = false) {
   const rng = lcg(seed);
   const mrng = lcg(seed ^ 0x5bd1e995); // minage
   const G = E.createGame(null, rng, mrng);
@@ -86,7 +96,7 @@ function runBot(seed, maxLoops = 60, verbose = false, tool = null) {
   let totalTime = 0,
     bossLoop = null;
   for (let loop = 1; loop <= maxLoops; loop++) {
-    totalTime = playLoop(G, totalTime);
+    totalTime = playLoop(G, totalTime, smart);
     if (G.meta.bossKilled) bossLoop = loop;
     if (verbose) logLoop(G, loop);
     if (bossLoop) break;
@@ -111,8 +121,11 @@ if (process.argv.includes('--outils')) {
     console.log('   matériaux au boss (médiane) :', matsLine(res));
   }
 } else {
-  runBot(42, 60, true);
-  const res = SEEDS.map(s => runBot(s));
+  // node tools/sim.js --malin : le bot choisit l'outil selon la case (sortie par défaut : pioche partout)
+  const smart = process.argv.includes('--malin');
+  if (smart) console.log('Bot malin : marteau sur élites, boss et golems, coutelas en farm, pioche sinon.');
+  runBot(42, 60, true, null, smart);
+  const res = SEEDS.map(s => runBot(s, 60, false, null, smart));
   console.log(
     '\nBoss vaincu à la boucle :',
     res.map(r => r.bossLoop).join(' '),

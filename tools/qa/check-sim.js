@@ -12,6 +12,7 @@ const REF_DIR = join(ROOT, 'tools', 'qa', 'ref');
 const RUNS = [
   {name: 'sim.txt', args: []},
   {name: 'sim-outils.txt', args: ['--outils']},
+  {name: 'sim-malin.txt', args: ['--malin']},
 ];
 
 const runSim = args => execFileSync(process.execPath, [SIM, ...args], {cwd: ROOT, encoding: 'utf8'});

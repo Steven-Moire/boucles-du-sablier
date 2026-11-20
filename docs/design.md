@@ -172,7 +172,22 @@ Lecture : le marteau abat plus vite (surtout golems, ours, boss grâce à l'armu
 
 #### Pour plus tard
 - Sprite du héros selon l'outil (il tient toujours une pioche).
-- Le bot ne change pas d'outil selon la case : un bot « malin » (marteau sur les élites, coutelas en farm) mesurerait l'écart de maîtrise.
+- ~~Bot qui change d'outil selon la case~~ : fait en 2b (`--malin`, ci-dessous).
+
+### Étape 2b en cours : forge et outil conseillé (2026-11-20)
+#### Décisions de Steven (2026-11-20, après un conseil)
+- **Outil conseillé dans le bestiaire** : le carnet compte les victoires **par outil** (`bestiary[id].byTool`, `{}` par défaut). Une note dans le ton du carnet apparaît à la première victoire ou défaite (après une défaite, en négatif : « pas la pioche »). L'outil est **nommé** dès que le monstre a été battu avec **2 outils différents** (le carnet compare tes essais), sinon au filet par rang : normal 10, élite 3, boss 2 (le boss sera battu plusieurs fois avec le multi-prestige). Pourquoi : un seuil unique de 10 arrive à la 1re boucle pour le mulot mais jamais avant le boss pour l'ours et le Gardien (mesuré : alpha 1 victoire par boucle, ours ~3 à la 8e boucle).
+- **Prix de forge** : prix plein à chaque boucle en 2b ; la « reforge » bon marché (le village garde le patron) est reportée en 3b, avec un conseil élargi.
+- **Armes et outils** : l'outil **est** l'arme. Idée de Steven : des **paliers qui se chevauchent** (le coutelas de base monte à +5, un coutelas de palier supérieur monte à +10 et son +3 vaut le +5 du palier de base) ; pareil pour les armures. Découpage à confirmer.
+
+#### Sous-étape 1 faite : bot malin (`node tools/sim.js --malin`)
+Le bot choisit l'outil avant chaque case : 🔨 marteau si la case a une élite, le boss ou un golem ; 🔪 coutelas pour farmer une case déjà faite dans la boucle ; ⛏️ pioche sinon. La sortie par défaut est inchangée (références `tools/qa/ref/sim.txt` et `sim-outils.txt` identiques, nouvelle référence `sim-malin.txt`).
+| Bot | Boss à la boucle | Min ×1 | Matériaux au boss (médiane) |
+|---|---|---|---|
+| Par défaut (pioche) | 9 13 10 12 9 12 8 9 12 9 (méd. 9,5) | 12-20 | 🟫 208 · 🐺 96 · 🧱 29 · 🦴 118 · 🔹 22 · 🦷 11 · 🐾 6 · 💎 1 |
+| Malin | 10 9 10 10 11 8 8 8 10 **7** (méd. 10) | 11-15 | 🟫 200 · 🐺 99 · 🧱 34 · 🦴 97 · 🔹 14 · 🦷 7 · 🐾 3 · 💎 1 · 🔥 23 · ❄️ 28 · ⚡ 35 · ⏳ 0 |
+
+Lecture : bien choisir son outil fait gagner ~2 boucles au plus rapide et resserre l'écart (11-15 min au lieu de 12-20). Une graine sort de la cible (7e boucle) : **à recaler avec la forge**, qui accélère encore. Le marteau sur les élites coûte des rares (🦷 7 au lieu de 11, 🐾 3 au lieu de 6) : si les recettes demandent des rares, le bon choix sur les élites devient la pioche, ce qui est le but de l'idée 2.
 
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 
