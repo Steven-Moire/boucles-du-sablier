@@ -1,6 +1,6 @@
 import {BIOMES, TILES, TILE_MAP, TYPES, tid} from './world.data.js';
 import {canExplore, explore, segFill} from './explore.engine.js';
-import {S, anyUpgrade} from '../shared/state.js';
+import {S, anyUpgrade, openVillage} from '../shared/state.js';
 import {$, setHTML} from '../shared/dom.js';
 import {spr} from '../shared/templates.js';
 import {requestRender} from '../shared/render.js';
@@ -42,7 +42,7 @@ mapEl.addEventListener('click', e => {
   const d = e.target.closest('.tile');
   if (!d) return;
   S.selected = d.dataset.id;
-  if (TILE_MAP[S.selected].type === 'village' && anyUpgrade()) S.tab = 'village';
+  if (TILE_MAP[S.selected].type === 'village' && anyUpgrade()) openVillage();
   requestRender();
 });
 mapEl.addEventListener('dblclick', e => {

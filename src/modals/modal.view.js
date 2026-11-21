@@ -1,6 +1,6 @@
 import {newLoop} from '../world/loop.engine.js';
 import {replayScene} from '../lore/scene.engine.js';
-import {S, newUiGame, saveMeta, startTile} from '../shared/state.js';
+import {S, newUiGame, openVillage, saveMeta, startTile} from '../shared/state.js';
 import {clearMeta} from '../shared/save.js';
 import {$, toast} from '../shared/dom.js';
 import {requestRender} from '../shared/render.js';
@@ -20,7 +20,11 @@ $('modal').addEventListener('click', e => {
   if (b.hasAttribute('data-newloop')) {
     newLoop(S.G);
     saveMeta();
-    S.tab = b.dataset.go ? 'village' : 'map';
+    // la boucle s'ouvre au village, chez Jalon (ou sur une amélioration payable si on l'a demandé)
+    S.tab = 'place';
+    S.zone = 'jalon';
+    S.farView = false;
+    if (b.dataset.go) openVillage();
     S.selected = startTile();
     S.lastSceneTile = null;
     closeModal();
@@ -53,7 +57,9 @@ $('resetBtn').addEventListener('click', () => {
   resetArm = false;
   $('resetBtn').textContent = 'Réinitialiser la sauvegarde';
   S.selected = startTile();
-  S.tab = 'map';
+  S.tab = 'place';
+  S.zone = 'jalon';
+  S.farView = false;
   S.lastSceneTile = null;
   closeModal();
   playIntro(showMorning); // tout effacé = nouveau départ, l'intro se rejoue (on peut toujours la passer)

@@ -184,7 +184,8 @@ $('scEnemies').addEventListener(
 export function onSceneEvent(ev) {
   const a = S.G.run.action;
   S.scene = {step: 'coup', tgt: ev.tgt, e: a?.enemies?.[+ev.tgt.slice(1)], killed: false, timer: null};
-  S.tab = 'combat';
+  S.tab = 'place';
+  S.farView = false;
   flyToHero(ev.tgt, ev.idx, ev.w);
   bubble(heroEl(), lineHTML(FIRST_FIGHT.coup), {next: askHeart});
 }

@@ -43,3 +43,170 @@
 .mats b {
   color: var(--text);
 }
+/* le village, lieu de l'onglet du lieu (R3a) : scène à cinq zones, fiche de la zone dessous.
+   Couleurs de la scène : palette Endesga 64 (docs/palette.hex), en attendant le fond et les sprites des PNJ */
+.vil-renown {
+  font-size: 13px;
+}
+.vil-renown .note,
+.vil-tale {
+  text-align: left;
+}
+.vil-tale {
+  font-style: italic;
+  margin: 0;
+}
+.vil-far {
+  border-color: var(--time);
+  font-size: 13px;
+}
+.vil-scene {
+  position: relative;
+  height: 320px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    repeating-linear-gradient(90deg, #00000000 0 30px, #27272766 30px 32px) 0 62% / 100% 38% no-repeat,
+    linear-gradient(180deg, #1a1932 0%, #2a2f4e 38%, #424c6e 58%, #5d2c28 58%, #391f21 100%);
+}
+/* toits du hameau, en ombre sur l'horizon */
+.vil-houses {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 40%;
+  height: 18%;
+  background:
+    linear-gradient(135deg, #00000000 50%, #1c121c 50%) 4% 100% / 48px 48px no-repeat,
+    linear-gradient(225deg, #00000000 50%, #1c121c 50%) calc(4% + 48px) 100% / 48px 48px no-repeat,
+    linear-gradient(135deg, #00000000 50%, #1c121c 50%) 58% 100% / 64px 64px no-repeat,
+    linear-gradient(225deg, #00000000 50%, #1c121c 50%) calc(58% + 64px) 100% / 64px 64px no-repeat,
+    linear-gradient(#1c121c, #1c121c) 0 100% / 100% 16px no-repeat;
+}
+.vil-name {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: var(--pix);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 1px;
+}
+.vz {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 2px solid #00000000;
+  border-radius: 10px;
+  background: #0e071b80;
+  color: var(--text);
+  max-width: 150px;
+}
+.vz:hover,
+.vz.on {
+  border-color: var(--gold);
+  box-shadow: 0 0 16px #ffc82566;
+  background: #0e071bcc;
+}
+.vz-ic {
+  font-size: 32px;
+  line-height: 1.1;
+}
+.vz-tx {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.vz-tx b {
+  font-size: 12px;
+}
+.vz-tx small {
+  color: var(--muted);
+  font-size: 11px;
+}
+.vz.on .vz-tx b {
+  color: var(--gold);
+}
+.vz-bang {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--danger);
+  color: #fff;
+  font-weight: 800;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+.vz-go {
+  display: none;
+}
+.vil-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* téléphone : la scène devient une liste de cinq boutons-vignettes */
+@media (max-width: 640px) {
+  .vil-scene {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 30px 8px 8px;
+    background: linear-gradient(180deg, #1a1932, #2a2f4e);
+  }
+  .vil-houses {
+    display: none;
+  }
+  .vz {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    flex-direction: row;
+    gap: 10px;
+    max-width: none;
+    border-color: var(--line);
+    background: var(--panel2);
+  }
+  .vz-ic {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0e071b;
+    border-radius: 8px;
+    font-size: 28px;
+  }
+  .vz-tx {
+    flex: 1;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .vz-tx b {
+    font-size: 13px;
+  }
+  .vz-bang {
+    position: static;
+  }
+  .vz-go {
+    display: block;
+    color: var(--muted);
+    font-size: 20px;
+  }
+}

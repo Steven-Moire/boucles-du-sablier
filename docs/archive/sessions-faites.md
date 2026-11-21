@@ -423,3 +423,16 @@ Lis docs/INDEX.md, docs/lore.md (« Le cartographe : Hyacinthe Jalon », « Les 
 Propose-moi d'abord le découpage en sous-étapes jouables, une maquette ASCII du village, et les règles à trancher : ce que devient le sac à la fin de la boucle, si l'or passe par le sac, capacité de départ et croissance, coûts en temps de la matinée, comment la simu et les trois bots matinent, rentrent et vident le sac, le cas « stuck » de tools/sim.js ; attends mon accord.
 Critère du joueur : moins de 3 s réelles de clics entre le début de la boucle et le départ, à la 10e boucle (le mesurer dans les captures). Chiffres : la matinée, la marche du retour et le sac changent l'équilibrage, mesurés avec node tools/sim.js --graines 30 (défaut, --malin, --moyen) dans la cible ; références mises à jour volontairement si elles bougent. Sauvegarde compatible (valeurs par défaut au chargement), captures sans erreur JS, docs/design.md, docs/lore.md et docs/INDEX.md à jour, commit à chaque sous-étape, demande-moi avant de pousser.
 ```
+
+## Gameplay R3a — le village devient un lieu du 21/11 (faite)
+
+**État avant la session** : le village était un onglet (renommée, Entraîneur, Forge, recettes, matériaux, Cartographe à venir, héros de la prochaine boucle) ; la colonne du héros portait « Rentrer au village (fin de boucle) » ; une boucle s'ouvrait sur la Carte.
+
+**Fait le 21/11** : maquette et fichiers proposés puis validés par Steven, avec le village « de loin » pendant la boucle (sinon achats et fin de boucle anticipée disparaissaient pendant la boucle : un changement de règle) et la boucle qui s'ouvre chez Jalon. Onglets lieu / Carte / Bestiaire, scène à cinq zones (`src/village/village.view.js`, `village.css`), « Laisser filer le sablier » à l'horloge, vignettes sur téléphone. Simu identique (quatre références), captures sans erreur JS (`village.png` vu de loin, nouvelle `etroit-village.png`). Détail : `docs/design.md` → `### R3a faite`.
+
+**Prompt exécuté** :
+```
+Lis docs/INDEX.md, docs/outillage.md (captures), puis dans docs/design.md seulement « Village », « Architecture du code » et, dans « Refonte de l'expérience », « R3 : découpage et règles » (sous-étape R3a et maquette) et « R1, livraison 1 faite » (onglets, écran étroit).
+Étape R3a : le village devient un lieu, sans changer aucun chiffre ni aucune règle. L'onglet Village disparaît ; l'onglet du lieu affiche 🏠 VILLAGE quand le héros est au village, ⚔️ COMBAT quand il est en route. Scène à cinq zones en surbrillance : Hyacinthe Jalon (« Partir » ouvre la carte), Honorine Mailloche (bâtiment Forge, recettes, vue du coffre), Philémon Basane (présent, sans mécanique), la salle d'entraînement (Entraîneur), l'horloge (Horloge, et « Laisser filer le sablier » qui remplace « Rentrer au village (fin de boucle) »). Un clic sur une zone ouvre sa fiche sous la scène ; sur téléphone, liste de cinq boutons-vignettes. PNJ en emoji en attendant leurs sprites.
+Propose-moi d'abord la maquette à jour et les fichiers touchés ; attends mon accord. Simu identique (npm run check), captures sans erreur JS (village grand écran et étroit), docs/design.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
+```

@@ -1,6 +1,6 @@
 // Point d'entrée : boucle principale (50 ms), rendu de toutes les zones, intro au premier lancement.
 import {tick} from '../world/tick.engine.js';
-import {S, hadSave, saveMeta} from '../shared/state.js';
+import {S, combatShown, hadSave, saveMeta} from '../shared/state.js';
 import {onRender} from '../shared/render.js';
 import {watchSprites} from '../shared/dom.js';
 import {playIntro} from '../intro/intro.view.js';
@@ -18,7 +18,7 @@ function render() {
   renderHeroPanel();
   renderTabs();
   renderMap();
-  if (S.tab === 'combat') renderScene();
+  if (combatShown()) renderScene();
   renderPane();
 }
 onRender(() => {

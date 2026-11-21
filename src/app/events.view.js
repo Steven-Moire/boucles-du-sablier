@@ -1,6 +1,6 @@
 import {MONSTERS} from '../enemies/enemies.data.js';
 import {UPGRADES} from '../village/village.data.js';
-import {S, saveMeta} from '../shared/state.js';
+import {S, combatShown, saveMeta} from '../shared/state.js';
 import {$, anim, toast} from '../shared/dom.js';
 import {gotText} from '../shared/format.js';
 import {requestRender} from '../shared/render.js';
@@ -23,7 +23,7 @@ function backToMapSoon() {
       backToMapSoon();
       return;
     }
-    if (!S.G.run.action && S.tab === 'combat') {
+    if (!S.G.run.action && combatShown()) {
       S.tab = 'map';
       requestRender();
     }
@@ -50,7 +50,8 @@ const HANDLERS = {
   explore: ev => {
     clearTimeout(S.backTimer);
     S.lastSceneTile = ev.id;
-    S.tab = 'combat';
+    S.tab = 'place'; // le héros part : l'onglet du lieu passe au combat
+    S.farView = false;
   },
   tileDone: backToMapSoon,
   retreat: backToMapSoon,
@@ -75,7 +76,7 @@ const HANDLERS = {
   },
 };
 export function consumeEvents() {
-  const fx = S.tab === 'combat';
+  const fx = combatShown();
   for (const ev of S.G.events) {
     const handler = (fx && FX_HANDLERS[ev.type]) || HANDLERS[ev.type];
     if (handler) handler(ev);

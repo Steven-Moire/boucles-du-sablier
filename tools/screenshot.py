@@ -1,11 +1,12 @@
 """Capture rapide du jeu dans Chromium (vérif visuelle après une modif).
 
   pip install playwright && playwright install chromium
-  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png (bulle du premier matin),
-                                           scene-coup.png, scene-coeur.png, scene-cle.png (scène du premier
-                                           combat), combat.png, combat-creuse.png, village.png,
-                                           etroit-carte.png, etroit-combat.png (téléphone, 390 px de large),
-                                           proto.png (prototype du minage)
+  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png (après « Partir »,
+                                           bulle du premier matin), scene-coup.png, scene-coeur.png,
+                                           scene-cle.png (scène du premier combat), combat.png,
+                                           combat-creuse.png, village.png (vu de loin, chez Mailloche),
+                                           etroit-village.png, etroit-carte.png, etroit-combat.png
+                                           (téléphone, 390 px de large), proto.png (prototype du minage)
 
 Hors ligne : seul le serveur local répond, toute requête vers un autre domaine est listée à la fin.
 
@@ -124,6 +125,8 @@ async def main():
         await pg.clock.run_for(700)
         await shoot(pg, 'intro2')
         await pg.click('.in-skip')
+        # la boucle s'ouvre au village, chez Jalon : « Partir » ouvre la carte
+        await pg.click('#villageView [data-act="go"]')
         await pg.clock.run_for(300)
         await shoot(pg, 'map')
         await pg.click('.say')  # la bulle du premier matin se ferme d'un clic sur elle
@@ -154,8 +157,12 @@ async def main():
         # quelques coups plus tard : les pixels creusés restent en silhouette pâle
         await pg.clock.run_for(2400)
         await shoot(pg, 'combat-creuse')
-        # onglet Village du panneau de droite (après le combat : les captures d'avant ne bougent pas)
-        await pg.click('#tabs button[data-t="village"]')
+        # le village vu de loin (le héros est en route), depuis la case Village de la carte, chez Mailloche
+        await pg.click('#tabs button[data-t="map"]')
+        await pg.click('.tile[data-id="4,6"]')
+        if await pg.is_visible('#tileCard [data-act="tab-village"]'):  # sinon le clic l'a déjà ouvert (achat payable)
+            await pg.click('#tileCard [data-act="tab-village"]')
+        await pg.click('#villageView [data-zone="mailloche"]')
         await pg.clock.run_for(TICK_MS)
         await shoot(pg, 'village')
         # écran étroit (téléphone), dans sa propre page : les captures d'avant ne bougent pas
@@ -163,6 +170,9 @@ async def main():
         await pg.clock.run_for(800)
         await pg.click('.in-skip')
         await pg.clock.run_for(300)
+        await shoot(pg, 'etroit-village')
+        await pg.click('#villageView [data-act="go"]')
+        await pg.clock.run_for(TICK_MS)
         await shoot(pg, 'etroit-carte')
         await pg.click('#speed button[data-s="2"]')
         await pg.dblclick('.tile[data-id="4,5"]')

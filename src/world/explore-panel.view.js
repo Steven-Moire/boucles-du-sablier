@@ -3,7 +3,7 @@
 import {BIOMES, TILE_MAP, TYPES} from './world.data.js';
 import {MONSTERS, RANK} from '../enemies/enemies.data.js';
 import {isExplorable} from './explore.engine.js';
-import {S, anyUpgrade} from '../shared/state.js';
+import {S, anyUpgrade, atVillage} from '../shared/state.js';
 import {segBar} from '../shared/templates.js';
 
 const RANK_CLASS = {elite: ' el', boss: ' bo'};
@@ -22,7 +22,7 @@ function tileHeadHTML(t) {
   return `<div class="sec"><div class="tname">${ty.icon} ${t.name}</div><div class="tsub">${BIOMES[t.biome].name} · ${ty.label}${t.lvl ? ' · Niveau ' + t.lvl : ''}</div>`;
 }
 function villageNoteHTML() {
-  return `<div class="note">Point de départ de chaque boucle. Le village garde tout ce que tu rapportes.</div><button class="btn small gold" data-act="tab-village">VOIR LE VILLAGE${anyUpgrade() ? ' (!)' : ''}</button></div>`;
+  return `<div class="note">Point de départ de chaque boucle. Le village garde tout ce que tu rapportes.</div><button class="btn small gold" data-act="tab-village">VOIR LE VILLAGE${atVillage() ? '' : ' DE LOIN'}${anyUpgrade() ? ' (!)' : ''}</button></div>`;
 }
 function tileProgressHTML(t, a, doneNow) {
   return (

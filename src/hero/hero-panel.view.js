@@ -1,9 +1,9 @@
-// Colonne du héros, toujours affichée à gauche : portrait, PV, XP, stats, outil (haut) ; équipement, journal, fin de boucle (bas).
+// Colonne du héros, toujours affichée à gauche : portrait, PV, XP, stats, outil (haut) ; équipement, journal (bas).
+// La fin de boucle est à l'horloge du village (« Laisser filer le sablier », village/village.view.js).
 // Sur écran étroit, le haut devient une bande au-dessus des onglets et le bas passe sous leur contenu (CSS).
 import {TOOLS, xpNeeded} from './hero.data.js';
 import {setTool} from './hero.engine.js';
 import {RECIPES, SLOTS} from '../village/forge.data.js';
-import {abandon} from '../world/loop.engine.js';
 import {S, saveMeta} from '../shared/state.js';
 import {$, setHTML} from '../shared/dom.js';
 import {fmt, pct} from '../shared/format.js';
@@ -58,20 +58,14 @@ function logHTML() {
 export function renderHeroPanel() {
   const h = S.G.run.hero;
   setHTML($('heroTop'), identityHTML(h) + statsHTML(h) + toolsHTML());
-  setHTML(
-    $('heroMore'),
-    equipHTML() +
-      logHTML() +
-      `<button class="btn small" data-act="abandon" ${S.G.run.over ? 'disabled' : ''}>RENTRER AU VILLAGE (FIN DE BOUCLE)</button>`,
-  );
+  setHTML($('heroMore'), equipHTML() + logHTML());
 }
 function onHeroClick(e) {
   const b = e.target.closest('button');
   if (!b || b.disabled) return;
-  if (b.dataset.tool) {
-    setTool(S.G, b.dataset.tool);
-    saveMeta();
-  } else if (b.dataset.act === 'abandon') abandon(S.G);
+  if (!b.dataset.tool) return;
+  setTool(S.G, b.dataset.tool);
+  saveMeta();
   requestRender();
 }
 $('heroTop').addEventListener('click', onHeroClick);

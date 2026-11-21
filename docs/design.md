@@ -45,7 +45,8 @@ Le héros, un mineur un peu fou, revit la même journée en boucle. Il oublie to
 | Cartographe | — | (à venir) route programmée | — |
 
 Renommée : +3 × niveau à la première exploration d'une case, +2 / +10 / +50 au premier kill d'un monstre / élite / boss, +5 par trésor.
-Notifications : un « ! » sur le village (carte et onglet) seulement si une amélioration est payable (bug corrigé en v0.3), et un toast à chaque nouveau bâtiment ou trophée.
+**Depuis R3a**, le village est un lieu (scène à cinq zones : Jalon, Mailloche et le coffre, Basane, salle d'entraînement, horloge) dans l'onglet du lieu : voir `### R3a faite` dans « Refonte de l'expérience ».
+Notifications : un « ! » sur le village (carte, onglet du lieu quand le héros y est, zone du bâtiment) seulement si une amélioration est payable (bug corrigé en v0.3), et un toast à chaque nouveau bâtiment ou trophée.
 
 ### Problème connu : la renommée ne sert plus après les premières boucles
 Elle grimpe vite (environ 270 en fin de contenu) mais ne débloque que trois seuils (5 / 20 / 35). Proposition à implémenter :
@@ -82,9 +83,9 @@ Modules ES natifs, aucune dépendance livrée au joueur, aucun build, aucune res
 - `index.html` : squelette HTML, charge d'abord `src/shared/fonts.css` (polices de `assets/fonts/`, woff2 + licences OFL : jamais de Google Fonts ni d'autre CDN), puis les 15 feuilles CSS de zone (dans l'ordre de l'ancien `style.css`, la cascade en dépend ; `hero/hero-panel.css` en dernier) et `src/app/main.js` (`<script type="module">`).
 - `src/` : **un dossier par domaine**, en anglais ; le **suffixe dit le rôle** (règles : `.claude/rules/javascript/architecture.md`) : `*.data.js` (données, n'importent que des données) ← `*.engine.js` (moteur **pur**, aucun DOM) ← `*.view.js` (affichage d'une zone, CSS à côté) ← `app/main.js`.
   - `world/` : carte et cases (`world.data.js`), une boucle (`loop.engine.js`), explorer une case (`explore.engine.js`), le pas de 50 ms (`tick.engine.js`, seul à importer combat + exploration), carte (`map.view.js`), fiche de la case à côté de la carte (`explore-panel.view.js`).
-  - `hero/` : stats, outils, compétences ; colonne du héros toujours à gauche (`hero-panel.view.js` : portrait, PV, XP, stats, outil, équipement, journal, fin de boucle). `enemies/` : monstres, rangs, composition, bestiaire ; `grids.generated.js` = grilles de pixels **générées** par `tools/sprite_grids.py` (ne pas éditer à la main). `mining/` : combat-minage (strates, veines, creusage, extraction ; vue pixel par pixel `dig.view.js`). `combat/` : coups, compétences, morts, scène. `village/` : bâtiments, forge à recettes (`forge.data.js`, `forge.engine.js`). `intro/` : 5 écrans au premier lancement. `lore/` : lore joué (`lore.data.js` : répliques, vestiges, phrase du premier matin ; `scene.engine.js` : scène du premier combat, suspension `G.run.hold` ; `scene.view.js` : bulles du Radoteur). `modals/` : fenêtre modale, fin de boucle, fiche d'un monstre.
-  - `shared/` (briques de l'UI, n'importent aucune vue) : `state.js` (état partagé `S` — `S.G`, `S.tab` : l'onglet affiché, `S.selected`… ; `startTile()` : case choisie en début de boucle), `dom.js` (`$`, `setHTML`, `anim`, `toast`), `templates.js`, `format.js`, `save.js` (seul accès à `localStorage`, renvoie `{ok, error}`), `rng.js` (`lcg(seed)` pour la simu, `fxRandom` : hasard des effets visuels, jamais celui du jeu), `render.js` (`requestRender()` : une vue demande un rendu sans importer `main.js`).
-  - `app/` : assemblage de plusieurs domaines — `main.js` (boucle, rendu, point d'entrée), `events.view.js` (consomme `G.events`), `layout.view.js` (barre du haut, onglets Combat / Carte / Bestiaire / Village et leur contenu).
+  - `hero/` : stats, outils, compétences ; colonne du héros toujours à gauche (`hero-panel.view.js` : portrait, PV, XP, stats, outil, équipement, journal ; la fin de boucle est passée à l'horloge du village en R3a). `enemies/` : monstres, rangs, composition, bestiaire ; `grids.generated.js` = grilles de pixels **générées** par `tools/sprite_grids.py` (ne pas éditer à la main). `mining/` : combat-minage (strates, veines, creusage, extraction ; vue pixel par pixel `dig.view.js`). `combat/` : coups, compétences, morts, scène. `village/` : bâtiments, forge à recettes (`forge.data.js`, `forge.engine.js`), le village comme lieu (`village.view.js` : scène à cinq zones, fiche de la zone cliquée, vu de loin pendant la boucle ; R3a). `intro/` : 5 écrans au premier lancement. `lore/` : lore joué (`lore.data.js` : répliques, vestiges, phrase du premier matin ; `scene.engine.js` : scène du premier combat, suspension `G.run.hold` ; `scene.view.js` : bulles du Radoteur). `modals/` : fenêtre modale, fin de boucle, fiche d'un monstre.
+  - `shared/` (briques de l'UI, n'importent aucune vue) : `state.js` (état partagé `S` — `S.G`, `S.tab` : l'onglet affiché (`place`, `map`, `bestiary`), `S.zone` : zone du village ouverte, `S.farView` : village vu de loin, `S.selected`… ; `startTile()` : case choisie en début de boucle ; `atVillage()`, `villageShown()`, `combatShown()` : ce que montre l'onglet du lieu ; `openVillage()`), `dom.js` (`$`, `setHTML`, `anim`, `toast`), `templates.js`, `format.js`, `save.js` (seul accès à `localStorage`, renvoie `{ok, error}`), `rng.js` (`lcg(seed)` pour la simu, `fxRandom` : hasard des effets visuels, jamais celui du jeu), `render.js` (`requestRender()` : une vue demande un rendu sans importer `main.js`).
+  - `app/` : assemblage de plusieurs domaines — `main.js` (boucle, rendu, point d'entrée), `events.view.js` (consomme `G.events`), `layout.view.js` (barre du haut, onglets lieu (🏠 village ou ⚔️ combat) / Carte / Bestiaire et leur contenu).
 - Hasards du minage sur `G.mrng`, séparé de `G.rng` (combats déterministes). Un module ES ne peut pas réaffecter une variable importée : tout état d'UI partagé passe par `S`.
 - Les sprites sont affichés par l'UI avec repli sur l'emoji si le fichier manque (`spr(clé, emoji)`).
 - Outillage (simu, lint, venv, captures, sprites) : `docs/outillage.md`.
@@ -361,7 +362,7 @@ Lecture :
 - **Compétences de déplacement ou d'exploration** : un levier pour ralentir ou accélérer la progression.
 - **Rencontres** : sur une case, le monstre n'est pas déjà là ; il apparaît avec une chance (des zones plutôt que des cases fixes).
 
-## Refonte de l'expérience (R0, conseil du 2026-11-21 ; R1 et R2 faites, R3 décidée)
+## Refonte de l'expérience (R0, conseil du 2026-11-21 ; R1, R2 et R3a faites, suite de R3 décidée)
 ### Pourquoi
 En rejouant (21/11), Steven trouve le jeu **inexpliqué**, pas ennuyeux : on ne sait pas pourquoi le héros part combattre, ni pourquoi il mine les monstres au lieu de les tuer (« l'équivalent d'un ta gueule c'est magique ») ; au début d'une boucle, la première chose affichée est une case inaccessible avec un bouton grisé ; les monstres semblent posés dans un cadre et le minage se voit mal. Vision complète : `PROCHAINES-SESSIONS.md` → « R. Refonte de l'expérience ».
 
@@ -409,7 +410,7 @@ Aucun chiffre touché (`npm run check` : les quatre références identiques ; `t
 - **Sauvegarde** : `meta.scenes` et `meta.vestiges` (`{}` par défaut), `meta.v` reste 1 : une ancienne sauvegarde joue la scène une fois.
 - Captures : `map.png` (bulle du matin), `scene-coup.png`, `scene-coeur.png`, `scene-cle.png` ; `combat.png` est prise après la scène.
 
-### R3 : découpage et règles (décidés le 2026-11-21, rien de codé)
+### R3 : découpage et règles (décidés le 2026-11-21 ; R3a faite, section suivante)
 Proposition validée par Steven, avec ses corrections (capacité du sac, Jalon dès la 1re boucle). Mesures faites sur une copie jetable de la simu (30 graines, trois bots).
 
 **Mesures de départ** :
@@ -443,7 +444,24 @@ Proposition validée par Steven, avec ses corrections (capacité du sac, Jalon d
 8. **Critère des 3 s** : à la 10e boucle, 1 clic et 0,6 s d'animation (3 clics s'il faut changer de première case : « Même matinée », la case, « Explorer ») ; une capture chronomètre et compte les clics.
 9. **Lore** : Jalon dit « C'est la même qu'hier » **dès la 1re boucle**, voulu (Steven : « le but, c'est de faire un peu un Jour sans fin ») ; la 2e réplique de déjà-vu (« le forgeron ») passe à Mailloche. Textes dans `lore.md`.
 
+### R3a faite : le village devient un lieu (2026-11-21)
+Vue seule, aucun chiffre ni aucune règle touchés (`npm run check` : les quatre références identiques). Maquette et choix validés par Steven.
+- **Onglets lieu / Carte / Bestiaire** (`S.tab` vaut `place`, `map` ou `bestiary`). L'onglet du lieu suit le héros : 🏠 VILLAGE quand il est au village (`atVillage()` de `shared/state.js` : aucune action en cours et `run.heroAt` au village, c'est-à-dire au début de la boucle ou après une retraite depuis une case voisine, puisqu'il ne rentre pas encore à pied), ⚔️ COMBAT dès qu'il part. « ! » rouge sur l'onglet quand le héros est au village et qu'une amélioration est payable ; point rouge quand un combat tourne sans qu'on le regarde.
+- **Une boucle s'ouvre au village, chez Jalon** (après l'intro, une nouvelle boucle, une réinitialisation) ; « Améliorer le village d'abord » ouvre la zone de l'amélioration payable. **« Partir » ouvre la carte** : un clic de plus par boucle jusqu'à « Même matinée » (R3b).
+- **La scène** (`src/village/village.view.js`, `village.css`) : fond en CSS (palette Endesga 64, toits du hameau en ombre) en attendant le fond et les sprites, cinq zones-boutons en emoji, éclairées en or au survol et quand leur fiche est ouverte, « ! » sur la zone d'une amélioration payable ; renommée en bandeau au-dessus. Un clic sur une zone ouvre sa fiche dessous (`S.zone`) :
+  - **Hyacinthe Jalon** : « Partir », note du cartographe à venir.
+  - **Honorine Mailloche** : bâtiment Forge, forge à recettes, **le coffre** (bois, minerai, matériaux extraits : les `meta.*` actuels), visible même Forge verrouillée.
+  - **Philémon Basane** : présent, rien à faire chez lui.
+  - **Salle d'entraînement** : Entraîneur, héros de la prochaine boucle.
+  - **L'horloge** : Horloge et **« Laisser filer le sablier »**, l'ancien « Rentrer au village (fin de boucle) » de la colonne du héros (même `abandon`, même raison `return` ; la modale dit « Le héros a laissé filer le sablier. »).
+  - Textes des PNJ : des descriptions, pas encore de répliques (leurs scènes arrivent avec R3b).
+- **Téléphone** (≤ 640 px) : la scène devient une liste de cinq boutons-vignettes (même balisage, CSS seul).
+- **Le village de loin** (en attendant « Rentrer », R3c) : pendant la boucle, la fiche de la case Village de la carte propose « Voir le village de loin » (un clic sur la case l'ouvre aussi directement si une amélioration est payable, comme avant). L'onglet devient 🏠 VILLAGE (DE LOIN), avec le bandeau « Le héros est en route » et « ⚔️ Retour au combat » ; toutes les zones marchent comme l'ancien onglet Village (achats et forge pour la boucle suivante, « Laisser filer le sablier »). Quitter l'onglet du lieu met fin au regard de loin (`S.farView`). R3c remplacera ce bouton par « Rentrer ».
+- **Retraite vers le village** (depuis une case voisine) : le héros est au village, l'onglet du lieu montre le village (avant : retour à la carte).
+- Captures : `map.png` après « Partir », `village.png` (vu de loin, chez Mailloche, après le combat), `etroit-village.png` (vignettes, bulle du premier matin).
+
 ### Mis de côté (à reproposer)
+- **Fond et sprites du village** (R3a) : les trois PNJ du matin et le fond de la scène sont en emoji et en CSS ; session Forge (Graphismes, `PROCHAINES-SESSIONS.md`).
 - **PNJ facultatifs** (R3) : sauter Basane fait partir sans sac, sauter Mailloche fait partir avec la pioche de base seulement. **Plafond du sac** ; amélioration payée en cuir rapporté (à voir avec la quête de Basane, R3d).
 - **Enchantement du sac** donné par un PNJ de la zone 1 au bout de quêtes en forêt (règle 1 de R3) : avec R4 et la 3b.
 - La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent) : sous-étape R3f ; Steven testera et on ajustera.

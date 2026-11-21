@@ -1,4 +1,5 @@
-// Onglet Village du panneau de droite : renommée, bâtiments, matériaux, héros de la prochaine boucle.
+// Le village, lieu de l'onglet du lieu (R3a) : scène à cinq zones (sur téléphone, liste de boutons-vignettes),
+// la fiche de la zone cliquée dessous. Aucune règle propre : bâtiments, forge et fin de boucle d'avant, rangés par zone.
 import {RES} from '../world/world.data.js';
 import {MATS} from '../mining/mining.data.js';
 import {UPGRADES} from './village.data.js';
@@ -7,28 +8,39 @@ import {MONSTERS} from '../enemies/enemies.data.js';
 import {heroAtLevel, heroBase} from '../hero/hero.engine.js';
 import {upgradeState} from './village.engine.js';
 import {forgeOpen, recipeState, repeatPlan} from './forge.engine.js';
-import {S, loopFresh} from '../shared/state.js';
+import {S, UPGRADE_ZONE, atVillage, loopFresh} from '../shared/state.js';
 import {fmt, pct} from '../shared/format.js';
+
+// zones de la scène, dans l'ordre de la liste sur téléphone ; x, y : position sur la scène (en %)
+const ZONES = [
+  {id: 'jalon', icon: '🧭', name: 'Hyacinthe Jalon', role: 'Cartographe', x: 14, y: 70},
+  {id: 'mailloche', icon: '⚒️', name: 'Honorine Mailloche', role: 'Forgeronne · le coffre', x: 47, y: 64},
+  {id: 'basane', icon: '🧵', name: 'Philémon Basane', role: 'Tanneur', x: 82, y: 72},
+  {id: 'entrainement', icon: '🥋', name: "Salle d'entraînement", role: 'Entraîneur', x: 70, y: 26},
+  {id: 'horloge', icon: '🕰️', name: "L'horloge", role: 'Clocher · le sablier', x: 24, y: 22},
+];
+const ZONE_UPGRADE = Object.fromEntries(Object.entries(UPGRADE_ZONE).map(([k, z]) => [z, k]));
+const zoneBadge = id => ZONE_UPGRADE[id] && upgradeState(S.G, ZONE_UPGRADE[id]).ok;
+const tale = text => `<div class="note vil-tale">${text}</div>`;
 
 function costHTML(cost) {
   return Object.entries(cost)
     .map(([k, v]) => `<span class="${S.G.meta[k] >= v ? '' : 'no'}">${RES[k].icon} ${fmt(v)}</span>`)
     .join(' &nbsp; ');
 }
-const CARTOGRAPHER_HTML = `<div class="sec bld lock"><div class="ic">🗺️</div><div><span class="nm">Cartographe</span><div class="ds">Bientôt : programmer sa route à l'avance sur les cases connues (mode idle).</div></div></div>`;
-const NO_MATS_HTML =
-  '<div class="note" style="margin:0;text-align:left">Creuse les monstres : ce que tu extrais, le village le garde. La forge s\'en sert.</div>';
-
 function nextReqHTML(m) {
   const nextReq = Object.values(UPGRADES)
     .map(u => u.req)
     .filter(q => q > m.renown)
     .sort((a, b) => a - b)[0];
-  return nextReq ? `<br>Prochain déblocage à <b>${nextReq} ⭐</b>.` : '';
+  return nextReq ? ` · prochain déblocage à <b>${nextReq} ⭐</b>` : '';
 }
 function renownHTML(m) {
-  return `<div class="sec"><h3>RENOMMÉE <span>⭐ ${fmt(m.renown)}</span></h3><div class="note" style="text-align:left;margin:0">Le village se souvient de toi : la renommée débloque les bâtiments, l'or et les matériaux servent à les améliorer.${nextReqHTML(m)}</div></div>`;
+  return `<div class="sec vil-renown"><b>⭐ ${fmt(m.renown)}</b> de renommée${nextReqHTML(m)}<div class="note">Le village se souvient de toi : la renommée débloque les bâtiments, l'or et les matériaux servent à les améliorer.</div></div>`;
 }
+const FAR_HTML = `<div class="sec vil-far"><div>Le héros est en route : tu regardes le village de loin. Ce que tu achètes ou forges sert à la boucle suivante.</div><button class="btn small" data-act="back">⚔️ RETOUR AU COMBAT</button></div>`;
+
+// ---------- bâtiments ----------
 function levelHTML(s) {
   return s.unlocked ? `<span class="lvl">NIV ${s.n}/${s.u.max}</span>` : '';
 }
@@ -100,13 +112,14 @@ function forgeHTML(m) {
     .join('');
   return `<div class="sec"><h3>FORGE À RECETTES</h3>${forgeNoteHTML(m, fresh)}${repeatHTML(fresh)}</div>${recipes}`;
 }
-function matHTML(m, k) {
-  return `<span title="${MATS[k].name}">${MATS[k].icon} <b>${fmt(m.mats[k])}</b> ${MATS[k].name}</span>`;
+// ---------- le coffre de Mailloche : bois, minerai et matériaux extraits gardés d'une boucle à l'autre ----------
+function chestLine(icon, n, name) {
+  return `<span title="${name}">${icon} <b>${fmt(n)}</b> ${name}</span>`;
 }
-function matsHTML(m) {
-  const mats = Object.keys(MATS).filter(k => m.mats[k]);
-  const body = mats.length ? `<div class="mats">${mats.map(k => matHTML(m, k)).join('')}</div>` : NO_MATS_HTML;
-  return `<div class="sec"><h3>MATÉRIAUX EXTRAITS</h3>${body}</div>`;
+function chestHTML(m) {
+  const lines = [chestLine(RES.wood.icon, m.wood, RES.wood.name), chestLine(RES.ore.icon, m.ore, RES.ore.name)];
+  for (const k of Object.keys(MATS)) if (m.mats[k]) lines.push(chestLine(MATS[k].icon, m.mats[k], MATS[k].name));
+  return `<div class="sec"><h3>LE COFFRE</h3><div class="mats">${lines.join('')}</div><div class="note" style="text-align:left">Ce que tu récoltes et ce que tu extrais des monstres, le village le garde. La forge s'en sert.</div></div>`;
 }
 function nextHeroHTML(m) {
   const nb = heroBase(m, loopFresh() ? m.equip : m.forge),
@@ -116,14 +129,41 @@ function nextHeroHTML(m) {
     <div>Esquive <b>${pct(h1.dodge)}</b></div><div>Critique <b>${pct(h1.crit)}</b></div><div>Temps <b>${nb.loopTime} s</b></div></div>
     <div class="note">${loopFresh() ? "Le héros n'est pas encore parti : les améliorations s'appliquent tout de suite." : 'Les améliorations prennent effet au début de la boucle suivante.'}</div></div>`;
 }
+
+// ---------- fiches des cinq zones ----------
+const CARTOGRAPHER_NOTE = "Bientôt : programmer sa route à l'avance sur les cases connues (mode idle).";
+function jalonHTML() {
+  const go = atVillage()
+    ? '<button class="btn gold" data-act="go">PARTIR</button>'
+    : '<div class="note">Le héros est déjà en route.</div><button class="btn small" data-act="go">VOIR LA CARTE</button>';
+  return `<div class="sec"><h3>HYACINTHE JALON · CARTOGRAPHE</h3>${tale("Jalon déroule la carte des environs sur une borne et pose le doigt dessus : c'est par là que la route commence.")}${go}<div class="note">${CARTOGRAPHER_NOTE}</div></div>`;
+}
+function maillocheHTML(m) {
+  return `<div class="sec"><h3>HONORINE MAILLOCHE · FORGERONNE</h3>${tale('Honorine Mailloche tape sur une lame qui refroidit. Derrière elle, le coffre du village, la seule chose qui traverse les boucles.')}</div>${buildingHTML('forge')}${forgeHTML(m)}${chestHTML(m)}`;
+}
+const BASANE_HTML = `<div class="sec"><h3>PHILÉMON BASANE · TANNEUR</h3>${tale("Philémon Basane tend une peau devant son atelier. Il te salue d'un signe de tête et retourne à son ouvrage.")}<div class="note">Rien à faire chez lui pour l'instant.</div></div>`;
+function hourglassHTML() {
+  return `<div class="sec"><h3>LE SABLIER</h3>${tale("Sous l'horloge, le sable file. Le laisser filer, c'est finir la boucle tout de suite : le village garde ce que tu as gagné.")}<button class="btn small" data-act="letgo" ${S.G.run.over ? 'disabled' : ''}>LAISSER FILER LE SABLIER</button></div>`;
+}
+const ZONE_HTML = {
+  jalon: jalonHTML,
+  mailloche: maillocheHTML,
+  basane: () => BASANE_HTML,
+  entrainement: m => buildingHTML('entraineur') + nextHeroHTML(m),
+  horloge: () => buildingHTML('horloge') + hourglassHTML(),
+};
+
+// ---------- la scène ----------
+function zoneHTML(z) {
+  return `<button class="vz ${S.zone === z.id ? 'on' : ''}" data-zone="${z.id}" style="--x:${z.x}%;--y:${z.y}%">
+    <span class="vz-ic">${z.icon}</span><span class="vz-tx"><b>${z.name}</b><small>${z.role}</small></span>${zoneBadge(z.id) ? '<span class="vz-bang">!</span>' : ''}<span class="vz-go">›</span></button>`;
+}
+function sceneHTML() {
+  return `<div class="vil-scene"><div class="vil-name">LES HEURELLES</div><div class="vil-houses"></div>${ZONES.map(zoneHTML).join('')}</div>`;
+}
 export function villageHTML() {
   const m = S.G.meta;
   return (
-    renownHTML(m) +
-    Object.keys(UPGRADES).map(buildingHTML).join('') +
-    forgeHTML(m) +
-    matsHTML(m) +
-    CARTOGRAPHER_HTML +
-    nextHeroHTML(m)
+    (atVillage() ? '' : FAR_HTML) + renownHTML(m) + sceneHTML() + `<div class="vil-card">${ZONE_HTML[S.zone](m)}</div>`
   );
 }

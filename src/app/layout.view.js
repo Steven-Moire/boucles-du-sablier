@@ -1,10 +1,19 @@
-// Disposition : barre du haut (ressources, vitesse, sablier), onglets Combat / Carte / Bestiaire / Village et leur contenu.
+// Disposition : barre du haut (ressources, vitesse, sablier), onglets lieu (village ou combat) / Carte / Bestiaire et leur contenu.
 import {RES} from '../world/world.data.js';
-import {startLoop} from '../world/loop.engine.js';
+import {abandon, startLoop} from '../world/loop.engine.js';
 import {explore} from '../world/explore.engine.js';
 import {buy} from '../village/village.engine.js';
 import {forgeItem, repeatForge} from '../village/forge.engine.js';
-import {S, anyUpgrade, loopFresh, saveMeta} from '../shared/state.js';
+import {
+  S,
+  anyUpgrade,
+  atVillage,
+  combatShown,
+  loopFresh,
+  openVillage,
+  saveMeta,
+  villageShown,
+} from '../shared/state.js';
 import {$, setHTML} from '../shared/dom.js';
 import {fmt} from '../shared/format.js';
 import {requestRender} from '../shared/render.js';
@@ -40,45 +49,53 @@ $('speed').addEventListener('click', e => {
 });
 
 // ---------- onglets (à droite du héros) et leur contenu ----------
-const TABS = [
-  ['combat', '⚔️', 'COMBAT'],
+// l'onglet du lieu suit le héros : 🏠 VILLAGE quand il y est (ou qu'on le regarde de loin), ⚔️ COMBAT en route
+function placeTab() {
+  if (!villageShown()) return ['place', '⚔️', 'COMBAT'];
+  return ['place', '🏠', atVillage() ? 'VILLAGE' : 'VILLAGE (DE LOIN)'];
+}
+const OTHER_TABS = [
   ['map', '🗺️', 'CARTE'],
   ['bestiary', '📖', 'BESTIAIRE'],
-  ['village', '🏠', 'VILLAGE'],
 ];
 const LIVE_HTML = '<span class="live"></span>';
 const BADGE_HTML = '<span class="bg">!</span>';
-// pastille d'un onglet : combat en cours ailleurs, ou amélioration possible au village
+// pastille de l'onglet du lieu : combat en cours qu'on ne regarde pas, ou amélioration possible au village
 function tabMark(k) {
-  if (k === 'combat' && S.G.run.action?.phase === 'fight' && S.tab !== 'combat') return LIVE_HTML;
-  if (k === 'village' && anyUpgrade()) return BADGE_HTML;
+  if (k !== 'place') return '';
+  if (S.G.run.action?.phase === 'fight' && !combatShown()) return LIVE_HTML;
+  if (atVillage() && anyUpgrade()) return BADGE_HTML;
   return '';
 }
 export function renderTabs() {
   setHTML(
     $('tabs'),
-    TABS.map(
-      ([k, ic, l]) =>
-        `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${ic}<span class="tl"> ${l}</span>${tabMark(k)}</button>`,
-    ).join(''),
+    [placeTab(), ...OTHER_TABS]
+      .map(
+        ([k, ic, l]) =>
+          `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${ic}<span class="tl"> ${l}</span>${tabMark(k)}</button>`,
+      )
+      .join(''),
   );
-  $('sceneView').hidden = S.tab !== 'combat';
+  $('sceneView').hidden = !combatShown();
+  $('villageView').hidden = S.tab !== 'place' || !villageShown();
   $('mapView').hidden = S.tab !== 'map';
-  $('pane').hidden = S.tab !== 'bestiary' && S.tab !== 'village';
+  $('pane').hidden = S.tab !== 'bestiary';
 }
 $('tabs').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (b) {
     S.tab = b.dataset.t;
+    if (S.tab !== 'place') S.farView = false; // quitter l'onglet du lieu met fin au regard de loin
     clearTimeout(S.backTimer);
     requestRender();
   }
 });
 
-// fiche de la case à côté de la carte ; bestiaire ou village dans le panneau
+// fiche de la case à côté de la carte ; village dans l'onglet du lieu ; bestiaire dans le panneau
 export function renderPane() {
   if (S.tab === 'map') setHTML($('tileCard'), tileCardHTML());
-  else if (S.tab === 'village') setHTML($('pane'), villageHTML());
+  else if (S.tab === 'place' && villageShown()) setHTML($('villageView'), villageHTML());
   else if (S.tab === 'bestiary') setHTML($('pane'), bestiaryHTML());
 }
 // achat d'un bâtiment ou forge : sauvegarde, et si le héros n'est pas parti, il repart avec (stats recalculées)
@@ -87,11 +104,24 @@ function afterVillageChange(isDone) {
   saveMeta();
   if (loopFresh()) startLoop(S.G);
 }
+// boutons d'action des fiches (case de la carte, zones du village)
+const ACTS = {
+  explore: () => explore(S.G, S.selected),
+  'tab-village': openVillage,
+  go: () => {
+    S.tab = 'map'; // « Partir » : Jalon ouvre la carte
+    S.farView = false;
+  },
+  letgo: () => abandon(S.G), // « Laisser filer le sablier » : fin de boucle tout de suite
+  back: () => {
+    S.farView = false;
+  },
+};
 function onPaneClick(e) {
   const b = e.target.closest('button');
   if (!b || b.disabled) return;
-  if (b.dataset.act === 'explore') explore(S.G, S.selected);
-  else if (b.dataset.act === 'tab-village') S.tab = 'village';
+  if (ACTS[b.dataset.act]) ACTS[b.dataset.act]();
+  else if (b.dataset.zone) S.zone = b.dataset.zone;
   else if (b.dataset.buy) afterVillageChange(buy(S.G, b.dataset.buy));
   else if (b.dataset.forge) afterVillageChange(forgeItem(S.G, b.dataset.forge, loopFresh()));
   else if (b.dataset.reforge !== undefined) afterVillageChange(repeatForge(S.G, loopFresh()));
@@ -99,4 +129,5 @@ function onPaneClick(e) {
   requestRender();
 }
 $('pane').addEventListener('click', onPaneClick);
+$('villageView').addEventListener('click', onPaneClick);
 $('tileCard').addEventListener('click', onPaneClick);

@@ -18,7 +18,7 @@ export function openLoopEnd() {
   const why = {
     death: `Le héros est tombé face à <b>${o.enemyName}</b>.`,
     time: "Le sablier s'est vidé.",
-    return: 'Le héros est rentré au village.',
+    return: 'Le héros a laissé filer le sablier.',
   }[o.reason];
   $('mbox').innerHTML = `<h2>⏳ La boucle se referme</h2><div class="sub">Boucle ${o.loop} · ${why}</div>
     <div class="divh"><span>CE QUE TU AS FAIT</span></div>

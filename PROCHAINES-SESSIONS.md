@@ -46,6 +46,8 @@ Lis docs/INDEX.md puis docs/art-direction.md (court), tools/sprites.json (entré
 Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et docs/INDEX.md, commit, et demande-moi avant de pousser.
 ```
 
+**Après R3a (21/11)** : sprites des trois PNJ du matin (Hyacinthe Jalon, Honorine Mailloche, Philémon Basane) et fond du village, aujourd'hui en emoji et en CSS (`src/village/village.view.js`, `village.css`) ; même pipeline que les fonds de scène, PNJ en tailles multiples de 16.
+
 **Commandes utiles** :
 - générer (Windows, Forge) : `.venv-win\Scripts\python tools/sd_generate.py <asset> -n 4` (ou `--profile v1_turbo` pour les fonds) ;
 - construire les sprites retenus : `.venv-win\Scripts\python tools/sd_generate.py --build` ;
@@ -89,12 +91,7 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 **R1 — l'écran : faite le 21/11** (livraison 1 la disposition, livraison 2 le combat en diagonale ; comptes rendus dans `docs/archive/sessions-faites.md`).
 **R2 — la scène du minage : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, détail dans `docs/design.md` → `### R2 faite`). Suite : R3.
 **R3 — le village comme lieu : découpage et règles décidés le 21/11** (rien de codé ; tout est dans `docs/design.md` → `### R3 : découpage et règles`, prompt d'origine et compte rendu dans `docs/archive/sessions-faites.md`). Six sous-étapes, une conversation chacune, dans l'ordre :
-**R3a — le village devient un lieu** (vue seule) :
-```
-Lis docs/INDEX.md, docs/outillage.md (captures), puis dans docs/design.md seulement « Village », « Architecture du code » et, dans « Refonte de l'expérience », « R3 : découpage et règles » (sous-étape R3a et maquette) et « R1, livraison 1 faite » (onglets, écran étroit).
-Étape R3a : le village devient un lieu, sans changer aucun chiffre ni aucune règle. L'onglet Village disparaît ; l'onglet du lieu affiche 🏠 VILLAGE quand le héros est au village, ⚔️ COMBAT quand il est en route. Scène à cinq zones en surbrillance : Hyacinthe Jalon (« Partir » ouvre la carte), Honorine Mailloche (bâtiment Forge, recettes, vue du coffre), Philémon Basane (présent, sans mécanique), la salle d'entraînement (Entraîneur), l'horloge (Horloge, et « Laisser filer le sablier » qui remplace « Rentrer au village (fin de boucle) »). Un clic sur une zone ouvre sa fiche sous la scène ; sur téléphone, liste de cinq boutons-vignettes. PNJ en emoji en attendant leurs sprites.
-Propose-moi d'abord la maquette à jour et les fichiers touchés ; attends mon accord. Simu identique (npm run check), captures sans erreur JS (village grand écran et étroit), docs/design.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
-```
+**R3a — le village devient un lieu : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, détail dans `docs/design.md` → `### R3a faite`).
 **R3b — la matinée** (après R3a) :
 ```
 Lis docs/INDEX.md, docs/lore.md (« Le cartographe : Hyacinthe Jalon », « Les deux autres PNJ du matin »), docs/outillage.md (simu), puis dans docs/design.md seulement « Architecture du code » et, dans « Refonte de l'expérience », « R3 : découpage et règles » (mesures, R3b, règles 7 à 9).
