@@ -12,7 +12,7 @@ Le héros, un mineur un peu fou, revit la même journée en boucle. Il oublie to
   - la mine est faite de strates de plus en plus anciennes, avec des traces des boucles précédentes ;
   - les mondes sont des époques d'un même lieu, et le monde tardif modifie le passé (nouveau contenu dans les mondes terminés, à la Loopbound).
 - **Chemin façon PowerSeeker** : carte de cases, biomes colorés, niveau sur chaque case, fiche détaillée au clic.
-- **Exploration case par case au début**. Plus tard, le **Cartographe** permettra de programmer une route sur les cases connues (mode idle).
+- **Exploration case par case au début**. Plus tard, le **Cartographe** permettra de programmer une route sur les cases connues (mode idle). Précisé par la refonte (2026-11-21) : Placide Jalon rend la carte chaque matin, et le pilote se débloque à la Bauge du Roi (voir « Refonte de l'expérience »).
 - **L'information se gagne** : la fiche d'un monstre se débloque à la première rencontre, ses butins au premier kill.
 - **Ré-exploration (farm)** : toute case déjà faite pendant la boucle peut être refaite (combat, récolte, source). Ça coûte du temps de boucle.
 - **Source = échanger du temps contre des PV** (v0.3) : +10 % des PV max par seconde jusqu'à être plein, avec la possibilité de reprendre la route avant. Réutilisable. Comme le soin est en pourcentage, une source pleine coûte toujours au plus ~10 s, quels que soient les PV max : le coût en temps reste constant.
@@ -360,6 +360,28 @@ Lecture :
 - **Armures utiles** : des modificateurs qui font gagner du temps ou rendent le danger réel (épines…), pour qu'elles entrent dans le min-max.
 - **Compétences de déplacement ou d'exploration** : un levier pour ralentir ou accélérer la progression.
 - **Rencontres** : sur une case, le monstre n'est pas déjà là ; il apparaît avec une chance (des zones plutôt que des cases fixes).
+
+## Refonte de l'expérience (R0, conseil du 2026-11-21 ; rien n'est codé)
+### Pourquoi
+En rejouant (21/11), Steven trouve le jeu **inexpliqué**, pas ennuyeux : on ne sait pas pourquoi le héros part combattre, ni pourquoi il mine les monstres au lieu de les tuer (« l'équivalent d'un ta gueule c'est magique ») ; au début d'une boucle, la première chose affichée est une case inaccessible avec un bouton grisé ; les monstres semblent posés dans un cadre et le minage se voit mal. Vision complète : `PROCHAINES-SESSIONS.md` → « R. Refonte de l'expérience ».
+
+### Conseil (quatre voix)
+- **Accords** : la raison du minage vient du **personnage** (il est mineur, il voit des strates), pas d'une règle du monde ; une explication ne sert à rien si le minage ne se voit pas, donc l'écran (R1) passe avant la scène (R2) ; rien de ce qui a été découvert ne se perd ; le pilote automatique ne doit **pas** attendre le Gardien du Sablier (la fin du contenu, boucle 10 en médiane).
+- **Le sceptique** voulait une simple ligne au lieu d'une scène, une carte qui ne se rend pas, et voit la R4 comme « un nouveau jeu ». Retenu de lui : la carte reste connue, une sortie de secours au lieu du bouton de fin de boucle supprimé (la simu connaît un cas « bloqué », `tools/sim.js`), mesurer le coût de la marche avant de la promettre, un bot de plus pour le pilote.
+- **Le joueur** : une scène jouée, pas lue ; un départ en moins de 3 s à la 10e boucle ; pilote tôt.
+- **Le conteur** : les répliques de la scène, le géomètre qui garde la carte, « le pilote, c'est le pointillé ».
+
+### Décisions de Steven (2026-11-21)
+1. **Le minage expliqué par une scène jouée au premier combat** (R2). Une bulle par geste, 20 s au plus, deux bulles courtes, passables d'un clic mais pas d'un bloc : le premier coup fissure le monstre et des pixels partent vers l'inventaire (« Du temps tassé. Ça se creuse, ça. »), puis le joueur clique lui-même sur le cœur (« On ne tue pas ça. On le descend. »). Au cœur, un vestige : la **clé de la lampe de Grésille**, dans le **Mulot dentu** (premier vestige de `lore.md`). Une seule fois par sauvegarde. Texte dans `lore.md` → « Le premier combat ».
+2. **Le cartographe, Placide Jalon**, vieux géomètre du hameau (lore dans `lore.md`). La carte ne s'efface jamais : il garde ce qui est **tracé** (cases découvertes, niveaux, fiches) ; seul l'état de la boucle repart de zéro (cases faites, récoltes). **C'est lui qui lance la boucle** : chaque matin, on va chercher la carte. La première fois, une vraie scène ; ensuite, il ne reparle que s'il a du neuf (annotation du village, zone). Avec la renommée, le village annote la carte, puis elle est prête d'avance. **Critère du joueur : moins de 3 s entre le début de la boucle et le départ, à la 10e boucle.**
+3. **La matinée, des actions enchaînées** (idée de Steven, à la manière des actions combinées de Terraformental) : la première fois, le joueur fait chaque geste lui-même (parler au cartographe, au forgeron…, partir vers la zone 1) ; ensuite, l'enchaînement devient un seul bouton **« Même matinée »** (le germe existe : « Refaire la même forge »). Différence avec Terraformental, où les actions combinées sont fixées par le jeu : ici, c'est la matinée du joueur qui est rejouée. Premier automatisme, dès la 2e boucle.
+4. **« Rentrer » remplace « Rentrer au village (fin de boucle) »**. Comme un pilote en marche arrière : le héros revient à pied au village (le temps de la marche compte), y fait le nécessaire, et repart s'il reste du temps ; si le temps s'écoule en chemin, la boucle finit comme une mort (on garde ses gains). À terme, le joueur peut **épingler UNE recette** : il n'a pas à se souvenir de ce qu'il lui manque, et le retour la forge (« faut pas être méchant non plus »). Le détail (ce que fait « le nécessaire », où s'affiche la recette épinglée) se tranche en R3.
+5. **Le pilote automatique se débloque à la première victoire sur la Bauge du Roi** (le Repaire de niveau 4 des Prés de l'Aube, avec le Sanglier alpha : le « boss » de la zone 1). Lore : Jalon trace en pointillé le chemin d'hier sur la carte, et le héros le suit par habitude, sans s'en souvenir (« Tu as suivi un chemin tout droit, tu devrais te l'épargner. »). Il suit la route sur les cases connues et s'arrête devant une case inconnue ou un boss. Il reste toutes les Collines grises à jouer avec lui. Boucle où tombe la Bauge : **pas encore mesurée** (estimée 3e-5e), à mesurer avec les trois bots en R5 ; un 4e bot « pilote » arrive avec lui.
+6. **Ordre : R1 écran → R2 scène → R3 village, cartographe, matinée et « Rentrer » → R4 zones → R5 pilote.** Chaque étape finit sur une partie jouable jusqu'au Gardien. Les chiffres ne bougent pas avant R3 (marche du retour, mesurée avec les trois bots) ; le rééquilibrage vient avec R4. Dernier Grain (3a1) et 3a2 restent en pause jusqu'après R4.
+
+### Mis de côté (à reproposer)
+- Une phrase qui dit pourquoi le héros part le matin (à trancher avec R2).
+- La règle du conteur « une trace à l'encre pèse plus qu'un souvenir » pourrait aussi expliquer le carnet du bestiaire gardé par le village (session lore).
 
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 

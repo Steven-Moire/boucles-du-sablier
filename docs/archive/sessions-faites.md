@@ -363,3 +363,16 @@ Lis docs/INDEX.md, docs/outillage.md (simu), puis dans docs/design.md seulement 
 Ajoute à tools/sim.js un bot « moyen » (--moyen, combinable avec --graines N), qui joue comme un humain attentif mais imparfait. Propose-moi d'abord sa règle en 3 lignes (par exemple : suit l'outil conseillé du carnet une case sur deux, revient au village sous 30 % de PV, forge ce qu'il peut sans ordre optimal) et attends mon accord. Le hasard du bot passe par un générateur à graine à part (jamais G.rng ni G.mrng, pour ne pas changer les combats).
 Sortie par défaut et --malin inchangées (npm run check), nouvelle référence sim-moyen.txt, résultats sur 30 graines (médiane, fourchette, part de morts) dans « Étape 3a1 », docs/outillage.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
 ```
+
+## Gameplay R0 — conseil sur la refonte de l'expérience du 21/11 (fait)
+
+**État avant la session** : vision de Steven notée dans `PROCHAINES-SESSIONS.md` → « R. Refonte de l'expérience » (minage inexpliqué, idle orienté aventure, village comme lieu, cartographe qui rend la carte, zones à distance) ; découpage R0 à R4 proposé, 3a1 sous-étape 3 (Dernier Grain) et 3a2 en pause.
+
+**Fait le 21/11** : conseil à quatre voix (Claude, conteur, joueur, sceptique). Décisions de Steven dans `docs/design.md` → « Refonte de l'expérience » : scène jouée au premier Mulot dentu (répliques du conteur, clé de la lampe au cœur) ; cartographe **Placide Jalon** (nom vérifié sur le web, « Garnier » écarté), qui rend la carte et lance la boucle, carte qui garde tout ce qui est tracé, départ en moins de 3 s à la 10e boucle ; matinée en actions enchaînées (« Même matinée », idée de Steven à la manière de Terraformental) ; « Rentrer » à pied au lieu du bouton de fin de boucle, avec à terme UNE recette épinglée ; pilote automatique à la première victoire sur la Bauge du Roi (le pointillé de Jalon) ; ordre R1 → R2 → R3 → R4 → R5 (pilote sorti de R4). Lore dans `docs/lore.md` ; prompts de R2 à R5 écrits, R1 précisé (bouton grisé, minage visible).
+
+**Prompt exécuté** :
+```
+Lis docs/INDEX.md, docs/lore.md, puis dans docs/design.md seulement « Pitch », « Décisions prises », « Miner les ennemis » (« Pourquoi », « Le lore qui va avec ») et « Étape 3a1 » (décisions). Lis la section « R. Refonte de l'expérience » de PROCHAINES-SESSIONS.md (vision de Steven).
+Réunis le conseil (/conseil) sur la refonte : 1) pourquoi le héros mine les monstres au lieu de les tuer (une scène au premier combat, dans le ton de lore.md) ; 2) le cartographe qui rend la carte à chaque boucle (ce qu'il garde, comment il lance le jeu) ; 3) le pilote automatique (quand il se débloque, par exemple après le premier boss de la zone 1, et ce qu'il fait) ; 4) l'ordre des étapes R1 à R4 et ce qui reste jouable entre deux.
+Rends les positions et une recommandation, attends mes décisions, puis note-les dans docs/design.md (nouvelle section « Refonte de l'expérience »), écris les prompts de R2 à R4 dans PROCHAINES-SESSIONS.md, docs/INDEX.md à jour, commit, demande-moi avant de pousser.
+```
