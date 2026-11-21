@@ -44,6 +44,7 @@
         </aside>
         <div class="card stage">
           <div class="tabs" id="tabs"></div>
+          <!-- combat en diagonale : monstres en haut à droite, héros en bas à gauche -->
           <div class="view scene" id="sceneView" hidden>
             <div class="sc-head"><div class="sc-title" id="scTitle"></div></div>
             <div class="sc-enemies" id="scEnemies"></div>
@@ -52,13 +53,15 @@
                 <div class="por">
                   <img class="spr" src="assets/sprites/heros.png" alt="🧙" />
                 </div>
-                <div class="nm"><b id="heroLv">1</b> Héros</div>
-                <div class="bar hp"><i id="heroHpBar"></i><span id="heroHpTxt"></span></div>
-                <div class="swing"><i id="heroSwing"></i></div>
+                <div class="plate">
+                  <div class="nm"><b id="heroLv">1</b> Héros</div>
+                  <div class="bar hp"><i id="heroHpBar"></i><span id="heroHpTxt"></span></div>
+                  <div class="swing"><i id="heroSwing"></i></div>
+                  <div class="skills" id="scSkills"></div>
+                </div>
               </div>
-              <div class="skills" id="scSkills"></div>
+              <button class="retreat" id="retreatBtn">BATTRE EN RETRAITE</button>
             </div>
-            <button class="retreat" id="retreatBtn">BATTRE EN RETRAITE</button>
           </div>
           <div class="view mapview" id="mapView">
             <div class="mapwrap">

@@ -13,10 +13,10 @@ Du **pixel art « joli »**, dans l'esprit de Little Dig : des pixels nets, une 
 | Élément | Taille native | Affichage |
 |---|---|---|
 | Icônes de cases | 32 × 32 | ×1 sur la carte (cases de 60 px, 38 px sur écran de téléphone), ×0,5 dans la légende |
-| Monstres normaux | 48 × 48 | ×2 |
-| Élites | 64 × 64 | ×2 |
-| Boss | 96 × 96 | ×2 |
-| Portrait du héros | 64 × 64 | ×2 au combat, ×1 dans la colonne du héros (×0,5 sur téléphone) |
+| Monstres normaux | 48 × 48 | au combat : ×4, ×3 ou ×2 selon la place (`digScale`) |
+| Élites | 64 × 64 | idem |
+| Boss | 96 × 96 | idem |
+| Portrait du héros | 64 × 64 | ×2 au combat (×1 sur téléphone), ×1 dans la colonne du héros (×0,5 sur téléphone) |
 | Fonds de scène (par biome) | 320 × 180 | ×3 ou ×4 |
 
 - **Une seule palette pour tout le jeu : Endesga 64** (Lospec), dans `docs/palette.hex`. Choisie par mesure : sur les premiers rendus SD, erreur de couleur moyenne 21,7 contre 28,5 pour Resurrect 64 et 39,2 pour Endesga 32 (Resurrect manque de bruns naturels).

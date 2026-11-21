@@ -8,7 +8,7 @@ import {fmt} from '../shared/format.js';
 import {fxRandom} from '../shared/rng.js';
 import {segBar} from '../shared/templates.js';
 import {requestRender} from '../shared/render.js';
-import {digPortrait, drawDig, onDigClick} from '../mining/dig.view.js';
+import {digPortrait, digScale, drawDig, onDigClick} from '../mining/dig.view.js';
 
 // ---------- scène de combat ----------
 let sceneKey = '';
@@ -59,11 +59,13 @@ function idleState(r, done) {
   if (r.over) return 'over';
   return done ? 'done' : 'wait';
 }
-function sceneKeyOf(r, a, done) {
-  return a ? `${a.id}|${a.seg}|${a.phase}` : 'idle|' + idleState(r, done);
+// la taille de la zone des monstres entre dans la clé : la grille est ré-agrandie quand l'écran change
+function sceneKeyOf(r, a, done, box) {
+  return a ? `${a.id}|${a.seg}|${a.phase}|${box.clientWidth}x${box.clientHeight}` : 'idle|' + idleState(r, done);
 }
-function enemyUnitHTML(e, i) {
-  return `<div class="unit ${e.rank}" id="u-e${i}"><div class="por">${digPortrait(e, i)}</div><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div>`;
+// monstre en haut à droite : sa plaque (niveau, nom, PV, élan) au-dessus, sans cadre, posé sur une ombre
+function enemyUnitHTML(e, i, scale) {
+  return `<div class="unit ${e.rank}" id="u-e${i}"><div class="plate"><div class="nm"><b>${e.lvl}</b>${e.name}</div><div class="bar hp enemy"><i></i><span></span></div><div class="swing"><i></i></div></div><div class="por">${digPortrait(e, i, scale)}</div></div>`;
 }
 function phaseIcon(a) {
   if (a.phase === 'harvest') return a.segs[a.seg]?.res === 'ore' ? '⛏️' : '🪓';
@@ -82,10 +84,16 @@ function messageHTML(r, a, done) {
 }
 // ennemis / message : reconstruits seulement quand la vague ou la phase change
 function renderSceneBody(r, a, done) {
-  const key = sceneKeyOf(r, a, done);
+  const box = $('scEnemies'),
+    key = sceneKeyOf(r, a, done, box);
   if (key === sceneKey) return;
   sceneKey = key;
-  $('scEnemies').innerHTML = hasEnemies(a) ? a.enemies.map(enemyUnitHTML).join('') : messageHTML(r, a, done);
+  if (!hasEnemies(a)) {
+    box.innerHTML = messageHTML(r, a, done);
+    return;
+  }
+  const scale = digScale(a.enemies, box.clientWidth, box.clientHeight);
+  box.innerHTML = a.enemies.map((e, i) => enemyUnitHTML(e, i, scale)).join('');
 }
 function updateEnemyUnit(e, i) {
   const u = $('u-e' + i);

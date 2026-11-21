@@ -361,7 +361,7 @@ Lecture :
 - **Compétences de déplacement ou d'exploration** : un levier pour ralentir ou accélérer la progression.
 - **Rencontres** : sur une case, le monstre n'est pas déjà là ; il apparaît avec une chance (des zones plutôt que des cases fixes).
 
-## Refonte de l'expérience (R0, conseil du 2026-11-21 ; R1 en cours)
+## Refonte de l'expérience (R0, conseil du 2026-11-21 ; R1 faite)
 ### Pourquoi
 En rejouant (21/11), Steven trouve le jeu **inexpliqué**, pas ennuyeux : on ne sait pas pourquoi le héros part combattre, ni pourquoi il mine les monstres au lieu de les tuer (« l'équivalent d'un ta gueule c'est magique ») ; au début d'une boucle, la première chose affichée est une case inaccessible avec un bouton grisé ; les monstres semblent posés dans un cadre et le minage se voit mal. Vision complète : `PROCHAINES-SESSIONS.md` → « R. Refonte de l'expérience ».
 
@@ -389,7 +389,15 @@ Aucun chiffre ni moteur touché (`npm run check` : les quatre références de la
 - **Fiche de case à côté de la carte**, réduite à la zone (nom, biome, niveau, vagues, ennemis ou ressource, bouton, indication) ; dessous sur écran moyen.
 - **Plus de bouton grisé** : une case où le héros ne peut pas aller n'affiche que la raison. En début de boucle, au chargement et après une réinitialisation, la case choisie est la première accessible jamais faite, sinon la première accessible (`startTile()`, `shared/state.js`). Avant, la sélection de la boucle précédente restait, souvent une case des Collines devenue inaccessible.
 - **Écran étroit** (≤ 860 px) : le haut de la colonne du héros devient une bande au-dessus des onglets, le bas passe sous leur contenu ; ≤ 640 px : cases de carte de 38 px, barre du haut compacte ; ≤ 420 px : onglets en icônes seules. Captures `etroit-carte.png` et `etroit-combat.png` (390 px de large).
-- **Reste la livraison 2** : le combat en diagonale (héros en bas à gauche, monstres en haut à droite, grille ×4 / ×3 / ×2 en échelle entière, trous creusés en silhouette pâle, éclats à l'échelle).
+- Livraison 2 (combat en diagonale) : section suivante.
+
+### R1, livraison 2 faite : le combat en diagonale (2026-11-21)
+Vue seule, aucun chiffre ni moteur touché (`npm run check` : les quatre références identiques).
+- **Diagonale façon Pokémon** (`index.html`, `src/combat/scene.css`) : titre de la case en haut à gauche, monstres en haut à droite, héros en bas à gauche, « Battre en retraite » en bas à droite. Plus de cadre autour des monstres : une plaque (niveau, nom, PV, élan) au-dessus du sprite, posé sur une ombre au sol. La plaque du héros porte ses PV, son élan, l'outil et les compétences. Les coups partent en diagonale (le héros vers le haut à droite, le monstre vers le bas à gauche).
+- **Grille plus grande, en échelle entière** (`digScale`, `src/mining/dig.view.js`) : ×4, sinon ×3, sinon ×2, le plus grand où toute la vague tient dans la zone des monstres (largeur des grilles et des plaques, hauteur de la plus haute). Recalculé quand la zone change de taille. Exemple : deux Mulots dentus en ×4 sur grand écran, en ×2 sur téléphone.
+- **Pixels creusés visibles** : un pixel retiré reste en silhouette pâle (`f9e6cf` de la palette, translucide), on voit où le héros a creusé. Les éclats suivent l'échelle de la grille (2 pixels, 3 pour ceux du marteau).
+- **Téléphone** (≤ 640 px) : une seule colonne (titre, monstres, héros), héros en ×1 (64 px), compétences de 40 px, la retraite passe sous le héros.
+- Capture `combat-creuse.png` (`tools/screenshot.py`) : un Mulot dentu entamé, trou en silhouette pâle.
 
 ### Mis de côté (à reproposer)
 - La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent). À voir en R3 avec la carte de Jalon ; Steven testera et on ajustera.

@@ -1,7 +1,8 @@
 """Capture rapide du jeu dans Chromium (vérif visuelle après une modif).
 
   pip install playwright && playwright install chromium
-  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, village.png,
+  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, combat-creuse.png,
+                                           village.png,
                                            etroit-carte.png, etroit-combat.png (téléphone, 390 px de large),
                                            proto.png (prototype du minage)
 
@@ -121,6 +122,9 @@ async def main():
         await pg.wait_for_selector('#sceneView.has-bg', state='attached')
         await pg.clock.run_for(TICK_MS)
         await shoot(pg, 'combat')
+        # quelques coups plus tard : les pixels creusés restent en silhouette pâle
+        await pg.clock.run_for(2400)
+        await shoot(pg, 'combat-creuse')
         # onglet Village du panneau de droite (après le combat : les captures d'avant ne bougent pas)
         await pg.click('#tabs button[data-t="village"]')
         await pg.clock.run_for(TICK_MS)

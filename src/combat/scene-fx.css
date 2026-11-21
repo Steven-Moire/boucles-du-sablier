@@ -91,9 +91,7 @@
   text-shadow: 0 1px 1px #000;
 }
 .retreat {
-  position: absolute;
-  left: 12px;
-  bottom: 12px;
+  margin-left: auto; /* en bas à droite, sous les monstres ; passe à la ligne sur téléphone */
   background: rgba(10, 11, 15, 0.8);
   border: 2px solid var(--text);
   color: var(--text);

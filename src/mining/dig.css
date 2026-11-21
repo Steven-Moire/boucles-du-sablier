@@ -6,10 +6,9 @@
   cursor: crosshair;
   filter: drop-shadow(0 3px 0 rgba(0, 0, 0, 0.35));
 }
+/* éclats : taille posée par digParticles, à l'échelle de la grille (2 pixels, 3 pour ceux du marteau) */
 .unit .chip-px {
   position: absolute;
-  width: 4px;
-  height: 4px;
   pointer-events: none;
   animation: chipfall 0.7s ease-in forwards;
   z-index: 2;
@@ -31,7 +30,5 @@
   font-size: 15px;
 }
 .unit .chip-px.broke {
-  width: 6px;
-  height: 6px;
   box-shadow: 0 0 4px #fff;
 }
