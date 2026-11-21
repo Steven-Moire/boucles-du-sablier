@@ -2,7 +2,7 @@
 
 Chaque conversation repart de `docs/INDEX.md` (qui résume tout) sans relire l'historique. Ce qui est déjà fait (prompts exécutés, état d'avant) est archivé dans `docs/archive/sessions-faites.md`.
 
-**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé : **Gameplay 3a1 (leviers d'équilibrage) → 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
+**Démarrer une conversation** : dans VS Code, nouvelle conversation Claude Code (ou `claude` dans un terminal ouvert à la racine du dépôt), puis coller le prompt de la section voulue. Ordre conseillé (21/11) : **Gameplay R (refonte de l'expérience : R0 conseil, R1 écran…) → 3a1 Dernier Grain → 3a2 → 3b** (qualité du code faite), Graphismes (héros selon l'outil) et Lore en parallèle.
 
 Rappels valables partout :
 - Stable Diffusion (Forge) doit tourner pour toute génération d'image : API sur http://127.0.0.1:7860.
@@ -71,20 +71,51 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 - **Scribes du carnet** : casé dans la section 1 (Lore).
 - **Courbe de puissance par zone** (21/11, décision « plus tard » de la 3a1) : un palier par zone plus une courbe douce dans la zone, ce qui donne une difficulté qui accélère d'un monde à l'autre. À mesurer à l'arrivée des mondes / époques (8 niveaux aujourd'hui : une formule à plusieurs chiffres s'ajusterait au bot, pas au joueur).
 
-**Ordre conseillé (20/11, révisé)** : leviers d'équilibrage (3a1) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
+**Ordre conseillé (21/11, révisé)** : refonte de l'expérience (R) → fin de la 3a1 (Dernier Grain) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante (à revoir avec R1 : héros vu en diagonale).
+
+### R. Refonte de l'expérience (21/11, avant la suite de la 3a ; 3a1 sous-étape 3 et 3a2 en pause)
+**Constat de Steven en rejouant (21/11)** : les bots disent si les règles tiennent, pas si le jeu se comprend. On ne sait pas pourquoi le héros part combattre, ni pourquoi il mine les monstres au lieu de les tuer « normalement » (« l'équivalent d'un ta gueule c'est magique ») ; le minage n'est pas ennuyeux, il est inexpliqué. Au début d'une boucle, la première chose affichée est une case inaccessible avec un bouton grisé.
+
+**Vision de Steven** (à trancher avec le conseil, puis à coder une étape à la fois) :
+- **Un idle orienté aventure** : le début se joue au clic, puis un **pilote automatique** se débloque (par exemple après le premier boss de la zone 1), qui suit un itinéraire (le cartographe à route programmée de la feuille de route).
+- **Écran** : le héros toujours à gauche (stats, armures, équipement) ; en haut les onglets **Combat / Carte / Bestiaire** ; la fiche de case ne garde que les infos de la zone ; **plus d'onglet Village**.
+- **Combat plus grand, en diagonale façon Pokémon** : héros en bas à gauche, monstres en haut à droite. Aujourd'hui les monstres semblent « posés dans un cadre » et le minage se voit mal.
+- **Le village est un lieu** : on y entre, des zones en surbrillance (forge, cartographe, salle d'entraînement), chacune avec son PNJ à qui parler. Pour s'améliorer, on retourne au village. Suppression du bouton « Rentrer au village (fin de boucle) » (le suicide), puisqu'il n'y a pas de blocage possible (à vérifier dans le code : la simu prévoit un cas « stuck »).
+- **Le cartographe rend la carte** : elle repart de zéro à chaque boucle, et la première chose à faire au village est d'aller lui parler pour l'avoir et « commencer » le jeu (même logique que la forge pour les outils ; colle au lore : le héros oublie, le village se souvient).
+- **Les zones** : la prairie est à une certaine distance du village ; dedans, on ne voit plus le village, juste une flèche « retourner au village ». La zone est un lieu avec des endroits cliquables, comme le village (le bosquet pour le bois, s'enfoncer dans la forêt, se reposer au puits ou à la mare). Des niveaux dans la zone (par exemple 1 à 3). On n'a plus « 3 vagues par case » : des ennemis **bloquent la route**, il faut en battre un certain nombre pour aller plus loin.
+
+**Découpage proposé (chaque étape reste jouable)** :
+- **R0, conseil** : lore du minage, cartographe, pilote automatique, ordre des étapes.
+- **R1, l'écran** (aucun chiffre ne bouge, ne dépend d'aucune décision de lore) : héros à gauche, onglets Combat / Carte / Bestiaire, fiche de zone allégée, combat en diagonale.
+- **R2, le lore du minage** : une scène au premier combat.
+- **R3, le village comme lieu** : scène et PNJ, le cartographe donne la carte, retour au village en marchant, fin de l'onglet Village et du bouton de fin de boucle.
+- **R4, les zones** : distance, endroits cliquables, niveaux, ennemis qui bloquent la route ; rééquilibrage avec les trois bots (défaut, malin, moyen). Ensuite seulement : Dernier Grain et 3a2.
+
+**R0 — conseil** :
+```
+Lis docs/INDEX.md, docs/lore.md, puis dans docs/design.md seulement « Pitch », « Décisions prises », « Miner les ennemis » (« Pourquoi », « Le lore qui va avec ») et « Étape 3a1 » (décisions). Lis la section « R. Refonte de l'expérience » de PROCHAINES-SESSIONS.md (vision de Steven).
+Réunis le conseil (/conseil) sur la refonte : 1) pourquoi le héros mine les monstres au lieu de les tuer (une scène au premier combat, dans le ton de lore.md) ; 2) le cartographe qui rend la carte à chaque boucle (ce qu'il garde, comment il lance le jeu) ; 3) le pilote automatique (quand il se débloque, par exemple après le premier boss de la zone 1, et ce qu'il fait) ; 4) l'ordre des étapes R1 à R4 et ce qui reste jouable entre deux.
+Rends les positions et une recommandation, attends mes décisions, puis note-les dans docs/design.md (nouvelle section « Refonte de l'expérience »), écris les prompts de R2 à R4 dans PROCHAINES-SESSIONS.md, docs/INDEX.md à jour, commit, demande-moi avant de pousser.
+```
+**R1 — l'écran** (possible avant R0) :
+```
+Lis docs/INDEX.md, docs/art-direction.md, puis dans docs/design.md seulement « Architecture du code » (liste des modules). Lis la section « R. Refonte de l'expérience » de PROCHAINES-SESSIONS.md.
+Étape R1, l'écran, sans changer aucun chiffre du jeu : héros toujours à gauche (stats, équipement, outil) ; onglets en haut Combat / Carte / Bestiaire ; fiche de case réduite aux infos de la zone ; combat en diagonale façon Pokémon (héros en bas à gauche, monstres en haut à droite, grille de minage plus grande), lisible aussi sur écran étroit. L'onglet Village et le bouton « Rentrer au village (fin de boucle) » restent pour l'instant (ils partent avec R3).
+Propose-moi d'abord une maquette ASCII de l'écran (large et étroit) et la liste des fichiers touchés, et attends mon accord. Simu identique (npm run check : aucune référence ne bouge), captures sans erreur JS (screenshot.py sous WSL), docs/design.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
+```
 
 ### 3a1. Leviers d'équilibrage (avant 3a2)
 **Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a1`) : pente de puissance des monstres 1,6 → 2,4 retenue (les deux bots dans la cible avec et sans la 3a2, la mort revient, l'armure compte), **codée le 21/11**. Bot moyen codé le 21/11, Dernier Grain au sablier, effets par emplacement renvoyés en 3b.
 **Sous-étape 1 — pente 2,4 : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, résultats dans `docs/design.md` → `### Étape 3a1` → « Pente 2,4 dans le jeu »).
 **Sous-étape 2 — bot moyen : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, résultats dans `docs/design.md` → `### Étape 3a1` → « Bot moyen »).
-**Sous-étape 3 — Dernier Grain** (après le bot moyen) :
+**Sous-étape 3 — Dernier Grain** (**en pause** depuis le 21/11 : après la refonte R, qui change le jeu à équilibrer) :
 ```
 Lis docs/INDEX.md, docs/lore.md (le ton), puis dans docs/design.md seulement « Boucle de jeu », « Compétences actives » et « Étape 3a1 » (décision : Dernier Grain dans les 10 derniers pour cent du sablier). Lis docs/design.md « Architecture du code ».
 Le Dernier Grain : dans les 10 derniers pour cent du temps de boucle, le joueur peut engager un pari (plus de puissance, mais la boucle s'arrête au prochain coup reçu). Propose-moi d'abord les chiffres (bonus de puissance, déclenchement manuel ou automatique, ce que fait chaque bot) mesurés avec node tools/sim.js --graines 30 (défaut, malin, moyen), et un texte dans le ton (le conteur l'a nommé « le Dernier Grain »).
 Moteur pur (événement dans G.events, l'UI l'affiche), sauvegarde compatible, simu dans la cible, docs/design.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
 ```
 
-### 3a2. Améliorations à l'intérieur des paliers (après 3a1)
+### 3a2. Améliorations à l'intérieur des paliers (après 3a1 ; **en pause** depuis le 21/11, après la refonte R)
 **Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a2`) : matériaux seuls, plafond = niveau du bâtiment Forge, niveaux refaits d'un clic s'ils sont perdus ; en attente des leviers (seuls des pas de +0,3 tiennent la cible aujourd'hui, et ils ne se sentent pas). La permanence des niveaux passe par une barre de relation avec le forgeron (lore), à voir avec la 3b.
 ```
 Lis docs/INDEX.md, puis dans docs/design.md seulement « Étape 2b faite » (décisions, forge et paliers), « Étape 3a2 » (conseil, mesures) et ce que la session des leviers (3a1) a décidé. Lis docs/design.md « Architecture du code » pour l'architecture.
