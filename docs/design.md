@@ -400,9 +400,9 @@ Vue seule, aucun chiffre ni moteur touché (`npm run check` : les quatre référ
 - Capture `combat-creuse.png` (`tools/screenshot.py`) : un Mulot dentu entamé, trou en silhouette pâle.
 
 ### Mis de côté (à reproposer)
-- La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent). À voir en R3 avec la carte de Jalon ; Steven testera et on ajustera.
-- Une phrase qui dit pourquoi le héros part le matin (à trancher avec R2).
-- La règle du conteur « une trace à l'encre pèse plus qu'un souvenir » pourrait aussi expliquer le carnet du bestiaire gardé par le village (session lore).
+- La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent). À voir en R3 avec la carte de Jalon (repris dans le prompt de R3) ; Steven testera et on ajustera.
+- Une phrase qui dit pourquoi le héros part le matin (à trancher avec R2, repris dans son prompt).
+- La règle du conteur « une trace à l'encre pèse plus qu'un souvenir » pourrait aussi expliquer le carnet du bestiaire gardé par le village (repris dans le prompt de la session lore).
 
 ## Équipement, forge et mémoire du village — PROPOSITION v3 (étape 2, en attente de validation)
 
