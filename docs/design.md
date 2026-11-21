@@ -392,7 +392,7 @@ Aucun chiffre ni moteur touché (`npm run check` : les quatre références de la
 - **Reste la livraison 2** : le combat en diagonale (héros en bas à gauche, monstres en haut à droite, grille ×4 / ×3 / ×2 en échelle entière, trous creusés en silhouette pâle, éclats à l'échelle).
 
 ### Mis de côté (à reproposer)
-- La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone (à revoir avec la carte de Jalon, R3, ou les zones, R4).
+- La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent). À voir en R3 avec la carte de Jalon ; Steven testera et on ajustera.
 - Une phrase qui dit pourquoi le héros part le matin (à trancher avec R2).
 - La règle du conteur « une trace à l'encre pèse plus qu'un souvenir » pourrait aussi expliquer le carnet du bestiaire gardé par le village (session lore).
 
