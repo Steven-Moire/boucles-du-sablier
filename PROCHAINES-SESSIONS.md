@@ -69,6 +69,7 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 **Sujets reportés le 20/11 (à caser)** :
 - **Multi-prestige** façon Increlution : un seul boss ne fait pas un vrai jeu ; la boucle est un premier prestige, il en faut d'autres au-dessus (conseil élargi, avant les mondes / époques de la feuille de route).
 - **Scribes du carnet** : casé dans la section 1 (Lore).
+- **Courbe de puissance par zone** (21/11, décision « plus tard » de la 3a1) : un palier par zone plus une courbe douce dans la zone, ce qui donne une difficulté qui accélère d'un monde à l'autre. À mesurer à l'arrivée des mondes / époques (8 niveaux aujourd'hui : une formule à plusieurs chiffres s'ajusterait au bot, pas au joueur).
 
 **Ordre conseillé (20/11, révisé)** : leviers d'équilibrage (3a1) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
 
@@ -93,6 +94,7 @@ Moteur pur (événement dans G.events, l'UI l'affiche), sauvegarde compatible, s
 ```
 Lis docs/INDEX.md, puis dans docs/design.md seulement « Étape 2b faite » (décisions, forge et paliers), « Étape 3a2 » (conseil, mesures) et ce que la session des leviers (3a1) a décidé. Lis docs/design.md « Architecture du code » pour l'architecture.
 Le conseil est fait : reprends ses accords (matériaux seuls, plafond = niveau du bâtiment Forge, « Refaire la même forge » rejoue les niveaux) et refais les mesures du tableau de la 3a2 dans le vrai code, avec les nouveaux leviers : propose-moi des pas qui se sentent et gardent la cible, avec le chevauchement (le +3 d'un palier vaut le max du palier d'avant) si c'est possible, et la façon d'afficher les niveaux (en mots, idée du conteur, ou en nombres avec la puissance totale, idée du joueur).
+À pente 2,4, l'ordre des outils s'est inversé (`node tools/sim.js --outils` : marteau méd. 10, pioche 11, coutelas 13, contre 9 / 10 / 10 à pente 1,6, voir « Pente 2,4 dans le jeu » dans « Étape 3a1 ») : le coutelas, léger, souffre le plus des monstres qui frappent fort. Dis-moi si ses améliorations doivent compenser, et vérifie que l'outil conseillé du bestiaire (fixé par monstre dans les données) reste juste.
 Puis une mécanique à la fois, jouable à chaque étape. Simu dans la cible (bot par défaut et bot malin), sauvegarde compatible (valeurs par défaut au chargement), docs/design.md et docs/INDEX.md à jour, commit à chaque sous-étape, demande-moi avant de pousser.
 ```
 
