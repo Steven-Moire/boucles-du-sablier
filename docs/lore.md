@@ -41,13 +41,19 @@ Scène **jouée** sur le premier Mulot dentu (une bulle par geste, 20 s au plus,
 3. Au cœur : la clé de la lampe de Grésille (premier vestige). Il la range sans se demander à qui elle était.
 Réplique en réserve (conteur) : « Regarde-moi ça, on dirait du mardi tassé sur du jeudi. »
 
-## Le cartographe : Placide Jalon (décidé le 2026-11-21)
+## Le cartographe : Hyacinthe Jalon (décidé le 2026-11-21)
 - **Qui** : un vieux géomètre du hameau, qui a relevé la mine et les environs avant la fissure. Il mesure, il ne creuse pas : il était à la surface, loin de la fissure.
 - **Pourquoi lui se souvient** : il ne se souvient pas de tout, seulement de ce qui s'est tracé (chemins, distances, noms de lieux). Il dessine à l'encre, et **une trace à l'encre pèse plus qu'un souvenir**. Il garde la carte, pas l'histoire : il parle de la carte, jamais du temps (le village se souvient « un peu »).
 - **Le geste qui lance la journée** : chaque matin, il tend le rouleau. « Prends. C'est la même qu'hier. Moi aussi, je préférerais qu'elle change. »
 - **Avec la renommée** : la carte se couvre d'annotations du village (« Ne pas boire ici. », « Il a dit qu'il y avait de l'or. Il y avait des cailloux. ») ; puis elle est prête d'avance : « Je l'ai refaite cette nuit. J'ai pas pu m'en empêcher. »
 - **Le pointillé** (le pilote automatique, après la première victoire sur la Bauge du Roi) : Jalon trace le chemin d'hier, et le héros le suit par habitude, comme il parle à sa pioche. « Tu as suivi un chemin tout droit, tu devrais te l'épargner. » La mémoire de ses boucles est dans le tracé, pas dans sa tête.
-- **Nom vérifié** (recherche web, 2026-11-21) : aucune personne connue ni marque « Placide Jalon » ; homonyme le plus proche, la commune de Jâlons (Marne), avec accent et « s », sans risque de confusion. « Garnier » écarté (marque de cosmétiques).
+- **Genre volontairement indéterminable** : Hyacinthe est un vieux prénom porté par des hommes comme par des femmes (« Placide », retenu d'abord, se lit masculin). Dans les textes, éviter les accords qui trancheraient (« Jalon » seul, tournures neutres).
+
+## Les deux autres PNJ du matin (décidés le 2026-11-21, conseil des noms)
+Même parti pris que Jalon : un prénom d'époque et un nom de famille fait d'un mot rare lié au métier, pour reconnaître d'un coup d'œil qui fait quoi.
+- **Honorine Mailloche, la forgeronne** (la mailloche est un gros maillet ; le nom tire un peu vers le comique, c'est assumé). Rend les outils et garde **le coffre**, la seule chose qui traverse les boucles. Le matin : « Tiens, je me souvenais pas qu'il y avait autant de choses là-dedans. » Réplique en réserve (conteur) : « C'est toi qui les as mises ? Ah non, c'est moi. Évidemment. »
+- **Philémon Basane, le tanneur** (la basane est une peau de mouton tannée). Donne chaque matin **le sac**, qui grandit. Répliques en réserve (conteur) : « Voilà ton sac. Il est plus grand qu'hier. Il est toujours plus grand qu'hier, je ne sais pas comment je fais. » ; « Un sac sans fond, ça existe. Je l'ai cousu. Ne me demande pas où va le fond. »
+- **Noms vérifiés** (recherche web, 2026-11-21) : aucune personne connue, marque ni commune « Hyacinthe Jalon », « Honorine Mailloche », « Philémon Basane » ; « mailloche » n'existe que comme nom d'outil (verrerie, percussion) ; homonyme proche de Jalon : la commune de Jâlons (Marne), avec accent et « s », sans risque. Écartés : « Garnier » (marque de cosmétiques), « Anselme … » (le vrai nom du héros), « Fauvel » (le *Roman de Fauvel*), « Maroquin » (maroquinerie de luxe), « Craon » (vraie commune), Mâchefer et Alun (mots trop bruts).
 
 ## Les lieux (confirmés par Steven le 2026-11-19)
 Répartition proposée par le conseil (2 voix sur 3 pour chacun), confirmée telle quelle :
