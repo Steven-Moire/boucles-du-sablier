@@ -8,6 +8,7 @@ import {S} from '../shared/state.js';
 import {$} from '../shared/dom.js';
 import {pct} from '../shared/format.js';
 import {spr} from '../shared/templates.js';
+import {VESTIGES} from '../lore/lore.data.js';
 
 // ---------- fiche d'un monstre ----------
 const dropQty = d => (d.min === d.max ? d.min : d.min + '~' + d.max);
@@ -41,10 +42,24 @@ export function openMonster(id, lvl) {
     `<button class="x" data-close>×</button><div style="text-align:center;font-size:48px">${seen ? spr(id, mm.por) : '❔'}</div><h2>${seen ? mm.name : '???'}</h2><div class="sub">${RANK[mm.rank].label} · Niveau ${L}</div>
     <div class="divh"><span>STATS</span></div>${rows.map(([k, v]) => `<div class="row"><span class="k">${k}</span><b>${v}</b></div>`).join('')}
     ${seen ? '' : '<div class="note">Rencontre-le une fois pour révéler sa fiche.</div>'}
-    ${seen ? compositionHTML(id, b.killed) + carnetHTML(id, b) : ''}
+    ${seen ? compositionHTML(id, b.killed) + carnetHTML(id, b) + vestigeHTML(id) : ''}
     <div class="divh"><span>BUTINS</span></div>${drops}`;
   S.modalMode = 'monster';
   $('modal').hidden = false;
+}
+// Vestige trouvé dans ce monstre (texte simple en attendant le carnet des vestiges) ; rejouer la scène du premier combat
+const replayHTML = pending =>
+  pending
+    ? '<div class="note">La scène se rejouera au prochain Mulot dentu.</div>'
+    : '<button class="btn small" data-replay>Revoir au prochain Mulot</button>';
+function vestigeHTML(id) {
+  const m = S.G.meta,
+    k = Object.keys(VESTIGES).find(v => VESTIGES[v].monster === id && m.vestiges[v]);
+  if (!k) return '';
+  const v = VESTIGES[k];
+  return `<div class="divh"><span>VESTIGE</span></div>
+    <div class="row"><span class="k">${v.icon} ${v.name}</span><span>boucle ${m.vestiges[k]}</span></div>
+    <div class="note">« ${v.text} »</div>${replayHTML(!m.scenes.premierCombat)}`;
 }
 // Carnet : outil conseillé (étape 2b) — note après la 1re victoire ou défaite, outil nommé après comparaison ou au filet
 const tally = (byTool, f) =>

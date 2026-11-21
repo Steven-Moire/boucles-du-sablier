@@ -23,7 +23,8 @@ const SCREENS = [
   },
 ];
 
-export function playIntro() {
+// onDone : appelé à la fermeture (bulle du premier matin, lore/scene.view.js)
+export function playIntro(onDone) {
   let i = 0;
   const box = document.createElement('div');
   box.className = 'intro';
@@ -47,6 +48,7 @@ export function playIntro() {
     box.remove();
     document.removeEventListener('keydown', onKey);
     S.modalMode = null;
+    onDone?.();
   };
   const next = () => {
     i += 1;

@@ -7,6 +7,7 @@ import {requestRender} from '../shared/render.js';
 import {floatNum, unitEl} from '../combat/scene.view.js';
 import {digParticles} from '../mining/dig.view.js';
 import {openBoss, openLoopEnd} from '../modals/loop-end.view.js';
+import {onSceneEvent, onVestigeEvent, sceneActive} from '../lore/scene.view.js';
 
 // ---------- événements & boucle principale ----------
 function hitClass(ev) {
@@ -14,9 +15,14 @@ function hitClass(ev) {
   return ev.skill ? 'f-sk' : '';
 }
 // retour à la carte peu après la fin d'une case, si le héros n'est pas reparti et que le joueur regarde le combat
+// (pas pendant une bulle de la scène du premier combat : on attend qu'elle se ferme)
 function backToMapSoon() {
   clearTimeout(S.backTimer);
   S.backTimer = setTimeout(() => {
+    if (sceneActive()) {
+      backToMapSoon();
+      return;
+    }
     if (!S.G.run.action && S.tab === 'combat') {
       S.tab = 'map';
       requestRender();
@@ -61,6 +67,8 @@ const HANDLERS = {
     saveMeta();
     if (S.modalMode !== 'boss') openLoopEnd();
   },
+  scene: onSceneEvent,
+  vestige: onVestigeEvent,
   boss: () => {
     saveMeta();
     openBoss();

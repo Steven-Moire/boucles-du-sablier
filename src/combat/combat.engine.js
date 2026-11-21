@@ -8,6 +8,7 @@ import {actionTool, heroAtLevel, heroEvery, skillUnlocked} from '../hero/hero.en
 import {aimDig, dig, extract} from '../mining/dig.engine.js';
 import {addRes, endLoop, log, randInt} from '../world/loop.engine.js';
 import {nextSegment} from '../world/explore.engine.js';
+import {sceneOnHit, sceneOnKill} from '../lore/scene.engine.js';
 
 // dégâts variables : chaque coup (héros et monstres) vaut entre ×0,8 et ×1,2 de la puissance, avant l'armure
 const DMG_SPREAD = 0.2;
@@ -30,6 +31,7 @@ export function strike(G, src, att, tgtKey, def, mult, sure) {
   if (def.dig) {
     const {idx, broken} = dig(def.dig, dmg, G.mrng);
     if (idx.length) G.events.push({type: 'dig', tgt: tgtKey, idx, broken, id: def.id, w: def.dig.w});
+    sceneOnHit(G, src, tgtKey, def, idx);
   }
 }
 // le joueur vise un point (coordonnées dans la grille du sprite) sur l'ennemi i
@@ -39,7 +41,8 @@ export function aimAt(G, i, x, y) {
   if (e?.hp > 0 && e.dig) aimDig(e.dig, {x, y});
 }
 export const firstAlive = a => a.enemies.findIndex(e => e.hp > 0);
-// un pas de combat : attaque de base, compétences automatiques, puis ennemis ; s'arrête dès que le combat finit
+// un pas de combat : attaque de base, compétences automatiques, puis ennemis ; s'arrête dès que le combat finit.
+// Une scène (G.run.hold) ne coupe jamais le pas en cours : elle suspend les suivants (tick.engine.js), le hasard reste le même.
 export function fightStep(G, dt) {
   if (heroAttacks(G, dt)) return;
   if (autoSkills(G, dt)) return;
@@ -175,6 +178,7 @@ export function onKill(G, e, i) {
   }
   log(G, msg, 'g');
   G.events.push({type: 'kill', tgt: 'e' + i, got});
+  sceneOnKill(G, e, 'e' + i);
   noteVictory(G, e, rk);
   if (!G.meta.trophies[e.id] && G.rng() < m.trophy.chance) {
     G.meta.trophies[e.id] = true;

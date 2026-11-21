@@ -26,6 +26,8 @@ export function newMeta() {
     recent: {},
     bossKilled: false,
     tool: DEFAULT_TOOL,
+    scenes: {}, // scènes déjà jouées (R2 : premierCombat)
+    vestiges: {}, // vestiges trouvés : id -> boucle de la trouvaille
   };
   m.discovered[VILLAGE] = true;
   neighbors(VILLAGE).forEach(n => (m.discovered[n] = true));
@@ -42,6 +44,8 @@ export function createGame(meta, rng, mrng) {
   meta.forge = cleanSlots(meta.forge);
   meta.recent = cleanSlots(meta.recent);
   for (const id in meta.bestiary) meta.bestiary[id].byTool ||= {}; // carnet par outil (2b)
+  meta.scenes ||= {}; // sauvegardes d'avant R2 : la scène du premier combat se joue une fois
+  meta.vestiges ||= {};
   const G = {meta, rng: rng || Math.random, mrng: mrng || Math.random, run: null, events: []};
   startLoop(G);
   return G;

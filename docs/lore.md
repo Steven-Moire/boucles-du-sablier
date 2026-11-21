@@ -40,6 +40,10 @@ Scène **jouée** sur le premier Mulot dentu (une bulle par geste, 20 s au plus,
 2. Le joueur clique lui-même sur le cœur. Le Radoteur : « On ne tue pas ça. On le descend. »
 3. Au cœur : la clé de la lampe de Grésille (premier vestige). Il la range sans se demander à qui elle était.
 Réplique en réserve (conteur) : « Regarde-moi ça, on dirait du mardi tassé sur du jeudi. »
+**En jeu depuis R2 (2026-11-21)**, telle quelle (détail : `design.md` → « R2 faite ») ; la clé est le premier vestige en jeu, rangée avec « Il la range, sans se demander à qui elle était. » Rejouable depuis la fiche du Mulot (« Revoir au prochain Mulot »).
+
+## Pourquoi il part le matin (décidé le 2026-11-21, R2)
+Bulle du Radoteur, une fois, au début de la 1re boucle, juste après l'intro : « Du sable fin file entre les pavés, vers les Collines grises. Une veine, ça se suit. » La raison vient encore du personnage (un mineur suit une veine) ; elle rattache la journée au sable de l'intro (écran 4) et au Gardien là-haut, sans rien expliquer du temps.
 
 ## Le cartographe : Hyacinthe Jalon (décidé le 2026-11-21)
 - **Qui** : un vieux géomètre du hameau, qui a relevé la mine et les environs avant la fissure. Il mesure, il ne creuse pas : il était à la surface, loin de la fissure.
@@ -65,7 +69,7 @@ Accroche possible : « Aux Heurelles, on compte mal les jours ; à Grésille, on
 **Vérification (recherche web, 2026-11-19)** : aucune commune ni aucun lieu-dit trouvé sous ces trois noms. Les homonymes les plus proches, sans risque de confusion : Les Hérolles (lieu-dit de Coulonges, Vienne), Grézillé (commune déléguée de Gennes-Val-de-Loire, Maine-et-Loire), le quartier des Grésilles à Dijon (au pluriel, avec un « s »), Griselles (communes de Côte-d'Or et du Loiret). Il n'existe pas d'annuaire complet des lieux-dits : un micro-toponyme cadastral reste possible, mais rien d'assez connu pour gêner.
 
 ## Vestiges et déjà-vu (proposés par le conseil, retenus provisoirement le 2026-11-19)
-Conseil à quatre voix (Claude, conteur, joueur, sceptique). Steven garde tout pour l'instant, **carnet des vestiges compris**, et ajustera en testant. Rien n'est encore en jeu.
+Conseil à quatre voix (Claude, conteur, joueur, sceptique). Steven garde tout pour l'instant, **carnet des vestiges compris**, et ajustera en testant. **En jeu** : la clé de la lampe de Grésille seule (R2, 21/11), en simple texte (journal, fiche du Mulot) en attendant le carnet.
 
 ### 5 vestiges cachés dans les monstres
 Règle du sceptique, adoptée par la synthèse : **des objets banals et un peu drôles, un seul qui fait mal** ; un vestige est un reste d'une journée passée, pas un message adressé au joueur ; le lien avec Anselme reste suggéré, jamais expliqué.
@@ -101,6 +105,6 @@ Rangs : Hameau (0) → Village (40) → Bourg (100) → Ville (200) → Cité (3
 Mélancolique mais drôle. Le mineur est un peu fou à force de revivre la même journée : il parle à sa pioche et numérote les mulots. Les villageois ont des déjà-vu de plus en plus précis (« On s'est déjà parlé, non ? Tu vas encore me demander du minerai… »).
 
 ## Questions ouvertes
-- Vestiges, répliques et carnet retenus provisoirement : à revoir une fois en jeu.
+- Vestiges, répliques et carnet retenus provisoirement : à revoir une fois en jeu (la clé y est depuis R2).
 - **Le bestiaire est « son carnet »** (Steven : oui, le héros le garde). Explication proposée, à valider : **c'est le village qui le garde**. Chaque matin, le veilleur (ou la boulangère) le lui rend : « Tiens, tu l'as encore oublié hier. » La mémoire reste dehors, chez les autres, ce qui respecte l'inversion. Le geste évolue avec la renommée, de la méfiance (« c'est à vous, ça ? ») à l'habitude.
 - **Fin provisoire (2026-11-19)** : réparer le Sablier en réunissant ses fragments. « Apprendre à vivre avec la boucle » reste possible plus tard (seconde fin, ou fin secrète à Griselune).

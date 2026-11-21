@@ -4,6 +4,7 @@ import {S, hadSave, saveMeta} from '../shared/state.js';
 import {onRender} from '../shared/render.js';
 import {watchSprites} from '../shared/dom.js';
 import {playIntro} from '../intro/intro.view.js';
+import {showMorning} from '../lore/scene.view.js';
 import {renderScene} from '../combat/scene.view.js';
 import {renderMap} from '../world/map.view.js';
 import {renderPane, renderTabs, renderTop} from './layout.view.js';
@@ -40,4 +41,4 @@ setInterval(() => {
   render();
 }, 50);
 render();
-if (!hadSave) playIntro();
+if (!hadSave) playIntro(showMorning); // puis la bulle du premier matin

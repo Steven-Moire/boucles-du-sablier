@@ -11,15 +11,19 @@ export const saveMeta = () => writeMeta(S.G.meta);
 
 // état de l'interface partagé entre modules (un module ES ne peut pas réaffecter une variable importée)
 const savedMeta = readMeta().meta;
+// partie de l'interface : les scènes jouées (lore/scene.engine.js) n'existent que là, jamais dans la simu
+export const newUiGame = meta => Object.assign(createGame(meta), {scenes: true});
 export const hadSave = savedMeta !== null; // l'intro ne se joue qu'au tout premier lancement
 export const S = {
-  G: createGame(savedMeta),
+  G: newUiGame(savedMeta),
   gameSpeed: 1,
   tab: 'map', // onglet affiché à droite du héros : combat, map, bestiary ou village
   selected: null,
   modalMode: null,
   backTimer: null,
   lastSceneTile: null,
+  scene: null, // scène du premier combat en cours : {step, tgt, e, killed, timer} (lore/scene.view.js)
+  heartHint: null, // monstre dont le cœur clignote à travers la chair pendant la scène
 };
 export const anyUpgrade = () => Object.keys(UPGRADES).some(k => upgradeState(S.G, k).ok);
 export const loopFresh = () => {

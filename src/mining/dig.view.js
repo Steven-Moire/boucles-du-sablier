@@ -61,13 +61,15 @@ const isExposed = (d, i) => {
   });
 };
 
-// Couleur d'un pixel encore en place : veine teintée, cœur qui scintille une fois mis à nu, sinon celle du sprite
-function pixelColor(src, d, i, vein, blink) {
+// Couleur d'un pixel encore en place : veine teintée, cœur qui scintille une fois mis à nu (ou à travers la chair
+// quand la scène du premier combat le montre, S.heartHint), sinon celle du sprite
+function pixelColor(src, d, i, vein, blink, hint) {
   const c = d.cls[i],
     r = src.data[i * 4],
     g = src.data[i * 4 + 1],
     b = src.data[i * 4 + 2];
   if (c === 'veine' && vein) return [(r + vein[0] * 2) / 3, (g + vein[1] * 2) / 3, (b + vein[2] * 2) / 3, 255];
+  if (c === 'rare' && hint) return blink ? [255, 255, 255, 255] : [240, 192, 74, 255]; // or et blanc, bien visibles
   if (c === 'rare' && isExposed(d, i)) {
     const k = blink ? 255 : 200;
     return [k, k, 160 + blink * 60, 255];
@@ -75,6 +77,17 @@ function pixelColor(src, d, i, vein, blink) {
   return [r, g, b, 255];
 }
 
+// Cercle qui pulse autour de chaque pixel du cœur (scène du premier combat : le cœur ne fait que quelques pixels)
+function heartRings(ctx, d, blink) {
+  ctx.strokeStyle = blink ? 'rgba(255,255,255,.9)' : 'rgba(240,192,74,.9)';
+  ctx.lineWidth = 1;
+  d.cls.forEach((c, i) => {
+    if (c !== 'rare') return;
+    ctx.beginPath();
+    ctx.arc((i % d.w) + 0.5, Math.floor(i / d.w) + 0.5, 3 + blink, 0, 2 * Math.PI);
+    ctx.stroke();
+  });
+}
 // Redessine un ennemi : pixels creusés en silhouette pâle, veines teintées, cœur qui scintille une fois mis à nu, viseur.
 export function drawDig(cv, e, t) {
   const src = sprites[e.id],
@@ -85,12 +98,14 @@ export function drawDig(cv, e, t) {
     comp = COMPOSITION[e.id];
   const vein = comp.veine && !comp.veine.sprite ? VEIN_COLOR[comp.veine.mat] : null;
   const blink = Math.floor(t * 5) % 2,
-    shape = GRIDS[e.id].cells;
+    shape = GRIDS[e.id].cells,
+    hint = S.heartHint === e;
   for (let i = 0; i < d.cls.length; i++) {
-    if (d.cls[i]) out.data.set(pixelColor(src, d, i, vein, blink), i * 4);
+    if (d.cls[i]) out.data.set(pixelColor(src, d, i, vein, blink, hint), i * 4);
     else if (shape[i] !== '.') out.data.set(HOLLOW, i * 4); // pixel déjà creusé : on voit où il était
   }
   ctx.putImageData(out, 0, 0);
+  if (hint) heartRings(ctx, d, blink);
   if (d.target) {
     ctx.strokeStyle = 'rgba(240,192,74,.9)';
     ctx.lineWidth = 1;

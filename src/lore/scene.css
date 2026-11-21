@@ -1,0 +1,80 @@
+/* Bulles du Radoteur (scène du premier combat, premier matin) : src/lore/scene.view.js */
+.say {
+  position: fixed;
+  z-index: 40;
+  transform: translate(-50%, calc(-100% - 12px));
+  max-width: 300px;
+  padding: 10px 14px 8px;
+  background: #f9e6cf;
+  color: #2a2e39;
+  border: 2px solid #000;
+  border-radius: 8px;
+  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.35);
+  font-size: 14px;
+  line-height: 1.4;
+  animation: sayIn 0.18s ease-out;
+}
+.say::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 12px;
+  height: 12px;
+  margin-left: -6px;
+  background: #f9e6cf;
+  border-right: 2px solid #000;
+  border-bottom: 2px solid #000;
+  transform: rotate(45deg);
+}
+.say b {
+  display: block;
+  font-family: var(--pix);
+  font-size: 11px;
+  color: var(--gold-d);
+  margin-bottom: 2px;
+}
+.say-hint {
+  display: block;
+  margin-top: 4px;
+  text-align: right;
+  font-size: 11px;
+  opacity: 0.6;
+}
+.say-note {
+  display: block;
+  font-style: italic;
+}
+.say-stow {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.75;
+}
+.say.say-hint-only {
+  font-family: var(--pix);
+  font-size: 12px;
+  background: var(--gold);
+}
+.say.say-hint-only::after {
+  background: var(--gold);
+}
+.say-px {
+  position: fixed;
+  z-index: 39;
+  pointer-events: none;
+  image-rendering: pixelated;
+}
+.say.say-below {
+  transform: translate(-50%, 12px);
+}
+.say.say-below::after {
+  top: -9px;
+  bottom: auto;
+  transform: rotate(225deg);
+}
+@keyframes sayIn {
+  from {
+    opacity: 0;
+  }
+}

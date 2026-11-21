@@ -13,7 +13,7 @@ export function tick(G, dt) {
 }
 export function step(G, dt) {
   const r = G.run;
-  if (!r || r.over || !r.action) return;
+  if (!r || r.over || !r.action || r.hold) return; // hold : une scène suspend le jeu (lore/scene.engine.js)
   r.timeLeft -= dt;
   if (r.timeLeft <= 0) {
     r.timeLeft = 0;

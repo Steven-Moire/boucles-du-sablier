@@ -1,8 +1,9 @@
 """Capture rapide du jeu dans Chromium (vérif visuelle après une modif).
 
   pip install playwright && playwright install chromium
-  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, combat-creuse.png,
-                                           village.png,
+  python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png (bulle du premier matin),
+                                           scene-coup.png, scene-coeur.png, scene-cle.png (scène du premier
+                                           combat), combat.png, combat-creuse.png, village.png,
                                            etroit-carte.png, etroit-combat.png (téléphone, 390 px de large),
                                            proto.png (prototype du minage)
 
@@ -62,6 +63,16 @@ async () => {
 }
 """
 
+# scène du premier combat : position à l'écran d'un pixel du cœur du Mulot (S de src/shared/state.js, même module)
+HEART_POINT = """
+async () => {
+  const {S} = await import('/src/shared/state.js');
+  const e = S.scene.e, d = e.dig, i = d.cls.indexOf('rare');
+  const r = document.querySelector('#u-' + S.scene.tgt + ' canvas.dig').getBoundingClientRect();
+  return {x: r.left + ((i % d.w) + 0.5) * r.width / d.w, y: r.top + (Math.floor(i / d.w) + 0.5) * r.height / d.h};
+}
+"""
+
 
 async def shoot(pg, name):
     """Capture une fois polices et images chargées, rien n'est laissé au temps réel."""
@@ -99,7 +110,7 @@ async def open_page(b, port, path, errors, external, viewport=None):
 
 
 async def main():
-    """Joue l'intro, la carte, un combat, le village, carte et combat en étroit, le prototype ; liste les erreurs."""
+    """Joue l'intro, la carte, la scène du premier combat, le village, l'étroit, le prototype ; liste les erreurs."""
     OUT.mkdir(exist_ok=True)
     srv = serve()
     async with async_playwright() as p:
@@ -115,12 +126,30 @@ async def main():
         await pg.click('.in-skip')
         await pg.clock.run_for(300)
         await shoot(pg, 'map')
+        await pg.click('.say')  # la bulle du premier matin se ferme d'un clic sur elle
         await pg.click('#speed button[data-s="2"]')
         await pg.dblclick('.tile[data-id="4,5"]')
         await pg.clock.run_for(2500)
         # le fond de scène n'est posé qu'une fois son image chargée, au rendu suivant
         await pg.wait_for_selector('#sceneView.has-bg', state='attached')
         await pg.clock.run_for(TICK_MS)
+        # scène du premier combat : premier coup (jeu suspendu), le cœur à viser, puis la clé
+        await shoot(pg, 'scene-coup')
+        await pg.clock.run_for(900)  # un clic plus tôt ne passe pas la bulle
+        await pg.click('#sceneView')
+        await pg.clock.run_for(TICK_MS)
+        await shoot(pg, 'scene-coeur')
+        heart = await pg.evaluate(HEART_POINT)
+        await pg.mouse.click(heart['x'], heart['y'])
+        for _ in range(60):  # le héros descend vers le cœur, jusqu'à la mort du Mulot
+            if await pg.query_selector('.say-vestige'):
+                break
+            await pg.clock.run_for(250)
+        await pg.clock.run_for(TICK_MS)
+        await shoot(pg, 'scene-cle')
+        await pg.clock.run_for(900)
+        await pg.click('#sceneView')
+        await pg.clock.run_for(2500)
         await shoot(pg, 'combat')
         # quelques coups plus tard : les pixels creusés restent en silhouette pâle
         await pg.clock.run_for(2400)
