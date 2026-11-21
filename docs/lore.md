@@ -49,6 +49,7 @@ Bulle du Radoteur, une fois, au début de la 1re boucle, juste après l'intro : 
 - **Qui** : un vieux géomètre du hameau, qui a relevé la mine et les environs avant la fissure. Il mesure, il ne creuse pas : il était à la surface, loin de la fissure.
 - **Pourquoi lui se souvient** : il ne se souvient pas de tout, seulement de ce qui s'est tracé (chemins, distances, noms de lieux). Il dessine à l'encre, et **une trace à l'encre pèse plus qu'un souvenir**. Il garde la carte, pas l'histoire : il parle de la carte, jamais du temps (le village se souvient « un peu »).
 - **Le geste qui lance la journée** : chaque matin, il tend le rouleau. « Prends. C'est la même qu'hier. Moi aussi, je préférerais qu'elle change. »
+- **Dès la 1re boucle** (décidé en R3, le 2026-11-21) : il dit déjà « C'est la même qu'hier », alors que le joueur n'a jamais vécu d'hier. C'est voulu, un peu *Un jour sans fin* : le village a l'air d'avoir vécu la journée avant le héros. Ensuite, il ne reparle que si la veille a découvert des cases.
 - **Avec la renommée** : la carte se couvre d'annotations du village (« Ne pas boire ici. », « Il a dit qu'il y avait de l'or. Il y avait des cailloux. ») ; puis elle est prête d'avance : « Je l'ai refaite cette nuit. J'ai pas pu m'en empêcher. »
 - **Le pointillé** (le pilote automatique, après la première victoire sur la Bauge du Roi) : Jalon trace le chemin d'hier, et le héros le suit par habitude, comme il parle à sa pioche. « Tu as suivi un chemin tout droit, tu devrais te l'épargner. » La mémoire de ses boucles est dans le tracé, pas dans sa tête.
 - **Genre volontairement indéterminable** : Hyacinthe est un vieux prénom porté par des hommes comme par des femmes (« Placide », retenu d'abord, se lit masculin). Dans les textes, éviter les accords qui trancheraient (« Jalon » seul, tournures neutres).
@@ -56,7 +57,7 @@ Bulle du Radoteur, une fois, au début de la 1re boucle, juste après l'intro : 
 ## Les deux autres PNJ du matin (décidés le 2026-11-21, conseil des noms)
 Même parti pris que Jalon : un prénom d'époque et un nom de famille fait d'un mot rare lié au métier, pour reconnaître d'un coup d'œil qui fait quoi.
 - **Honorine Mailloche, la forgeronne** (la mailloche est un gros maillet ; le nom tire un peu vers le comique, c'est assumé). Rend les outils et garde **le coffre**, la seule chose qui traverse les boucles. Le matin : « Tiens, je me souvenais pas qu'il y avait autant de choses là-dedans. » Réplique en réserve (conteur) : « C'est toi qui les as mises ? Ah non, c'est moi. Évidemment. »
-- **Philémon Basane, le tanneur** (la basane est une peau de mouton tannée). Donne chaque matin **le sac**, qui grandit. Répliques en réserve (conteur) : « Voilà ton sac. Il est plus grand qu'hier. Il est toujours plus grand qu'hier, je ne sais pas comment je fais. » ; « Un sac sans fond, ça existe. Je l'ai cousu. Ne me demande pas où va le fond. »
+- **Philémon Basane, le tanneur** (la basane est une peau de mouton tannée). Donne chaque matin **le sac**, qui grandit. Au premier matin, il dit la règle : « Ce que tu ne rapportes pas ce soir, demain ça n'existe plus. » Son vrai rôle (R3, 21/11) : le sac a 20 places et ne grandit que chez lui, par une amélioration débloquée par **sa quête secondaire**, la première du jeu (par exemple lui rapporter du cuir), ce qui justifie ses répliques sur le sac qui grandit. Répliques en réserve (conteur) : « Voilà ton sac. Il est plus grand qu'hier. Il est toujours plus grand qu'hier, je ne sais pas comment je fais. » ; « Un sac sans fond, ça existe. Je l'ai cousu. Ne me demande pas où va le fond. »
 - **Noms vérifiés** (recherche web, 2026-11-21) : aucune personne connue, marque ni commune « Hyacinthe Jalon », « Honorine Mailloche », « Philémon Basane » ; « mailloche » n'existe que comme nom d'outil (verrerie, percussion) ; homonyme proche de Jalon : la commune de Jâlons (Marne), avec accent et « s », sans risque. Écartés : « Garnier » (marque de cosmétiques), « Anselme … » (le vrai nom du héros), « Fauvel » (le *Roman de Fauvel*), « Maroquin » (maroquinerie de luxe), « Craon » (vraie commune), Mâchefer et Alun (mots trop bruts).
 
 ## Les lieux (confirmés par Steven le 2026-11-19)
@@ -87,7 +88,7 @@ Règle du sceptique, adoptée par la synthèse : **des objets banals et un peu d
 ### 6 répliques de déjà-vu, une par rang de renommée
 Rangs : Hameau (0) → Village (40) → Bourg (100) → Ville (200) → Cité (350), puis après la révélation du nom.
 1. **Hameau**, le veilleur : « Encore toi, le Radoteur ? Tu radotes même ton chemin. »
-2. **Village**, le forgeron : « Pas la peine de me dire où est la mine. Tu y vas tous les jours. »
+2. **Village**, la forgeronne (Honorine Mailloche, depuis R3) : « Pas la peine de me dire où est la mine. Tu y vas tous les jours. »
 3. **Bourg**, un enfant : « Tu comptes les mulots ? Moi aussi. J'en suis à onze. »
 4. **Ville**, la boulangère : « Je garde un pain pour toi. Va savoir pourquoi. »
 5. **Cité**, l'entraîneur : « Tu me dis toujours la même chose. Je commence à l'aimer. »
@@ -107,4 +108,5 @@ Mélancolique mais drôle. Le mineur est un peu fou à force de revivre la même
 ## Questions ouvertes
 - Vestiges, répliques et carnet retenus provisoirement : à revoir une fois en jeu (la clé y est depuis R2).
 - **Le bestiaire est « son carnet »** (Steven : oui, le héros le garde). Explication proposée, à valider : **c'est le village qui le garde**. Chaque matin, le veilleur (ou la boulangère) le lui rend : « Tiens, tu l'as encore oublié hier. » La mémoire reste dehors, chez les autres, ce qui respecte l'inversion. Le geste évolue avec la renommée, de la méfiance (« c'est à vous, ça ? ») à l'habitude.
+- **Un enchantement du sac** (idée de Steven, R3, 21/11) : un PNJ hors du village, dans la zone 1, qui protège le sac (ou une part) de la perte en fin de boucle, au bout de quêtes qui obligent à se promener dans la forêt (« trouver le bon chemin ne suffit pas toujours »). Qui il est et pourquoi il sait enchanter : à trouver, avec R4 (zones) et la 3b (quêtes).
 - **Fin provisoire (2026-11-19)** : réparer le Sablier en réunissant ses fragments. « Apprendre à vivre avec la boucle » reste possible plus tard (seconde fin, ou fin secrète à Griselune).

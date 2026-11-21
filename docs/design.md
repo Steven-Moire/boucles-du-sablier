@@ -361,7 +361,7 @@ Lecture :
 - **Compétences de déplacement ou d'exploration** : un levier pour ralentir ou accélérer la progression.
 - **Rencontres** : sur une case, le monstre n'est pas déjà là ; il apparaît avec une chance (des zones plutôt que des cases fixes).
 
-## Refonte de l'expérience (R0, conseil du 2026-11-21 ; R1 et R2 faites)
+## Refonte de l'expérience (R0, conseil du 2026-11-21 ; R1 et R2 faites, R3 décidée)
 ### Pourquoi
 En rejouant (21/11), Steven trouve le jeu **inexpliqué**, pas ennuyeux : on ne sait pas pourquoi le héros part combattre, ni pourquoi il mine les monstres au lieu de les tuer (« l'équivalent d'un ta gueule c'est magique ») ; au début d'une boucle, la première chose affichée est une case inaccessible avec un bouton grisé ; les monstres semblent posés dans un cadre et le minage se voit mal. Vision complète : `PROCHAINES-SESSIONS.md` → « R. Refonte de l'expérience ».
 
@@ -409,8 +409,44 @@ Aucun chiffre touché (`npm run check` : les quatre références identiques ; `t
 - **Sauvegarde** : `meta.scenes` et `meta.vestiges` (`{}` par défaut), `meta.v` reste 1 : une ancienne sauvegarde joue la scène une fois.
 - Captures : `map.png` (bulle du matin), `scene-coup.png`, `scene-coeur.png`, `scene-cle.png` ; `combat.png` est prise après la scène.
 
+### R3 : découpage et règles (décidés le 2026-11-21, rien de codé)
+Proposition validée par Steven, avec ses corrections (capacité du sac, Jalon dès la 1re boucle). Mesures faites sur une copie jetable de la simu (30 graines, trois bots).
+
+**Mesures de départ** :
+- Bois, minerai et matériaux extraits ramenés par boucle (médiane) : bot par défaut 16 (boucle 1), 37 (4e), 60 (6e), 76 (8e), 85 (10e) ; bot moyen 21, 65, 87, 102, 117. Or : 25 à 260 par boucle. Distance au village en fin de boucle : 3 à 8 cases. Cas « stuck » de `tools/sim.js` : jamais arrivé en 90 parties.
+- Les bots ne rentrent jamais et, aux boucles 1 à 4, finissent presque tous par la mort : avec un sac qui se perd, il leur faut une règle de retour.
+- Coût de la matinée seul :
+
+| Réglage | Par défaut | Malin | Moyen |
+|---|---|---|---|
+| Aujourd'hui | méd. 11, 1 hors | méd. 10, 0 hors | méd. 12, 3 hors |
+| 15 s puis 10 s | méd. 12, 5 hors | méd. 11, 2 hors | méd. 13, 11 hors (sort) |
+| 10 s puis 5 s | | | méd. 13 (sort) |
+| **15 s puis 10 s, sablier 75 → 85 s** | identique à aujourd'hui | identique | méd. 12, 3 hors |
+
+**Sous-étapes** (une mécanique à la fois, un commit chacune, une conversation chacune) :
+- **R3a. Le village devient un lieu** (vue seule, simu identique). L'onglet Village disparaît ; l'onglet du lieu affiche 🏠 VILLAGE quand le héros est au village, ⚔️ COMBAT quand il est en route (onglets : lieu / Carte / Bestiaire). Scène à cinq zones en surbrillance : Jalon (« Partir » : ouvre la carte), Mailloche (bâtiment Forge, recettes, vue du coffre), Basane (présent, sans mécanique encore), la salle d'entraînement (l'Entraîneur), l'horloge (l'Horloge, et « Laisser filer le sablier », qui remplace « Rentrer au village (fin de boucle) »). **Un clic sur une zone ouvre sa fiche sous la scène ; sur téléphone, les zones deviennent une liste de cinq boutons-vignettes** (validé par Steven). PNJ en emoji en attendant leurs sprites (session Forge à part).
+- **R3b. La matinée.** Chaque PNJ coûte 5 s de sablier la première fois (15 s), puis **« Même matinée »** (dès la 2e boucle) coûte 10 s et enchaîne les trois PNJ, la même forge (« Refaire la même forge »), le même outil et le départ vers la première case d'hier : **1 clic** à la 10e boucle. Le temps est retiré d'un coup avec une animation de sable d'environ 0,6 s, sans attente réelle. Les trois PNJ sont obligatoires, Jalon en dernier (c'est lui qui ouvre la carte). Achats et forge ne coûtent pas de temps. **Sablier de base 75 → 85 s** pour compenser (mesuré neutre). Vraie scène de Jalon la première fois, ensuite il ne parle que si la veille a découvert des cases. Simu et bots font la matinée, références mises à jour.
+- **R3c. Le sac, le coffre et « Rentrer ».** Capacité, perte, marche du retour, coffre de Mailloche, amélioration du sac chez Basane (d'abord en accès libre, pour garder la cible) ; la réplique de déjà-vu à la première arrivée au village de chaque boucle ; sac visible pendant le combat, pixels de la scène R2 qui filent vers lui (`flyToHero` de `src/lore/scene.view.js`) ; les bots rentrent ; le cas stuck.
+- **R3d. La quête de Basane** : la première quête secondaire du jeu débloque l'amélioration du sac (voir règle 3).
+- **R3e. Épingler UNE recette** : ses matériaux restent visibles pendant la boucle, à côté du sac.
+- **R3f. Dézoom progressif de la carte** (vue seule) : la carte ne montre que le rectangle des cases découvertes plus une case de marge, les cases grandissent par pas de 16 px (48, 64, 80) avec une transition quand elle s'agrandit. Peut aussi venir juste après R3b, avec le rouleau de Jalon. Steven testera et on ajustera.
+
+**Règles** :
+1. **Fin de boucle** : le sac non rentré est **perdu en entier**, à la mort comme au sablier vide (lore : Basane en coud un neuf chaque matin, seul le coffre traverse les boucles ; il le dit au premier matin). Repli si les bots sortent de la cible : on garde un tiers. Plus tard, idée de Steven : **un enchantement** qui protège le sac (ou une part), donné par un PNJ **hors du village, dans la zone 1**, au bout de quêtes qui obligent à se promener dans la forêt (trouver le bon chemin ne suffit pas toujours) ; avec R4 et la 3b.
+2. **L'or ne passe pas par le sac** et reste le compteur du haut, gardé dès le gain comme aujourd'hui : il paie les trois bâtiments sur lesquels repose l'équilibrage, et 25 à 260 pièces par boucle écraseraient n'importe quelle capacité. Steven trouvait « sac et bourse » trop : **il n'y a pas de bourse**, ni objet ni mot, la seule nouveauté à l'écran est le sac (à confirmer au début de R3c). Le sac contient le bois, le minerai et les matériaux extraits, une place par unité ; renommée, cases, fiches, trophées et vestiges restent hors du sac.
+3. **Capacité** : 20 places au départ, **fixes** (Steven : +6 à chaque matinée, c'est trop). Le sac s'**améliore chez Basane**, comme les bâtiments du village, et l'amélioration se débloque par **une quête secondaire de Basane** : c'est ce qui donne un vrai rôle au tanneur. Proposition à valider au début de R3c-R3d, chiffres à mesurer : quête « Rapporte-moi du cuir » (par exemple 8 🟫 cuir rentrés au coffre en une boucle), niveaux payés en cuir et en or. Au-delà de la capacité, le butin tombe au sol (animation) et un toast « Le sac déborde » apparaît.
+4. **Marche** : « Rentrer » suit le chemin le plus court par les cases faites dans la boucle, **0,5 s par case** ; par uniformité, l'aller se paie aussi par case de chemin (aujourd'hui 0,5 s fixe quelle que soit la case de départ). Si 1,5 à 4 s rendent le retour trop bon marché, passer à 1 s par case. En combat, « Rentrer » bat d'abord en retraite. **Au village en pleine boucle** (comportement par défaut, sans réglage pour le désactiver : Steven n'en voit pas l'utilité) : le sac se vide dans le coffre, on achète et on forge (effet le lendemain, comme aujourd'hui après le départ), on repart, ou on laisse filer le sablier à l'horloge.
+5. **Bots** : tous font « Même matinée », puis achètent et forgent comme aujourd'hui (le bot achète aussi l'amélioration du sac). Par défaut et malin : entre deux cases, ils rentrent si le sac est plein, si le temps restant est sous le retour plus environ 12 s (durée d'une case, à mesurer) ou sous 40 % de PV ; ils repartent s'il reste plus de deux retours plus 12 s, sinon ils laissent filer le sablier. Moyen : même règle, mais une fois sur trois il oublie de rentrer à temps, et sa retraite sous 30 % de PV enchaîne sur « Rentrer » (son propre hasard, jamais `G.rng` ni `G.mrng`).
+6. **Cas stuck** : plus de cas à part ; sans case possible, le bot rentre et laisse filer le sablier (raison `return`), par le même chemin que le joueur. Garde-fou : une erreur explicite si même « Rentrer » est impossible, au lieu de boucler sans fin.
+7. **Sauvegarde** (`meta.v` reste 1) : le coffre, ce sont les `meta.mats`, `meta.wood` et `meta.ore` actuels (une ancienne sauvegarde arrive avec tout au coffre, la réplique de Mailloche tombe juste) ; nouveaux champs avec valeur par défaut : `meta.morning` (première case d'hier), les nouvelles scènes dans `meta.scenes`, le niveau du sac et la quête de Basane, `meta.pin` (vide). Le sac vit dans `G.run` et ne se sauvegarde pas : recharger la page en pleine boucle le perd.
+8. **Critère des 3 s** : à la 10e boucle, 1 clic et 0,6 s d'animation (3 clics s'il faut changer de première case : « Même matinée », la case, « Explorer ») ; une capture chronomètre et compte les clics.
+9. **Lore** : Jalon dit « C'est la même qu'hier » **dès la 1re boucle**, voulu (Steven : « le but, c'est de faire un peu un Jour sans fin ») ; la 2e réplique de déjà-vu (« le forgeron ») passe à Mailloche. Textes dans `lore.md`.
+
 ### Mis de côté (à reproposer)
-- La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent). À voir en R3 avec la carte de Jalon (repris dans le prompt de R3) ; Steven testera et on ajustera.
+- **PNJ facultatifs** (R3) : sauter Basane fait partir sans sac, sauter Mailloche fait partir avec la pioche de base seulement. **Plafond du sac** ; amélioration payée en cuir rapporté (à voir avec la quête de Basane, R3d).
+- **Enchantement du sac** donné par un PNJ de la zone 1 au bout de quêtes en forêt (règle 1 de R3) : avec R4 et la 3b.
+- La carte garde la place de toutes ses cases, même cachées : beaucoup de vide au début, surtout sur téléphone. Piste de Steven (21/11) : un **dézoom progressif** (la carte s'agrandit à mesure que les cases se découvrent) : sous-étape R3f ; Steven testera et on ajustera.
 - Rejouer la scène du premier combat directement dans la fiche du bestiaire (R2 : seul « Revoir au prochain Mulot » est fait) ; le carnet des vestiges (silhouettes « ? ») ; l'inventaire visible pendant le combat : en R2, les pixels filent vers le héros faute de sac à l'écran, à refaire avec le sac de Philémon Basane (R3). Repris dans `PROCHAINES-SESSIONS.md`.
 - La règle du conteur « une trace à l'encre pèse plus qu'un souvenir » pourrait aussi expliquer le carnet du bestiaire gardé par le village (repris dans le prompt de la session lore).
 
