@@ -73,13 +73,8 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 **Ordre conseillé (20/11, révisé)** : leviers d'équilibrage (3a1) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
 
 ### 3a1. Leviers d'équilibrage (avant 3a2)
-**Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a1`) : pente de puissance des monstres 1,6 → 2,4 retenue (les deux bots dans la cible avec et sans la 3a2, la mort revient, l'armure compte), **pas encore codée**. Bot moyen validé, Dernier Grain au sablier, effets par emplacement renvoyés en 3b.
-**Sous-étape 1 — pente 2,4** (si elle n'a pas été codée dans la conversation du conseil) :
-```
-Lis docs/INDEX.md, puis dans docs/design.md seulement « Monstres et trophées », « Équilibrage » et « Étape 3a1 » (mesures, décisions). Lis docs/outillage.md pour la simu.
-Passe la pente de puissance des monstres de 1,6 à 2,4 dans monsterStats (src/enemies/enemies.engine.js). Vérifie dans le vrai code les mesures du banc (node tools/sim.js --graines 30, bot par défaut et --malin : médiane, fourchette, graines hors cible) et la part de boucles finies par la mort à partir de la 3e ; dis-moi tout écart avec le tableau de la 3a1 avant de continuer.
-Références de la simu mises à jour (node tools/qa/check-sim.js --update, explication dans le message), npm run check, formule à jour dans « Monstres et trophées » et résultats dans « Étape 3a1 », docs/INDEX.md, commit, demande-moi avant de pousser.
-```
+**Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a1`) : pente de puissance des monstres 1,6 → 2,4 retenue (les deux bots dans la cible avec et sans la 3a2, la mort revient, l'armure compte), **codée le 21/11**. Bot moyen validé, Dernier Grain au sablier, effets par emplacement renvoyés en 3b.
+**Sous-étape 1 — pente 2,4 : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, résultats dans `docs/design.md` → `### Étape 3a1` → « Pente 2,4 dans le jeu »).
 **Sous-étape 2 — bot moyen** (après la pente) :
 ```
 Lis docs/INDEX.md, docs/outillage.md (simu), puis dans docs/design.md seulement « Étape 2b faite » (sous-étape 1 : bot malin) et « Étape 3a1 » (le joueur du conseil : un humain joue moins bien que le bot malin).

@@ -338,3 +338,15 @@ Allège le contexte chargé à chaque requête, sans rien perdre :
 3. Vérifie que rien n'est perdu (chaque ligne de l'ancien CLAUDE.md retrouvée quelque part), mesure les tailles avant / après, mets à jour docs/INDEX.md, commit, demande-moi avant de pousser.
 ```
 
+## Gameplay 3a1 — pente de puissance des monstres 2,4 du 21/11 (faite, sous-étape 1)
+
+**État avant la session** : conseil et mesures de la 3a1 faits sur un banc jetable (20/11) ; pente 1,6 dans `monsterStats` ; 30 graines : défaut méd. 10 [7-13] 3 hors cible, malin méd. 9 [6-11] 6 hors, 7-9 % de boucles finies par la mort à partir de la 3e.
+
+**Fait le 21/11** : pente 2,4 dans `monsterStats` (`src/enemies/enemies.engine.js`), seul changement de code. Vrai code identique au banc : défaut méd. 11 [8-14] 1 hors (la graine 23757 à 14, dans les 10 de la sortie par défaut), malin méd. 10 [8-12] 0 hors, 55,9 % / 56,7 % de morts. `--outils` : le coutelas passe de l'outil le plus rapide au plus lent (méd. 13). Références de `tools/qa/ref/` réécrites, `npm run check` et captures sans erreur JS ; formule dans « Monstres et trophées », série dans « Équilibrage », résultats dans « Étape 3a1 ».
+
+**Prompt exécuté** :
+```
+Lis docs/INDEX.md, puis dans docs/design.md seulement « Monstres et trophées », « Équilibrage » et « Étape 3a1 » (mesures, décisions). Lis docs/outillage.md pour la simu.
+Passe la pente de puissance des monstres de 1,6 à 2,4 dans monsterStats (src/enemies/enemies.engine.js). Vérifie dans le vrai code les mesures du banc (node tools/sim.js --graines 30, bot par défaut et --malin : médiane, fourchette, graines hors cible) et la part de boucles finies par la mort à partir de la 3e ; dis-moi tout écart avec le tableau de la 3a1 avant de continuer.
+Références de la simu mises à jour (node tools/qa/check-sim.js --update, explication dans le message), npm run check, formule à jour dans « Monstres et trophées » et résultats dans « Étape 3a1 », docs/INDEX.md, commit, demande-moi avant de pousser.
+```

@@ -1,11 +1,14 @@
-B 1 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙32 🪵1 🪨0 upg:{} 🏆0 équipé:-
-B 2 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙48 🪵2 🪨0 upg:{"entraineur":2} 🏆0 équipé:-
-B 3 time   lvl6 cases:8 maxNiv:4 ⭐84 🪙121 🪵5 🪨0 upg:{"entraineur":4} 🏆1 équipé:-
-B 4 time   lvl7 cases:12 maxNiv:6 ⭐146 🪙148 🪵1 🪨3 upg:{"entraineur":6,"horloge":2} 🏆3 équipé:lanterne
-B 5 time   lvl8 cases:12 maxNiv:6 ⭐146 🪙137 🪵6 🪨3 upg:{"entraineur":8,"horloge":2,"forge":2} 🏆3 équipé:lanterne
-B 6 time   lvl8 cases:13 maxNiv:7 ⭐177 🪙158 🪵7 🪨5 upg:{"entraineur":9,"horloge":3,"forge":3} 🏆4 équipé:lanterne
-B 7 time   lvl9 cases:13 maxNiv:7 ⭐177 🪙260 🪵6 🪨4 upg:{"entraineur":9,"horloge":4,"forge":4} 🏆4 équipé:collier
-B 8 time   lvl9 cases:15 maxNiv:8 ⭐272 🪙353 🪵5 🪨7 upg:{"entraineur":10,"horloge":5,"forge":4} 🏆6 équipé:lanterne
+B 1 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙30 🪵1 🪨0 upg:{} 🏆0 équipé:-
+B 2 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙43 🪵1 🪨0 upg:{"entraineur":2} 🏆0 équipé:-
+B 3 death  lvl5 cases:6 maxNiv:3 ⭐45 🪙64 🪵4 🪨0 upg:{"entraineur":4} 🏆1 équipé:-
+B 4 death  lvl6 cases:8 maxNiv:4 ⭐86 🪙137 🪵6 🪨0 upg:{"entraineur":5,"horloge":1} 🏆1 équipé:lanterne
+B 5 death  lvl6 cases:9 maxNiv:4 ⭐98 🪙136 🪵8 🪨2 upg:{"entraineur":7,"horloge":2} 🏆2 équipé:lanterne
+B 6 death  lvl7 cases:11 maxNiv:5 ⭐128 🪙155 🪵5 🪨3 upg:{"entraineur":8,"horloge":3,"forge":1} 🏆3 équipé:-
+B 7 death  lvl8 cases:13 maxNiv:7 ⭐177 🪙188 🪵3 🪨6 upg:{"entraineur":9,"horloge":4,"forge":2} 🏆4 équipé:lanterne
+B 8 death  lvl9 cases:14 maxNiv:7 ⭐198 🪙231 🪵6 🪨8 upg:{"entraineur":10,"horloge":4,"forge":3} 🏆4 équipé:pioche2
+B 9 death  lvl9 cases:14 maxNiv:7 ⭐198 🪙327 🪵1 🪨11 upg:{"entraineur":10,"horloge":5,"forge":4} 🏆4 équipé:lanterne
+B10 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙252 🪵5 🪨3 upg:{"entraineur":11,"horloge":5,"forge":6} 🏆4 équipé:lanterne
+B11 time   lvl9 cases:16 maxNiv:8 ⭐275 🪙299 🪵10 🪨12 upg:{"entraineur":12,"horloge":5,"forge":6} 🏆6 équipé:manteau,lanterne
 
-Boss vaincu à la boucle : 7 10 11 13 11 9 10 9 10 10 | temps de jeu ×1 (min) : 11 15 17 20 17 14 15 14 17 16
-Matériaux extraits au boss (médiane) : 🟫 37  🐺 31  🧱 21  🦴 64  🔹 20  🦷 9  🐾 1  💎 2  🔥 31  ❄️ 33  ⚡ 45  ⏳ 1
+Boss vaincu à la boucle : 13 11 14 12 11 10 11 12 11 11 | temps de jeu ×1 (min) : 18 14 20 17 15 13 16 17 15 17
+Matériaux extraits au boss (médiane) : 🟫 40  🐺 37  🧱 19  🦴 63  🔹 19  🦷 9  🐾 1  💎 2  🔥 30  ❄️ 29  ⚡ 46  ⏳ 1

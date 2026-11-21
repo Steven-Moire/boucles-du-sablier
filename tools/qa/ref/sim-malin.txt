@@ -1,16 +1,15 @@
 Bot malin : marteau sur élites, boss et golems, coutelas en farm, pioche sinon.
-B 1 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙32 🪵1 🪨0 upg:{} 🏆0 équipé:-
-B 2 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙48 🪵2 🪨0 upg:{"entraineur":2} 🏆0 équipé:-
-B 3 time   lvl6 cases:8 maxNiv:4 ⭐86 🪙125 🪵4 🪨1 upg:{"entraineur":4} 🏆1 équipé:-
-B 4 time   lvl7 cases:11 maxNiv:5 ⭐128 🪙155 🪵2 🪨2 upg:{"entraineur":6,"forge":1,"horloge":1} 🏆1 équipé:lanterne
-B 5 time   lvl7 cases:11 maxNiv:5 ⭐128 🪙146 🪵2 🪨3 upg:{"entraineur":8,"forge":2,"horloge":1} 🏆2 équipé:lanterne
-B 6 time   lvl8 cases:12 maxNiv:6 ⭐146 🪙164 🪵7 🪨4 upg:{"entraineur":9,"forge":3,"horloge":1} 🏆2 équipé:lanterne
-B 7 time   lvl9 cases:13 maxNiv:7 ⭐177 🪙266 🪵0 🪨5 upg:{"entraineur":9,"forge":4,"horloge":3} 🏆3 équipé:coutelas2
-B 8 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙280 🪵2 🪨4 upg:{"entraineur":10,"forge":5,"horloge":3} 🏆4 équipé:manteau,lanterne
-B 9 time   lvl9 cases:13 maxNiv:7 ⭐198 🪙299 🪵3 🪨9 upg:{"entraineur":11,"forge":5,"horloge":3} 🏆4 équipé:coutelas2
-B10 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙196 🪵4 🪨8 upg:{"entraineur":12,"forge":6,"horloge":3} 🏆4 équipé:plastron,lanterne
-B11 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙291 🪵6 🪨8 upg:{"entraineur":12,"forge":7,"horloge":3} 🏆4 équipé:manteau,lanterne
-B12 time   lvl9 cases:16 maxNiv:8 ⭐275 🪙420 🪵10 🪨6 upg:{"entraineur":12,"forge":8,"horloge":4} 🏆5 équipé:coutelas2
+B 1 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙30 🪵1 🪨0 upg:{} 🏆0 équipé:-
+B 2 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙43 🪵1 🪨0 upg:{"entraineur":2} 🏆0 équipé:-
+B 3 death  lvl5 cases:6 maxNiv:3 ⭐45 🪙62 🪵2 🪨0 upg:{"entraineur":4} 🏆2 équipé:-
+B 4 death  lvl6 cases:8 maxNiv:4 ⭐84 🪙128 🪵4 🪨0 upg:{"entraineur":5,"horloge":1} 🏆2 équipé:lanterne
+B 5 death  lvl7 cases:11 maxNiv:5 ⭐128 🪙134 🪵4 🪨3 upg:{"entraineur":7,"horloge":2} 🏆2 équipé:lanterne
+B 6 death  lvl8 cases:12 maxNiv:6 ⭐146 🪙152 🪵1 🪨3 upg:{"entraineur":8,"horloge":3,"forge":2} 🏆2 équipé:-
+B 7 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙230 🪵4 🪨5 upg:{"entraineur":9,"horloge":3,"forge":3} 🏆4 équipé:lanterne
+B 8 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙252 🪵4 🪨7 upg:{"entraineur":10,"horloge":3,"forge":4} 🏆4 équipé:lanterne
+B 9 death  lvl9 cases:14 maxNiv:7 ⭐198 🪙241 🪵5 🪨6 upg:{"entraineur":11,"horloge":3,"forge":5} 🏆5 équipé:coutelas2,lanterne
+B10 time   lvl9 cases:14 maxNiv:7 ⭐198 🪙332 🪵0 🪨5 upg:{"entraineur":11,"horloge":4,"forge":6} 🏆5 équipé:plastron,collier
+B11 time   lvl9 cases:15 maxNiv:8 ⭐272 🪙387 🪵5 🪨9 upg:{"entraineur":12,"horloge":4,"forge":6} 🏆6 équipé:manteau,lanterne
 
-Boss vaincu à la boucle : 6 10 10 10 9 10 8 10 7 9 | temps de jeu ×1 (min) : 9 14 16 14 13 16 12 14 11 14
-Matériaux extraits au boss (médiane) : 🟫 39  🐺 59  🧱 16  🦴 40  🔹 13  🦷 2  🐾 0  💎 0  🔥 26  ❄️ 26  ⚡ 31  ⏳ 0
+Boss vaincu à la boucle : 11 11 10 11 10 10 10 10 8 10 | temps de jeu ×1 (min) : 16 14 14 15 13 13 13 13 10 15
+Matériaux extraits au boss (médiane) : 🟫 49  🐺 67  🧱 23  🦴 49  🔹 11  🦷 2  🐾 0  💎 1  🔥 26  ❄️ 23  ⚡ 32  ⏳ 0

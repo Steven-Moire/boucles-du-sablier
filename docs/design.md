@@ -53,7 +53,7 @@ Elle grimpe vite (environ 270 en fin de contenu) mais ne débloque que trois seu
 - Plus tard, de la renommée gagnée en continu : quêtes de villageois du type « rapporte 5 crocs de loup ».
 
 ## Monstres et trophées
-Stats au niveau L : `PV = (12 + 8(L−1)) × mult`, `puissance = (3 + 1,6(L−1)) × mult`, `armure = ⌊(L−1)/2⌋ + bonus`.
+Stats au niveau L : `PV = (12 + 8(L−1)) × mult`, `puissance = (3 + 2,4(L−1)) × mult` (pente 1,6 jusqu'au 2026-11-21, voir `### Étape 3a1`), `armure = ⌊(L−1)/2⌋ + bonus`.
 
 | Monstre | Zone | Trophée unique | Chance | Bonus |
 |---|---|---|---|---|
@@ -68,6 +68,7 @@ Stats au niveau L : `PV = (12 + 8(L−1)) × mult`, `puissance = (3 + 1,6(L−1)
 ## Équilibrage (bot, `node tools/sim.js`, 10 parties)
 Le boss tombe entre la 8e et la 13e boucle, soit environ 12 à 20 min de jeu en ×1. **Cible (révisée le 2026-11-19) : boss entre la 8e et la 13e boucle, médiane entre 9 et 12.**
 Pourquoi : la série `9 13 10 12 9 12 8 9 12 9` est identique depuis le prototype v0.3 (vérifié sur a625c8a → 6f6844a → 3fab3e6 → 69b808d → main) ; le 8 vient d'une graine chanceuse, ce n'est pas une régression. Le remonter par les chiffres pousserait la graine à 13 vers 14 : on élargit la cible plutôt que de déplacer l'écart. À recaler après la mémoire du village (étape 2c), qui changera la courbe de progression.
+Depuis la pente 2,4 (2026-11-21, `### Étape 3a1`), la série devient `13 11 14 12 11 10 11 12 11 11` (méd. 11, une graine à 14) ; sur 30 graines, bot par défaut méd. 11 [8-14] 1 hors cible, bot malin méd. 10 [8-12] 0 hors : on juge l'équilibrage sur 30 graines.
 
 ## Architecture du code (étape 1 de la feuille de route, faite ; arborescence par domaine le 2026-11-19)
 Le jeu est découpé en modules ES natifs, sans build, **un dossier par domaine** (`src/world/`, `hero/`, `enemies/`, `mining/`, `combat/`, `village/`, `intro/`, `modals/`, `shared/`, `app/`). Le suffixe dit le rôle : `*.data.js` (données) ← `*.engine.js` (moteur pur, testable dans Node) ← `*.view.js` (rendu et interactions d'une zone, avec son CSS à côté) ← `app/main.js`. Liste des modules : ci-dessous ; règles des couches : `.claude/rules/javascript/architecture.md`, vérifiées par `npm run lint`. Les deux découpages (v0.3 monolithique → modules, puis modules → domaines) sont mécaniques : aucune règle ni aucun chiffre n'a changé.
@@ -265,7 +266,7 @@ Le carnet ne tire aucun hasard : la simulation est identique octet pour octet.
 - Le bot malin suit sa propre règle (marteau sur les élites) ; un bot qui suit le carnet (pioche sur les élites pour les rares) mesurerait mieux l'idée 2.
 
 ### Étape 3a1 : leviers d'équilibrage — conseil et mesures (2026-11-20)
-Rien n'est codé : mesures sur une copie du moteur (banc jetable, chiffres injectés), à confirmer dans le vrai code.
+Mesures faites sur une copie du moteur (banc jetable, chiffres injectés). **Pente 2,4 codée le 2026-11-21** (sous-étape 1, voir « Pente 2,4 dans le jeu » plus bas) ; le reste n'est pas codé.
 #### Conseil élargi
 - **Accord** des quatre voix : le premier levier est la **puissance des monstres par niveau** (le levier « mort ») ; les PV des monstres sont le levier « temps ». Les dégâts variables ne sont pas un levier (même moyenne), les rencontres aléatoires viennent en dernier.
 - Le conteur : « le temps qui s'écoule, c'est le Sablier qui gagne ; la mort, c'est le monde qui mord » ; lore : plus on creuse, plus le temps sédimenté est dense et rend les coups ; pas de « +secondes » sur une armure (le temps appartient à l'Horloge et au Sablier) ; rencontres en « graine du jour » qui revient (« mardi, il y a toujours le blaireau »). Le joueur : 25 à 40 % de morts après la 3e boucle, au-delà de 50 % le joueur croit perdre son temps ; armures qui changent la façon de jouer ; un bot « moyen » en plus du bot malin. Le sceptique : un seul chiffre d'abord (la pente), épines et déplacement sont de la puissance ou du temps déguisés, rencontres aléatoires = variance en plus ; mesurer la part de morts **et** la médiane.
@@ -299,6 +300,15 @@ Lecture :
 - **Effets par emplacement** : pas d'épines sur l'armure actuelle seule ; une liste d'effets, chaque emplacement a les siens (épines sur le torse, vitesse sur les bottes…). Le héros a des **habits de base** qu'on améliore ; la permanence d'une boucle à l'autre arrive **vers la 3e-5e boucle**, débloquée en parlant aux PNJ et par des quêtes secondaires, présentées au joueur comme du **confort de jeu**. Pour rendre une quête, il faut **revenir au village pendant la boucle** : le village devient une case à part où l'on passe sans finir la boucle (aujourd'hui, rentrer au village finit la boucle, et les matériaux gardés se rendent gratuitement entre deux boucles). Le chemin du retour coûte donc du temps ; des **compétences qui se gardent d'une boucle à l'autre** (façon Increlution) rendent peu à peu les quêtes faisables. À travailler avec la 3b. Rappel mesuré : la marche (0,5 s par case) pèse peu aujourd'hui ; le retour ne coûtera vraiment que si elle compte davantage.
 - **Permanence et horloges** : le « une boucle de gagnée » des niveaux permanents a été mesuré en 3a2 à pente 1,6, quand plus de 90 % des boucles finissent par le temps. À pente 2,4, la mort domine : une puissance permanente fait toujours avancer plus loin avant la fin du temps, et une armure ou des PV permanents font tenir plus longtemps avant la mort. La permanence accélère donc quelle que soit l'horloge qui arrête la boucle, mais ce n'est pas encore mesuré à pente 2,4.
 - **Plus tard** : un palier par zone plus une courbe douce dans la zone (demande la zone dans le calcul des stats, à mesurer quand les mondes arriveront) ; rencontres en zones en « graine du jour » déterministe ; compétences de déplacement (à revoir quand la marche comptera).
+
+#### Pente 2,4 dans le jeu (sous-étape 1, faite le 2026-11-21)
+`monsterStats` (`src/enemies/enemies.engine.js`) : puissance `3 + 2,4(L−1)` au lieu de `3 + 1,6(L−1)`, rien d'autre. Vrai code, 30 graines (`node tools/sim.js --graines 30`, la part de morts comptée avec une copie de la simu, la simu ne l'affiche pas) : **aucun écart avec le banc**.
+| | Bot par défaut | Bot malin | Morts (boucles 3 et +) |
+|---|---|---|---|
+| Avant (pente 1,6), vérifié | méd. 10 [7-13], 3 hors cible | méd. 9 [6-11], 6 hors | 7,0 % / 8,6 % |
+| **Pente 2,4** | **méd. 11 [8-14], 1 hors** (une graine à 14) | **méd. 10 [8-12], 0 hors** | **55,9 % / 56,7 %** |
+- 10 graines (sortie par défaut, références de `tools/qa/ref/`) : `13 11 14 12 11 10 11 12 11 11` (méd. 11 ; avant `9 13 10 12 9 12 8 9 12 9`). La graine à 14 est la 3e (23757) : elle est dans les 10 graines de la sortie par défaut.
+- `--outils` (un outil gardé toute la partie, 10 graines) : l'ordre s'inverse. Marteau méd. 10 [9-12] (avant 9 [7-11]), pioche 11 [10-14] (avant 10 [7-13]), **coutelas 13 [11-13]** (avant 10 [8-11]) : le coutelas, rapide mais léger, souffre le plus de monstres qui frappent plus fort. Tout reste entre 8 et 13 sauf la graine à 14 de la pioche.
 
 ### Étape 3a2 : améliorations dans les paliers — conseil et mesures (2026-11-20, en attente des leviers)
 Rien n'est codé : mesures faites sur une copie du moteur (banc jetable), à refaire dans le vrai code quand la 3a2 reprendra.
