@@ -13,6 +13,7 @@ const RUNS = [
   {name: 'sim.txt', args: []},
   {name: 'sim-outils.txt', args: ['--outils']},
   {name: 'sim-malin.txt', args: ['--malin']},
+  {name: 'sim-moyen.txt', args: ['--moyen']},
 ];
 
 const runSim = args => execFileSync(process.execPath, [SIM, ...args], {cwd: ROOT, encoding: 'utf8'});

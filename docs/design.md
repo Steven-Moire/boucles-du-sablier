@@ -266,7 +266,7 @@ Le carnet ne tire aucun hasard : la simulation est identique octet pour octet.
 - Le bot malin suit sa propre règle (marteau sur les élites) ; un bot qui suit le carnet (pioche sur les élites pour les rares) mesurerait mieux l'idée 2.
 
 ### Étape 3a1 : leviers d'équilibrage — conseil et mesures (2026-11-20)
-Mesures faites sur une copie du moteur (banc jetable, chiffres injectés). **Pente 2,4 codée le 2026-11-21** (sous-étape 1, voir « Pente 2,4 dans le jeu » plus bas) ; le reste n'est pas codé.
+Mesures faites sur une copie du moteur (banc jetable, chiffres injectés). **Pente 2,4 et bot moyen codés le 2026-11-21** (sous-étapes 1 et 2, voir « Pente 2,4 dans le jeu » et « Bot moyen » plus bas) ; le reste n'est pas codé.
 #### Conseil élargi
 - **Accord** des quatre voix : le premier levier est la **puissance des monstres par niveau** (le levier « mort ») ; les PV des monstres sont le levier « temps ». Les dégâts variables ne sont pas un levier (même moyenne), les rencontres aléatoires viennent en dernier.
 - Le conteur : « le temps qui s'écoule, c'est le Sablier qui gagne ; la mort, c'est le monde qui mord » ; lore : plus on creuse, plus le temps sédimenté est dense et rend les coups ; pas de « +secondes » sur une armure (le temps appartient à l'Horloge et au Sablier) ; rencontres en « graine du jour » qui revient (« mardi, il y a toujours le blaireau »). Le joueur : 25 à 40 % de morts après la 3e boucle, au-delà de 50 % le joueur croit perdre son temps ; armures qui changent la façon de jouer ; un bot « moyen » en plus du bot malin. Le sceptique : un seul chiffre d'abord (la pente), épines et déplacement sont de la puissance ou du temps déguisés, rencontres aléatoires = variance en plus ; mesurer la part de morts **et** la médiane.
@@ -295,7 +295,7 @@ Lecture :
 
 #### Décisions de Steven (2026-11-20)
 - **Pente de puissance des monstres 1,6 → 2,4** (`monsterStats`), une sous-étape à elle seule.
-- **Bot « moyen »** validé (un humain joue moins bien que le bot malin), règle à fixer avant de le coder.
+- **Bot « moyen »** validé (un humain joue moins bien que le bot malin) ; règle fixée et **codée le 2026-11-21** (voir « Bot moyen » plus bas).
 - **Dernier Grain** (idée du conteur) : un pari dans les **10 derniers pour cent du sablier** (pas sous 25 % de PV : à pente 2,4, il se déclencherait presque à chaque boucle) : plus de puissance, mais la boucle s'arrête au prochain coup reçu. Chiffres à mesurer.
 - **Effets par emplacement** : pas d'épines sur l'armure actuelle seule ; une liste d'effets, chaque emplacement a les siens (épines sur le torse, vitesse sur les bottes…). Le héros a des **habits de base** qu'on améliore ; la permanence d'une boucle à l'autre arrive **vers la 3e-5e boucle**, débloquée en parlant aux PNJ et par des quêtes secondaires, présentées au joueur comme du **confort de jeu**. Pour rendre une quête, il faut **revenir au village pendant la boucle** : le village devient une case à part où l'on passe sans finir la boucle (aujourd'hui, rentrer au village finit la boucle, et les matériaux gardés se rendent gratuitement entre deux boucles). Le chemin du retour coûte donc du temps ; des **compétences qui se gardent d'une boucle à l'autre** (façon Increlution) rendent peu à peu les quêtes faisables. À travailler avec la 3b. Rappel mesuré : la marche (0,5 s par case) pèse peu aujourd'hui ; le retour ne coûtera vraiment que si elle compte davantage.
 - **Permanence et horloges** : le « une boucle de gagnée » des niveaux permanents a été mesuré en 3a2 à pente 1,6, quand plus de 90 % des boucles finissent par le temps. À pente 2,4, la mort domine : une puissance permanente fait toujours avancer plus loin avant la fin du temps, et une armure ou des PV permanents font tenir plus longtemps avant la mort. La permanence accélère donc quelle que soit l'horloge qui arrête la boucle, mais ce n'est pas encore mesuré à pente 2,4.
@@ -309,6 +309,27 @@ Lecture :
 | **Pente 2,4** | **méd. 11 [8-14], 1 hors** (une graine à 14) | **méd. 10 [8-12], 0 hors** | **55,9 % / 56,7 %** |
 - 10 graines (sortie par défaut, références de `tools/qa/ref/`) : `13 11 14 12 11 10 11 12 11 11` (méd. 11 ; avant `9 13 10 12 9 12 8 9 12 9`). La graine à 14 est la 3e (23757) : elle est dans les 10 graines de la sortie par défaut.
 - `--outils` (un outil gardé toute la partie, 10 graines) : l'ordre s'inverse. Marteau méd. 10 [9-12] (avant 9 [7-11]), pioche 11 [10-14] (avant 10 [7-13]), **coutelas 13 [11-13]** (avant 10 [8-11]) : le coutelas, rapide mais léger, souffre le plus de monstres qui frappent plus fort. Tout reste entre 8 et 13 sauf la graine à 14 de la pioche.
+
+#### Bot moyen (sous-étape 2, faite le 2026-11-21 : `node tools/sim.js --moyen`, combinable avec `--graines N`)
+Un humain attentif mais imparfait (`tools/sim-moyen.js`, règle validée par Steven). Son hasard vient d'un générateur à part (`lcg(graine ^ 0x9e3779b9)`), jamais `G.rng` ni `G.mrng` : à décisions égales, les combats sont les mêmes.
+1. **Outil** : si le carnet nomme l'outil du monstre principal de la case (l'élite ou le boss s'il y en a un, sinon le monstre le plus fréquent), il le suit une fois sur deux, sinon il garde le sien (pioche au départ).
+2. **Route** : comme les autres bots (case neuve du plus bas niveau, sinon farm de la plus haute), mais une fois sur quatre il refarme la case déjà faite de plus haut niveau au lieu d'avancer ; sous 30 % de PV en combat, il bat en retraite de la case, une fois par boucle au plus. Rentrer au village ne sert à rien : le moteur traite le retour comme la mort (on garde ses gains), on perd seulement le temps qui reste.
+3. **Village** : il achète, tiré au hasard parmi ce qu'il peut payer, jusqu'à ne plus rien pouvoir payer ; il forge dans un ordre tiré au hasard (une recette par emplacement, palier II de son outil du moment seulement).
+
+30 graines, pente 2,4 (« morts » = part des boucles finies par la mort à partir de la 3e, affichée par `--moyen`) :
+| Bot | Boss à la boucle | Morts |
+|---|---|---|
+| Par défaut (rappel) | méd. 11 [8-14], 1 hors | 55,9 % |
+| Malin (rappel) | méd. 10 [8-12], 0 hors | 56,7 % |
+| **Moyen** | **méd. 12 [9-14], 3 hors** (trois graines à 14) | **13,4 %** |
+| Moyen sans retraite (mesure seule) | méd. 11 [8-14], 1 hors | 17,9 % |
+| Moyen sans farm une fois sur quatre (mesure seule) | méd. 12 [9-14], 5 hors | 49,7 % |
+- 10 graines (référence `tools/qa/ref/sim-moyen.txt`) : `12 10 13 12 9 12 11 12 12 11` (méd. 12).
+
+Lecture :
+- Le bot moyen reste dans la cible, mais **au bord haut** (médiane 12, la borne) : un humain moyen met deux boucles de plus que le malin. Tout levier qui ralentit doit donc se mesurer avec lui, sinon il sortira par le haut le premier.
+- **Les morts baissent à cause du farm, pas de la retraite** : refarmer une fois sur quatre fait monter le héros en niveau sur des cases sûres, et la boucle finit par le temps. Sans ce farm, on retrouve presque les 56 % des autres bots, qui avancent toujours. 13 % est sous la fourchette du joueur du conseil (25 à 40 %) ; la bonne valeur pour un vrai joueur se situe sans doute entre les deux bots.
+- La retraite coûte un peu de temps et ne sauve presque rien : à pente 2,4, un héros sous 30 % de PV meurt à la case suivante (il ne récupère que 10 % de PV entre deux vagues).
 
 ### Étape 3a2 : améliorations dans les paliers — conseil et mesures (2026-11-20, en attente des leviers)
 Rien n'est codé : mesures faites sur une copie du moteur (banc jetable), à refaire dans le vrai code quand la 3a2 reprendra.

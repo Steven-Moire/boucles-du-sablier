@@ -16,6 +16,7 @@ import * as combat from '../src/combat/combat.engine.js';
 import * as village from '../src/village/village.engine.js';
 import * as forge from '../src/village/forge.engine.js';
 import {lcg} from '../src/shared/rng.js';
+import {averageTile, averageTool, averageVillage, averageWatch, makeAverageBot} from './sim-moyen.js';
 const E = {
   ...worldData,
   ...heroData,
@@ -54,22 +55,29 @@ function smartTool(G, tile) {
   if (hard) return 'marteau';
   return G.run.completed.has(tile.id) ? 'coutelas' : 'pioche';
 }
+// choix de la case et de l'outil quand le héros n'a rien à faire ; renvoie false si aucune case n'est possible
+function startAction(G, smart, avg) {
+  let tile = pickTile(G);
+  if (avg) tile = averageTile(G, avg, tile);
+  if (!tile) return false;
+  if (smart) E.setTool(G, smartTool(G, tile));
+  if (avg) averageTool(G, avg, tile);
+  E.explore(G, tile.id);
+  return true;
+}
 // joue une boucle jusqu'à sa fin ; renvoie le temps de jeu total (ajouté tick par tick, comme avant)
-function playLoop(G, totalTime, smart = false) {
+// avg : le bot moyen (--moyen, tools/sim-moyen.js), null pour les autres
+function playLoop(G, totalTime, smart = false, avg = null) {
   let time = totalTime;
   while (!G.run.over) {
-    if (!G.run.action) {
-      const tile = pickTile(G);
-      if (!tile) {
-        G.run.over = {reason: 'stuck', gains: G.run.gains};
-        break;
-      }
-      if (smart) E.setTool(G, smartTool(G, tile));
-      E.explore(G, tile.id);
+    if (!G.run.action && !startAction(G, smart, avg)) {
+      G.run.over = {reason: 'stuck', gains: G.run.gains};
+      break;
     }
     const before = G.run.timeLeft;
     E.tick(G, 0.5);
     G.events.length = 0;
+    if (avg) averageWatch(G, avg);
     time += before - G.run.timeLeft;
   }
   G.events.length = 0;
@@ -102,23 +110,37 @@ function forgeAll(G, smart) {
     E.forgeItem(G, id, false);
   }
 }
-function runBot(seed, maxLoops = 60, verbose = false, tool = null, smart = false) {
+// entre deux boucles : achats et forge, au hasard pour le bot moyen
+function betweenLoops(G, smart, avg) {
+  if (avg) {
+    averageVillage(G, avg);
+    return;
+  }
+  buyAll(G);
+  forgeAll(G, smart);
+}
+// deaths / late : boucles finies par la mort et boucles jouées, à partir de la 3e
+function runBot(seed, maxLoops = 60, verbose = false, tool = null, smart = false, average = false) {
   const rng = lcg(seed);
   const mrng = lcg(seed ^ 0x5bd1e995); // minage
   const G = E.createGame(null, rng, mrng);
   if (tool) E.setTool(G, tool); // --outils : le bot garde cet outil toute la partie
+  const avg = average ? makeAverageBot(seed) : null;
   let totalTime = 0,
-    bossLoop = null;
+    bossLoop = null,
+    deaths = 0,
+    late = 0;
   for (let loop = 1; loop <= maxLoops; loop++) {
-    totalTime = playLoop(G, totalTime, smart);
+    totalTime = playLoop(G, totalTime, smart, avg);
+    late += loop >= 3 ? 1 : 0;
+    deaths += loop >= 3 && G.run.over.reason === 'death' ? 1 : 0;
     if (G.meta.bossKilled) bossLoop = loop;
     if (verbose) logLoop(G, loop);
     if (bossLoop) break;
-    buyAll(G);
-    forgeAll(G, smart);
+    betweenLoops(G, smart, avg);
     E.newLoop(G);
   }
-  return {bossLoop, totalTime: Math.round(totalTime), mats: {...G.meta.mats}};
+  return {bossLoop, totalTime: Math.round(totalTime), mats: {...G.meta.mats}, deaths, late};
 }
 const med = a => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)];
 // --graines N : N parties au lieu de 10 (les 10 premières restent les mêmes, sortie par défaut inchangée)
@@ -140,10 +162,14 @@ if (process.argv.includes('--outils')) {
   }
 } else {
   // node tools/sim.js --malin : le bot choisit l'outil selon la case (sortie par défaut : pioche partout)
-  const smart = process.argv.includes('--malin');
+  // node tools/sim.js --moyen : un humain attentif mais imparfait (tools/sim-moyen.js)
+  const smart = process.argv.includes('--malin'),
+    average = !smart && process.argv.includes('--moyen');
   if (smart) console.log('Bot malin : marteau sur élites, boss et golems, coutelas en farm, pioche sinon.');
-  runBot(42, 60, true, null, smart);
-  const res = SEEDS.map(s => runBot(s, 60, false, null, smart));
+  if (average)
+    console.log('Bot moyen : carnet suivi une fois sur deux, farm une fois sur quatre, retraite sous 30 % PV.');
+  runBot(42, 60, true, null, smart, average);
+  const res = SEEDS.map(s => runBot(s, 60, false, null, smart, average));
   console.log(
     '\nBoss vaincu à la boucle :',
     res.map(r => r.bossLoop).join(' '),
@@ -151,4 +177,8 @@ if (process.argv.includes('--outils')) {
     res.map(r => (r.totalTime / 60).toFixed(0)).join(' '),
   );
   console.log('Matériaux extraits au boss (médiane) :', matsLine(res));
+  if (average) {
+    const sum = f => res.reduce((n, r) => n + r[f], 0);
+    console.log(`Boucles finies par la mort (3e et +) : ${((100 * sum('deaths')) / sum('late')).toFixed(1)} %`);
+  }
 }

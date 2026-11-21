@@ -74,18 +74,13 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 **Ordre conseillé (20/11, révisé)** : leviers d'équilibrage (3a1) → 3a2 → 3b (la session 4, qualité du code, est faite). La session graphismes « héros selon l'outil » est indépendante.
 
 ### 3a1. Leviers d'équilibrage (avant 3a2)
-**Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a1`) : pente de puissance des monstres 1,6 → 2,4 retenue (les deux bots dans la cible avec et sans la 3a2, la mort revient, l'armure compte), **codée le 21/11**. Bot moyen validé, Dernier Grain au sablier, effets par emplacement renvoyés en 3b.
+**Conseil et mesures faits le 20/11** (`docs/design.md` → `### Étape 3a1`) : pente de puissance des monstres 1,6 → 2,4 retenue (les deux bots dans la cible avec et sans la 3a2, la mort revient, l'armure compte), **codée le 21/11**. Bot moyen codé le 21/11, Dernier Grain au sablier, effets par emplacement renvoyés en 3b.
 **Sous-étape 1 — pente 2,4 : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, résultats dans `docs/design.md` → `### Étape 3a1` → « Pente 2,4 dans le jeu »).
-**Sous-étape 2 — bot moyen** (après la pente) :
-```
-Lis docs/INDEX.md, docs/outillage.md (simu), puis dans docs/design.md seulement « Étape 2b faite » (sous-étape 1 : bot malin) et « Étape 3a1 » (le joueur du conseil : un humain joue moins bien que le bot malin).
-Ajoute à tools/sim.js un bot « moyen » (--moyen, combinable avec --graines N), qui joue comme un humain attentif mais imparfait. Propose-moi d'abord sa règle en 3 lignes (par exemple : suit l'outil conseillé du carnet une case sur deux, revient au village sous 30 % de PV, forge ce qu'il peut sans ordre optimal) et attends mon accord. Le hasard du bot passe par un générateur à graine à part (jamais G.rng ni G.mrng, pour ne pas changer les combats).
-Sortie par défaut et --malin inchangées (npm run check), nouvelle référence sim-moyen.txt, résultats sur 30 graines (médiane, fourchette, part de morts) dans « Étape 3a1 », docs/outillage.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
-```
+**Sous-étape 2 — bot moyen : faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`, résultats dans `docs/design.md` → `### Étape 3a1` → « Bot moyen »).
 **Sous-étape 3 — Dernier Grain** (après le bot moyen) :
 ```
 Lis docs/INDEX.md, docs/lore.md (le ton), puis dans docs/design.md seulement « Boucle de jeu », « Compétences actives » et « Étape 3a1 » (décision : Dernier Grain dans les 10 derniers pour cent du sablier). Lis docs/design.md « Architecture du code ».
-Le Dernier Grain : dans les 10 derniers pour cent du temps de boucle, le joueur peut engager un pari (plus de puissance, mais la boucle s'arrête au prochain coup reçu). Propose-moi d'abord les chiffres (bonus de puissance, déclenchement manuel ou automatique, ce que fait chaque bot) mesurés avec node tools/sim.js --graines 30 (défaut, malin, moyen s'il existe), et un texte dans le ton (le conteur l'a nommé « le Dernier Grain »).
+Le Dernier Grain : dans les 10 derniers pour cent du temps de boucle, le joueur peut engager un pari (plus de puissance, mais la boucle s'arrête au prochain coup reçu). Propose-moi d'abord les chiffres (bonus de puissance, déclenchement manuel ou automatique, ce que fait chaque bot) mesurés avec node tools/sim.js --graines 30 (défaut, malin, moyen), et un texte dans le ton (le conteur l'a nommé « le Dernier Grain »).
 Moteur pur (événement dans G.events, l'UI l'affiche), sauvegarde compatible, simu dans la cible, docs/design.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
 ```
 

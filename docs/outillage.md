@@ -7,6 +7,8 @@
 - Équilibrage : `node tools/sim.js` → affiche la trace d'une partie, la boucle où le boss tombe sur 10 graines, puis les matériaux extraits au boss (médiane).
   **Cible actuelle : boss entre la 8e et la 13e boucle, médiane entre 9 et 12 (~12-20 min en ×1).** Relancer après toute modif de chiffres.
   `node tools/sim.js --outils` : la même partie avec chaque outil (pioche / marteau / coutelas) gardé du début à la fin.
+  `node tools/sim.js --malin` : bot qui choisit l'outil selon la case. `node tools/sim.js --moyen` : bot « humain moyen » (`tools/sim-moyen.js` : carnet suivi une fois sur deux, farm une fois sur quatre, retraite sous 30 % de PV, achats et forge au hasard ; son hasard ne touche jamais `G.rng` ni `G.mrng`), affiche aussi la part de boucles finies par la mort à partir de la 3e.
+  `--graines N` (avec la sortie par défaut, `--malin` ou `--moyen`) : N parties au lieu de 10, les 10 premières restent les mêmes ; juger l'équilibrage sur `--graines 30`.
 
 ## Environnements Python
 - **WSL** : `uv venv .venv && uv pip sync -p .venv --require-hashes requirements-dev.txt && .venv/bin/playwright install chromium` (une fois : `sudo .venv/bin/playwright install-deps chromium`). Installe aussi ruff. `sync` rend le venv conforme au fichier verrouillé (paquets en trop retirés), `--require-hashes` refuse tout fichier téléchargé dont le hash diffère.
@@ -22,7 +24,7 @@
 - Refactoring : les références ne bougent pas ; changement de gameplay voulu : `node tools/qa/check-sim.js --update` dans le même commit.
 
 ## `tools/qa/`
-- `check-sim.js` : simu comparée octet pour octet aux références de `tools/qa/ref/`.
+- `check-sim.js` : simu comparée octet pour octet aux références de `tools/qa/ref/` (`sim.txt`, `sim-outils.txt`, `sim-malin.txt`, `sim-moyen.txt`).
 - `compare_shots.py` : captures comparées pixel par pixel.
 - `ruff.js` : lance le ruff du venv pour `npm run lint` / `format`.
 - `check-tools.sh` : sorties et empreintes des scripts Python de `tools/`, à lancer avant / après une modif : `bash tools/qa/check-tools.sh <étiquette>` sous WSL, `bash tools/qa/check-tools.sh <étiquette> .venv-win/Scripts/python.exe` depuis Git Bash sous Windows. Sous Windows, `log.txt` est identique à WSL, mais comparer les PNG avec `compare_shots.py`, pas les empreintes : le Pillow Windows compresse avec zlib-ng.

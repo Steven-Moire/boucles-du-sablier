@@ -1,0 +1,16 @@
+Bot moyen : carnet suivi une fois sur deux, farm une fois sur quatre, retraite sous 30 % PV.
+B 1 death  lvl4 cases:4 maxNiv:2 ⭐25 🪙30 🪵2 🪨0 upg:{} 🏆0 équipé:-
+B 2 time   lvl5 cases:5 maxNiv:3 ⭐34 🪙63 🪵4 🪨0 upg:{"entraineur":2} 🏆0 équipé:-
+B 3 time   lvl6 cases:6 maxNiv:3 ⭐45 🪙93 🪵7 🪨0 upg:{"entraineur":5} 🏆0 équipé:-
+B 4 death  lvl6 cases:6 maxNiv:3 ⭐45 🪙104 🪵4 🪨0 upg:{"entraineur":6,"horloge":2} 🏆0 équipé:tablier
+B 5 time   lvl8 cases:8 maxNiv:4 ⭐84 🪙202 🪵4 🪨0 upg:{"entraineur":7,"horloge":3} 🏆3 équipé:tablier
+B 6 death  lvl8 cases:11 maxNiv:5 ⭐128 🪙188 🪵8 🪨2 upg:{"entraineur":9,"horloge":3} 🏆4 équipé:tablier
+B 7 time   lvl8 cases:11 maxNiv:5 ⭐128 🪙222 🪵17 🪨3 upg:{"entraineur":10,"horloge":4,"forge":1} 🏆5 équipé:-
+B 8 time   lvl9 cases:9 maxNiv:4 ⭐128 🪙312 🪵9 🪨1 upg:{"entraineur":10,"horloge":6,"forge":2} 🏆5 équipé:tablier,lanterne
+B 9 time   lvl10 cases:13 maxNiv:7 ⭐177 🪙279 🪵6 🪨10 upg:{"entraineur":11,"horloge":7,"forge":2} 🏆6 équipé:tablier
+B10 time   lvl10 cases:14 maxNiv:7 ⭐198 🪙279 🪵13 🪨16 upg:{"entraineur":12,"horloge":7,"forge":4} 🏆6 équipé:lanterne,tablier
+B11 time   lvl11 cases:15 maxNiv:8 ⭐272 🪙389 🪵8 🪨13 upg:{"entraineur":12,"horloge":8,"forge":6} 🏆7 équipé:tablier,collier
+
+Boss vaincu à la boucle : 12 10 13 12 9 12 11 12 12 11 | temps de jeu ×1 (min) : 18 16 25 22 17 19 17 20 22 19
+Matériaux extraits au boss (médiane) : 🟫 109  🐺 99  🧱 25  🦴 14  🔹 9  🦷 6  🐾 1  💎 1  🔥 33  ❄️ 27  ⚡ 29  ⏳ 0
+Boucles finies par la mort (3e et +) : 13.8 %

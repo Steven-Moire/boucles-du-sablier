@@ -350,3 +350,16 @@ Lis docs/INDEX.md, puis dans docs/design.md seulement « Monstres et trophées �
 Passe la pente de puissance des monstres de 1,6 à 2,4 dans monsterStats (src/enemies/enemies.engine.js). Vérifie dans le vrai code les mesures du banc (node tools/sim.js --graines 30, bot par défaut et --malin : médiane, fourchette, graines hors cible) et la part de boucles finies par la mort à partir de la 3e ; dis-moi tout écart avec le tableau de la 3a1 avant de continuer.
 Références de la simu mises à jour (node tools/qa/check-sim.js --update, explication dans le message), npm run check, formule à jour dans « Monstres et trophées » et résultats dans « Étape 3a1 », docs/INDEX.md, commit, demande-moi avant de pousser.
 ```
+
+## Gameplay 3a1 — bot moyen du 21/11 (fait, sous-étape 2)
+
+**État avant la session** : pente 2,4 codée ; deux bots dans la simu (défaut et `--malin`), 30 graines : défaut méd. 11 [8-14] 1 hors, malin méd. 10 [8-12] 0 hors, 56 % de morts ; la part de morts n'était pas affichée par la simu.
+
+**Fait le 21/11** : bot moyen `--moyen` dans `tools/sim-moyen.js` (règle validée par Steven : carnet suivi une fois sur deux, farm une fois sur quatre, retraite sous 30 % de PV une fois par boucle, achats et forge au hasard ; générateur à part `lcg(graine ^ 0x9e3779b9)`). « Revient au village sous 30 % de PV » de l'exemple remplacé par la retraite : le moteur ne distingue pas le retour de la mort. `tools/sim.js` : branchement du bot (`startAction`, `betweenLoops` pour garder `runBot` sous la complexité 15), part de morts affichée avec `--moyen` seulement. Sorties par défaut, `--outils` et `--malin` identiques ; nouvelle référence `sim-moyen.txt`. 30 graines : méd. 12 [9-14], 3 hors, 13,4 % de morts ; sans le farm, 49,7 % : c'est le farm qui protège, pas la retraite. `docs/outillage.md` décrit aussi `--malin` et `--graines`, qui n'y étaient pas.
+
+**Prompt exécuté** :
+```
+Lis docs/INDEX.md, docs/outillage.md (simu), puis dans docs/design.md seulement « Étape 2b faite » (sous-étape 1 : bot malin) et « Étape 3a1 » (le joueur du conseil : un humain joue moins bien que le bot malin).
+Ajoute à tools/sim.js un bot « moyen » (--moyen, combinable avec --graines N), qui joue comme un humain attentif mais imparfait. Propose-moi d'abord sa règle en 3 lignes (par exemple : suit l'outil conseillé du carnet une case sur deux, revient au village sous 30 % de PV, forge ce qu'il peut sans ordre optimal) et attends mon accord. Le hasard du bot passe par un générateur à graine à part (jamais G.rng ni G.mrng, pour ne pas changer les combats).
+Sortie par défaut et --malin inchangées (npm run check), nouvelle référence sim-moyen.txt, résultats sur 30 graines (médiane, fourchette, part de morts) dans « Étape 3a1 », docs/outillage.md et docs/INDEX.md à jour, commit, demande-moi avant de pousser.
+```
