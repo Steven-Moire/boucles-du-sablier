@@ -13,12 +13,12 @@ function hitClass(ev) {
   if (ev.crit) return 'f-crit';
   return ev.skill ? 'f-sk' : '';
 }
-// retour à la carte peu après la fin d'une case, si le héros n'est pas reparti
+// retour à la carte peu après la fin d'une case, si le héros n'est pas reparti et que le joueur regarde le combat
 function backToMapSoon() {
   clearTimeout(S.backTimer);
   S.backTimer = setTimeout(() => {
-    if (!S.G.run.action) {
-      S.view = 'map';
+    if (!S.G.run.action && S.tab === 'combat') {
+      S.tab = 'map';
       requestRender();
     }
   }, 900);
@@ -44,7 +44,7 @@ const HANDLERS = {
   explore: ev => {
     clearTimeout(S.backTimer);
     S.lastSceneTile = ev.id;
-    S.view = 'scene';
+    S.tab = 'combat';
   },
   tileDone: backToMapSoon,
   retreat: backToMapSoon,
@@ -67,7 +67,7 @@ const HANDLERS = {
   },
 };
 export function consumeEvents() {
-  const fx = S.view === 'scene';
+  const fx = S.tab === 'combat';
   for (const ev of S.G.events) {
     const handler = (fx && FX_HANDLERS[ev.type]) || HANDLERS[ev.type];
     if (handler) handler(ev);

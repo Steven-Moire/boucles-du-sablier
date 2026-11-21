@@ -1,10 +1,44 @@
-/* map */
+/* map : la carte, et sa fiche de case à côté (dessous si la place manque) */
+:root {
+  --cell: 60px;
+}
 .mapview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+  height: auto;
+  min-height: 620px;
+}
+.mapwrap {
+  width: min-content; /* la légende passe à la ligne plutôt que d'élargir la colonne de la carte */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 10px;
+}
+.mapview .tilecard {
+  flex: 1 1 260px;
+  max-width: 340px;
+  padding: 0;
+}
+@media (max-width: 640px) {
+  :root {
+    --cell: 38px;
+  }
+  .mapview {
+    min-height: 0;
+  }
+  .mapview .tilecard {
+    max-width: none;
+  }
+  .map {
+    padding: 6px;
+  }
+  .tile {
+    font-size: 20px;
+  }
 }
 .legend {
   display: flex;
@@ -31,8 +65,8 @@
   background: radial-gradient(circle at 1px 1px, #2a2e39 1px, transparent 1.5px) 0 0/16px 16px;
 }
 .cell {
-  width: 60px;
-  height: 60px;
+  width: var(--cell);
+  height: var(--cell);
   position: relative;
 }
 .tile {

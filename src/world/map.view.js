@@ -13,7 +13,7 @@ const minX = Math.min(...xs) - 1,
   minY = Math.min(...ys) - 1,
   maxY = Math.max(...ys) + 1;
 const mapEl = $('map');
-mapEl.style.gridTemplateColumns = `repeat(${maxX - minX + 1}, 60px)`;
+mapEl.style.gridTemplateColumns = `repeat(${maxX - minX + 1}, var(--cell))`; // --cell : map.css (plus petit en étroit)
 const tileEls = {};
 // icône 32×32 de la case (assets/sprites/tile_<type>.png), repli sur l'emoji ; la case verrouillée du Puits ancien a son propre puits
 const tileIcon = t => spr(t.biome === 'puits' ? 'tile_puits' : 'tile_' + t.type, TYPES[t.type].icon);
@@ -42,14 +42,14 @@ mapEl.addEventListener('click', e => {
   const d = e.target.closest('.tile');
   if (!d) return;
   S.selected = d.dataset.id;
-  S.tab = TILE_MAP[S.selected].type === 'village' && anyUpgrade() ? 'village' : 'explore';
+  if (TILE_MAP[S.selected].type === 'village' && anyUpgrade()) S.tab = 'village';
   requestRender();
 });
 mapEl.addEventListener('dblclick', e => {
   const d = e.target.closest('.tile');
   if (!d) return;
   S.selected = d.dataset.id;
-  if (explore(S.G, S.selected)) S.tab = 'explore';
+  explore(S.G, S.selected); // l'événement « explore » ouvre l'onglet Combat
   requestRender();
 });
 $('legend').innerHTML =

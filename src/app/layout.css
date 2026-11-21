@@ -157,62 +157,25 @@ button {
   min-width: 64px;
   text-align: right;
 }
-/* layout */
+/* layout : héros à gauche, onglets et leur contenu à droite */
 .main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 370px;
+  grid-template-columns: 270px minmax(0, 1fr);
   gap: 14px;
   align-items: start;
-}
-@media (max-width: 940px) {
-  .main {
-    grid-template-columns: 1fr;
-  }
 }
 .card {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 12px;
 }
-.left {
-  padding: 10px 14px 14px;
+.stage {
+  min-width: 0;
 }
-.viewtabs {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
+.stage > .view {
+  margin: 10px 14px 14px;
 }
-.viewtabs button {
-  background: var(--panel2);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-family: var(--pix);
-  font-size: 11px;
-  position: relative;
-}
-.viewtabs button.on {
-  color: #111;
-  background: var(--gold);
-  border-color: var(--gold);
-}
-.vhp {
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: var(--muted);
-  font-variant-numeric: tabular-nums;
-}
-.vhp .bar {
-  width: 160px;
-  height: 14px;
-  line-height: 14px;
-  flex: none;
-}
-.viewtabs .live {
+.tabs .live {
   display: inline-block;
   width: 7px;
   height: 7px;
@@ -228,6 +191,33 @@ button {
 }
 .view {
   height: 620px;
+}
+/* écran étroit (la carte ne tient plus à côté du héros) : le haut de la colonne du héros devient
+   une bande au-dessus des onglets, le bas passe dessous */
+@media (max-width: 860px) {
+  .app {
+    padding: 10px 16px 24px;
+  }
+  .main {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .stage {
+    order: 1; /* entre le haut (#heroTop) et le bas (#heroMore) de la colonne du héros : hero-panel.css */
+  }
+  .stage > .view {
+    margin: 8px;
+  }
+  .view.scene {
+    height: 520px;
+  }
+}
+@media (max-width: 640px) {
+  .title small,
+  .chip span {
+    display: none;
+  }
 }
 .view[hidden] {
   display: none;

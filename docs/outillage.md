@@ -26,11 +26,11 @@
 ## `tools/qa/`
 - `check-sim.js` : simu comparée octet pour octet aux références de `tools/qa/ref/` (`sim.txt`, `sim-outils.txt`, `sim-malin.txt`, `sim-moyen.txt`).
 - `compare_shots.py` : captures comparées pixel par pixel.
-- `ruff.js` : lance le ruff du venv pour `npm run lint` / `format`.
+- `ruff.js` : lance le ruff du venv pour `npm run lint` / `format` ; même sortie sous Windows et sous WSL (chemins écrits avec des `/`, sans couleurs).
 - `check-tools.sh` : sorties et empreintes des scripts Python de `tools/`, à lancer avant / après une modif : `bash tools/qa/check-tools.sh <étiquette>` sous WSL, `bash tools/qa/check-tools.sh <étiquette> .venv-win/Scripts/python.exe` depuis Git Bash sous Windows. Sous Windows, `log.txt` est identique à WSL, mais comparer les PNG avec `compare_shots.py`, pas les empreintes : le Pillow Windows compresse avec zlib-ng.
 
 ## Vérification visuelle
-`.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/` (5 écrans du jeu + `proto.png`, le prototype), et liste les erreurs JS et les requêtes externes (Chromium hors ligne : seul le serveur local répond, attendu `aucune`). Captures déterministes (horloge Playwright, `Math.random` à graine fixe) ; comparer à des captures d'avant : `.venv/bin/python tools/qa/compare_shots.py <dossier> [--tol 0.05]`.
+`.venv/bin/python tools/screenshot.py` (Playwright) → `screenshots/` (5 écrans du jeu en 1280 × 900, `etroit-carte.png` et `etroit-combat.png` en 390 × 844 pour l'écran de téléphone, + `proto.png`, le prototype), et liste les erreurs JS et les requêtes externes (Chromium hors ligne : seul le serveur local répond, attendu `aucune`). Captures déterministes (horloge Playwright, `Math.random` à graine fixe) ; comparer à des captures d'avant : `.venv/bin/python tools/qa/compare_shots.py <dossier> [--tol 0.05]`.
 
 ## Sprites (Stable Diffusion Forge)
 - Prompts et seeds retenues dans `tools/sprites.json`. Forge tourne sous Windows (API sur :7860) → lancer depuis Windows :

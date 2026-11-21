@@ -20,6 +20,7 @@
     <link rel="stylesheet" href="src/mining/dig.css" />
     <link rel="stylesheet" href="src/world/explore-panel.css" />
     <link rel="stylesheet" href="src/intro/intro.css" />
+    <link rel="stylesheet" href="src/hero/hero-panel.css" />
   </head>
   <body>
     <div class="app">
@@ -36,12 +37,13 @@
         <span class="val" id="timeVal"></span>
       </div>
       <div class="main">
-        <div class="card left">
-          <div class="viewtabs" id="viewtabs"></div>
-          <div class="view mapview" id="mapView">
-            <div class="map" id="map"></div>
-            <div class="legend" id="legend"></div>
-          </div>
+        <!-- héros toujours à gauche ; en étroit, le haut passe au-dessus des onglets et le bas en dessous -->
+        <aside class="hero-col">
+          <div class="card hero-box" id="heroTop"></div>
+          <div class="card hero-box" id="heroMore"></div>
+        </aside>
+        <div class="card stage">
+          <div class="tabs" id="tabs"></div>
           <div class="view scene" id="sceneView" hidden>
             <div class="sc-head"><div class="sc-title" id="scTitle"></div></div>
             <div class="sc-enemies" id="scEnemies"></div>
@@ -58,10 +60,14 @@
             </div>
             <button class="retreat" id="retreatBtn">BATTRE EN RETRAITE</button>
           </div>
-        </div>
-        <div class="card">
-          <div class="tabs" id="tabs"></div>
-          <div class="pane" id="pane"></div>
+          <div class="view mapview" id="mapView">
+            <div class="mapwrap">
+              <div class="map" id="map"></div>
+              <div class="legend" id="legend"></div>
+            </div>
+            <div class="pane tilecard" id="tileCard"></div>
+          </div>
+          <div class="pane" id="pane" hidden></div>
         </div>
       </div>
       <div class="foot">

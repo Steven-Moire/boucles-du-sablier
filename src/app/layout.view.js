@@ -1,14 +1,14 @@
+// Disposition : barre du haut (ressources, vitesse, sablier), onglets Combat / Carte / Bestiaire / Village et leur contenu.
 import {RES} from '../world/world.data.js';
-import {abandon, startLoop} from '../world/loop.engine.js';
+import {startLoop} from '../world/loop.engine.js';
 import {explore} from '../world/explore.engine.js';
-import {setTool} from '../hero/hero.engine.js';
 import {buy} from '../village/village.engine.js';
 import {forgeItem, repeatForge} from '../village/forge.engine.js';
 import {S, anyUpgrade, loopFresh, saveMeta} from '../shared/state.js';
 import {$, setHTML} from '../shared/dom.js';
 import {fmt} from '../shared/format.js';
 import {requestRender} from '../shared/render.js';
-import {exploreHTML} from '../world/explore-panel.view.js';
+import {tileCardHTML} from '../world/explore-panel.view.js';
 import {villageHTML} from '../village/village.view.js';
 import {bestiaryHTML} from '../enemies/bestiary.view.js';
 import {openMonster} from '../modals/monster.view.js';
@@ -30,15 +30,6 @@ export function renderTop() {
   $('loopLbl').textContent = `⏳ BOUCLE ${m.loop}`;
   $('timeBar').style.width = (r.timeLeft / r.timeMax) * 100 + '%';
   $('timeVal').textContent = `${r.timeLeft.toFixed(1)} s`;
-  const fighting = r.action?.phase === 'fight';
-  const h = r.hero;
-  setHTML(
-    $('viewtabs'),
-    `<button data-v="map" class="${S.view === 'map' ? 'on' : ''}">🗺️ CARTE</button><button data-v="scene" class="${S.view === 'scene' ? 'on' : ''}">⚔️ COMBAT${fighting && S.view !== 'scene' ? '<span class="live"></span>' : ''}</button>
-    <div class="vhp" title="Points de vie du héros : ${fmt(h.hp)} / ${h.maxHp}">🧙 Niv ${h.lvl}<div class="bar hp"><i style="width:${(h.hp / h.maxHp) * 100}%"></i><span>${fmt(h.hp)} / ${h.maxHp} PV</span></div></div>`,
-  );
-  $('mapView').hidden = S.view !== 'map';
-  $('sceneView').hidden = S.view !== 'scene';
 }
 $('speed').addEventListener('click', e => {
   const b = e.target.closest('button');
@@ -47,42 +38,48 @@ $('speed').addEventListener('click', e => {
     requestRender();
   }
 });
-$('viewtabs').addEventListener('click', e => {
-  const b = e.target.closest('button');
-  if (b) {
-    S.view = b.dataset.v;
-    clearTimeout(S.backTimer);
-    requestRender();
-  }
-});
 
-// ---------- panneau de droite ----------
+// ---------- onglets (à droite du héros) et leur contenu ----------
+const TABS = [
+  ['combat', '⚔️', 'COMBAT'],
+  ['map', '🗺️', 'CARTE'],
+  ['bestiary', '📖', 'BESTIAIRE'],
+  ['village', '🏠', 'VILLAGE'],
+];
+const LIVE_HTML = '<span class="live"></span>';
+const BADGE_HTML = '<span class="bg">!</span>';
+// pastille d'un onglet : combat en cours ailleurs, ou amélioration possible au village
+function tabMark(k) {
+  if (k === 'combat' && S.G.run.action?.phase === 'fight' && S.tab !== 'combat') return LIVE_HTML;
+  if (k === 'village' && anyUpgrade()) return BADGE_HTML;
+  return '';
+}
 export function renderTabs() {
-  const T = [
-    ['explore', 'Exploration'],
-    ['village', 'Village'],
-    ['bestiary', 'Bestiaire'],
-  ];
   setHTML(
     $('tabs'),
-    T.map(
-      ([k, l]) =>
-        `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${l}${k === 'village' && anyUpgrade() ? '<span class="bg">!</span>' : ''}</button>`,
+    TABS.map(
+      ([k, ic, l]) =>
+        `<button data-t="${k}" class="${S.tab === k ? 'on' : ''}">${ic}<span class="tl"> ${l}</span>${tabMark(k)}</button>`,
     ).join(''),
   );
+  $('sceneView').hidden = S.tab !== 'combat';
+  $('mapView').hidden = S.tab !== 'map';
+  $('pane').hidden = S.tab !== 'bestiary' && S.tab !== 'village';
 }
 $('tabs').addEventListener('click', e => {
   const b = e.target.closest('button');
   if (b) {
     S.tab = b.dataset.t;
+    clearTimeout(S.backTimer);
     requestRender();
   }
 });
 
-// gabarit de chaque onglet ; tout autre onglet affiche le bestiaire
-const PANES = {explore: exploreHTML, village: villageHTML};
+// fiche de la case à côté de la carte ; bestiaire ou village dans le panneau
 export function renderPane() {
-  setHTML($('pane'), (PANES[S.tab] || bestiaryHTML)());
+  if (S.tab === 'map') setHTML($('tileCard'), tileCardHTML());
+  else if (S.tab === 'village') setHTML($('pane'), villageHTML());
+  else if (S.tab === 'bestiary') setHTML($('pane'), bestiaryHTML());
 }
 // achat d'un bâtiment ou forge : sauvegarde, et si le héros n'est pas parti, il repart avec (stats recalculées)
 function afterVillageChange(isDone) {
@@ -90,18 +87,16 @@ function afterVillageChange(isDone) {
   saveMeta();
   if (loopFresh()) startLoop(S.G);
 }
-$('pane').addEventListener('click', e => {
+function onPaneClick(e) {
   const b = e.target.closest('button');
   if (!b || b.disabled) return;
   if (b.dataset.act === 'explore') explore(S.G, S.selected);
-  else if (b.dataset.act === 'abandon') abandon(S.G);
-  else if (b.dataset.tool) {
-    setTool(S.G, b.dataset.tool);
-    saveMeta();
-  } else if (b.dataset.act === 'tab-village') S.tab = 'village';
+  else if (b.dataset.act === 'tab-village') S.tab = 'village';
   else if (b.dataset.buy) afterVillageChange(buy(S.G, b.dataset.buy));
   else if (b.dataset.forge) afterVillageChange(forgeItem(S.G, b.dataset.forge, loopFresh()));
   else if (b.dataset.reforge !== undefined) afterVillageChange(repeatForge(S.G, loopFresh()));
   else if (b.dataset.mon) openMonster(b.dataset.mon, +b.dataset.lvl || null);
   requestRender();
-});
+}
+$('pane').addEventListener('click', onPaneClick);
+$('tileCard').addEventListener('click', onPaneClick);

@@ -1,4 +1,4 @@
-/* side */
+/* onglets Combat / Carte / Bestiaire / Village, et panneaux */
 .tabs {
   display: flex;
   border-bottom: 1px solid var(--line);
@@ -37,6 +37,14 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+.pane[hidden] {
+  display: none;
+}
+@media (max-width: 420px) {
+  .tabs .tl {
+    display: none;
+  }
 }
 .sec {
   background: var(--panel2);

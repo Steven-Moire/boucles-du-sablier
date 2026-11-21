@@ -2,6 +2,7 @@ import {TILES} from '../world/world.data.js';
 import {UPGRADES} from '../village/village.data.js';
 import {createGame} from '../world/loop.engine.js';
 import {upgradeState} from '../village/village.engine.js';
+import {isExplorable} from '../world/explore.engine.js';
 import {readMeta, writeMeta} from './save.js';
 
 // ======================= INTERFACE =======================
@@ -14,9 +15,8 @@ export const hadSave = savedMeta !== null; // l'intro ne se joue qu'au tout prem
 export const S = {
   G: createGame(savedMeta),
   gameSpeed: 1,
-  tab: 'explore',
-  view: 'map',
-  selected: TILES[2].id,
+  tab: 'map', // onglet affiché à droite du héros : combat, map, bestiary ou village
+  selected: null,
   modalMode: null,
   backTimer: null,
   lastSceneTile: null,
@@ -26,3 +26,11 @@ export const loopFresh = () => {
   const r = S.G.run;
   return !r.over && !r.action && r.completed.size === 1 && r.timeLeft === r.timeMax;
 };
+// case choisie en début de boucle : la première accessible jamais faite, sinon la première accessible
+// (jamais une case inaccessible, qui n'aurait qu'un bouton grisé)
+export function startTile() {
+  const r = S.G.run,
+    ok = TILES.filter(t => isExplorable(S.G, t.id) && !r.completed.has(t.id));
+  return (ok.find(t => !S.G.meta.everCompleted[t.id]) || ok[0] || TILES[0]).id;
+}
+S.selected = startTile();

@@ -1,20 +1,11 @@
-// Onglet Exploration du panneau de droite : héros, case choisie, outil, journal.
+// Fiche de la case choisie, à côté de la carte : infos de la zone, ennemis ou ressource, bouton d'exploration.
+// Une case où le héros ne peut pas aller n'a pas de bouton grisé, seulement la raison.
 import {BIOMES, TILE_MAP, TYPES} from './world.data.js';
-import {TOOLS, xpNeeded} from '../hero/hero.data.js';
 import {MONSTERS, RANK} from '../enemies/enemies.data.js';
-import {RECIPES} from '../village/forge.data.js';
-import {canExplore, isExplorable} from './explore.engine.js';
+import {isExplorable} from './explore.engine.js';
 import {S, anyUpgrade} from '../shared/state.js';
-import {fmt, pct} from '../shared/format.js';
 import {segBar} from '../shared/templates.js';
 
-function heroHTML() {
-  const h = S.G.run.hero;
-  return `<div class="sec"><h3>HÉROS <span>Niv ${h.lvl}</span></h3>
-    <div class="barline" title="PV : ${fmt(h.hp)} / ${h.maxHp}"><span style="width:22px">❤️</span><div class="bar hp"><i style="width:${(h.hp / h.maxHp) * 100}%"></i></div><span class="n">${fmt(h.hp)} / ${h.maxHp}</span></div>
-    <div class="barline" title="XP : ${fmt(h.xp)} / ${xpNeeded(h.lvl)}"><span style="width:22px">✨</span><div class="bar xp thin"><i style="width:${(h.xp / xpNeeded(h.lvl)) * 100}%"></i></div><span class="n">${fmt(h.xp)} / ${xpNeeded(h.lvl)} XP</span></div>
-    <div class="stats"><div>Puissance <b>${h.pow.toFixed(1)}</b></div><div>Armure <b>${h.arm.toFixed(1)}</b></div><div>Esquive <b>${pct(h.dodge)}</b></div><div>Critique <b>${pct(h.crit)}</b></div></div></div>`;
-}
 const RANK_CLASS = {elite: ' el', boss: ' bo'};
 const LOCKED_NOTE_HTML = `<div class="note">Un vieux puits descend dans la roche… Les strates les plus profondes semblent plus anciennes.<br><b>La mine arrive bientôt.</b></div></div>`;
 const RESOURCE_NOTES = {
@@ -90,13 +81,14 @@ function exploreLabel(t, again) {
 }
 function exploreButtonHTML(t, m, again) {
   const reason = blockReason(t, S.G.run, S.G.run.action);
-  return `<button class="btn gold" data-act="explore" ${canExplore(S.G, t.id) ? '' : 'disabled'}>${exploreLabel(t, again)}</button>${hintHTML(t, m, reason, again)}</div>`;
+  if (reason) return hintHTML(t, m, reason, again) + '</div>';
+  return `<button class="btn gold" data-act="explore">${exploreLabel(t, again)}</button>${hintHTML(t, m, reason, again)}</div>`;
 }
-// case explorable : progression, ennemis ou ressource, outil, bouton
+// case explorable : progression, ennemis ou ressource, bouton
 function tileBodyHTML(t, m) {
   const doneNow = S.G.run.completed.has(t.id);
   let h = tileProgressHTML(t, S.G.run.action, doneNow);
-  if (t.waves) h += enemiesHTML(t, m) + toolsHTML();
+  if (t.waves) h += enemiesHTML(t, m);
   else h += note(resourceNote(t, m));
   return h + exploreButtonHTML(t, m, doneNow);
 }
@@ -109,36 +101,7 @@ function tileHTML() {
   if (t.type === 'locked') return head + LOCKED_NOTE_HTML;
   return head + tileBodyHTML(t, m);
 }
-// choix de l'outil avant d'entrer sur une case de combat (l'action en cours garde le sien)
-function toolsHTML() {
-  const cur = S.G.meta.tool,
-    a = S.G.run.action;
-  const busy =
-    a && a.tool !== cur
-      ? `<br>Le combat en cours garde ${TOOLS[a.tool].icon} ${TOOLS[a.tool].name.toLowerCase()} : le nouvel outil servira à la case suivante.`
-      : '';
-  return `<div class="divh"><span>OUTIL</span></div><div class="tools">${Object.entries(TOOLS)
-    .map(
-      ([k, o]) =>
-        `<button data-tool="${k}" class="${k === cur ? 'on' : ''}" title="${o.desc}">${o.icon} ${o.name}</button>`,
-    )
-    .join('')}</div>
-    <div class="note">${TOOLS[cur].desc}${forgedToolText(cur)}${busy}</div>`;
-}
-// palier forgé de l'outil choisi (porté pendant cette boucle)
-function forgedToolText(key) {
-  const r = RECIPES[S.G.meta.equip[key]];
-  return r ? `<br>Forgé : <b>${r.name}</b>. ${r.desc}` : '';
-}
-const logLine = l => `<div class="${l.cls || ''}">${l.text}</div>`;
-function logHTML() {
-  return `<div class="sec"><h3>JOURNAL</h3><div class="log">${S.G.run.log.map(logLine).join('')}</div></div>`;
-}
-export function exploreHTML() {
-  return (
-    heroHTML() +
-    tileHTML() +
-    logHTML() +
-    `<button class="btn small" data-act="abandon" ${S.G.run.over ? 'disabled' : ''}>RENTRER AU VILLAGE (FIN DE BOUCLE)</button>`
-  );
+const EMPTY_HTML = `<div class="sec"><div class="note">Clique une case de la carte pour voir sa fiche.</div></div>`;
+export function tileCardHTML() {
+  return tileHTML() || EMPTY_HTML;
 }

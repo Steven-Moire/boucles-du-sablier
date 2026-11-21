@@ -2,6 +2,7 @@
 
   pip install playwright && playwright install chromium
   python tools/screenshot.py            -> screenshots/intro.png, intro2.png, map.png, combat.png, village.png,
+                                           etroit-carte.png, etroit-combat.png (téléphone, 390 px de large),
                                            proto.png (prototype du minage)
 
 Hors ligne : seul le serveur local répond, toute requête vers un autre domaine est listée à la fin.
@@ -82,9 +83,9 @@ def serve():
     return srv
 
 
-async def open_page(b, port, path, errors, external):
+async def open_page(b, port, path, errors, external, viewport=None):
     """Ouvre une page du dépôt : hasard à graine fixe, horloge en pause, erreurs JS et requêtes externes notées."""
-    pg = await b.new_page(viewport={'width': 1280, 'height': 900})
+    pg = await b.new_page(viewport=viewport or {'width': 1280, 'height': 900})
     pg.on('pageerror', lambda e: errors.append(f'{path} : {e}'))
     pg.on('request', lambda r: None if r.url.startswith(LOCAL) else external.append(f'{path} : {r.url}'))
     await pg.add_init_script(SEEDED_RANDOM)
@@ -97,7 +98,7 @@ async def open_page(b, port, path, errors, external):
 
 
 async def main():
-    """Joue l'intro, la carte, un combat et le village, capture le prototype, liste erreurs JS et requêtes externes."""
+    """Joue l'intro, la carte, un combat, le village, carte et combat en étroit, le prototype ; liste les erreurs."""
     OUT.mkdir(exist_ok=True)
     srv = serve()
     async with async_playwright() as p:
@@ -124,6 +125,18 @@ async def main():
         await pg.click('#tabs button[data-t="village"]')
         await pg.clock.run_for(TICK_MS)
         await shoot(pg, 'village')
+        # écran étroit (téléphone), dans sa propre page : les captures d'avant ne bougent pas
+        pg = await open_page(b, srv.server_port, 'index.html', errors, external, {'width': 390, 'height': 844})
+        await pg.clock.run_for(800)
+        await pg.click('.in-skip')
+        await pg.clock.run_for(300)
+        await shoot(pg, 'etroit-carte')
+        await pg.click('#speed button[data-s="2"]')
+        await pg.dblclick('.tile[data-id="4,5"]')
+        await pg.clock.run_for(2500)
+        await pg.wait_for_selector('#sceneView.has-bg', state='attached')
+        await pg.clock.run_for(TICK_MS)
+        await shoot(pg, 'etroit-combat')
         # prototype du minage (proto/), dans sa propre page : les captures du jeu ne bougent pas
         pg = await open_page(b, srv.server_port, 'proto/mine-ennemi.html', errors, external)
         await pg.clock.run_for(800)

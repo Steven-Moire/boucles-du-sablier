@@ -86,7 +86,7 @@ Vérifie avec tools/screenshot.py (WSL), mets à jour docs/art-direction.md et d
 
 **R0 — conseil : fait le 21/11** (décisions dans `docs/design.md` → `## Refonte de l'expérience`, lore dans `docs/lore.md` → « Le premier combat » et « Le cartographe : Hyacinthe Jalon », compte rendu dans `docs/archive/sessions-faites.md`). Ordre retenu : **R1 écran → R2 scène du minage → R3 village, cartographe, matinée et « Rentrer » → R4 zones → R5 pilote automatique**. Chaque étape finit sur une partie jouable jusqu'au Gardien ; aucun chiffre ne bouge avant R3.
 
-**R1 — l'écran** :
+**R1 — l'écran** : **livraison 1 (disposition) faite le 21/11** (compte rendu dans `docs/archive/sessions-faites.md`) ; reste la **livraison 2, le combat en diagonale** : relancer le prompt ci-dessous en précisant « livraison 2 » (maquette déjà validée, dans `docs/design.md` → « R1, livraison 1 faite »).
 ```
 Lis docs/INDEX.md, docs/art-direction.md, puis dans docs/design.md seulement « Architecture du code » (liste des modules) et « Refonte de l'expérience ». Lis la section « R. Refonte de l'expérience » de PROCHAINES-SESSIONS.md.
 Étape R1, l'écran, sans changer aucun chiffre du jeu : héros toujours à gauche (stats, équipement, outil) ; onglets en haut Combat / Carte / Bestiaire ; fiche de case réduite aux infos de la zone ; combat en diagonale façon Pokémon (héros en bas à gauche, monstres en haut à droite, grille de minage plus grande, pixels creusés bien visibles : la scène de R2 expliquera ce geste, il doit se voir), lisible aussi sur écran étroit. Le début de boucle ne montre plus une case inaccessible avec un bouton grisé. L'onglet Village et le bouton « Rentrer au village (fin de boucle) » restent pour l'instant (ils partent avec R3).

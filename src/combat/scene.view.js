@@ -31,7 +31,7 @@ const PHASE_TEXT = {
   chest: "Fouille de l'autel",
 };
 const PHASE_BAR_HTML = '<div class="bar thin"><i id="phaseBar" style="background:var(--gold)"></i></div>';
-const MAP_BUTTON_HTML = '<button class="btn small" data-view="map" style="margin-top:12px">VOIR LA CARTE</button>';
+const MAP_BUTTON_HTML = '<button class="btn small" data-tab="map" style="margin-top:12px">VOIR LA CARTE</button>';
 const isFight = a => a?.phase === 'fight';
 const hasEnemies = a => isFight(a) && !!a.enemies;
 
@@ -172,9 +172,9 @@ $('retreatBtn').addEventListener('click', () => {
   requestRender();
 });
 $('sceneView').addEventListener('click', e => {
-  const b = e.target.closest('[data-view]');
+  const b = e.target.closest('[data-tab]');
   if (b) {
-    S.view = b.dataset.view;
+    S.tab = b.dataset.tab;
     requestRender();
   }
 });

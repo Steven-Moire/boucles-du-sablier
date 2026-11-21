@@ -1,6 +1,5 @@
-import {TILES} from '../world/world.data.js';
 import {createGame, newLoop} from '../world/loop.engine.js';
-import {S, saveMeta} from '../shared/state.js';
+import {S, saveMeta, startTile} from '../shared/state.js';
 import {clearMeta} from '../shared/save.js';
 import {$} from '../shared/dom.js';
 import {requestRender} from '../shared/render.js';
@@ -19,8 +18,8 @@ $('modal').addEventListener('click', e => {
   if (b.hasAttribute('data-newloop')) {
     newLoop(S.G);
     saveMeta();
-    S.tab = b.dataset.go ? 'village' : 'explore';
-    S.view = 'map';
+    S.tab = b.dataset.go ? 'village' : 'map';
+    S.selected = startTile();
     S.lastSceneTile = null;
     closeModal();
   } else if (b.hasAttribute('data-close')) closeModal();
@@ -46,8 +45,8 @@ $('resetBtn').addEventListener('click', () => {
   S.G = createGame(null);
   resetArm = false;
   $('resetBtn').textContent = 'Réinitialiser la sauvegarde';
-  S.selected = TILES[2].id;
-  S.view = 'map';
+  S.selected = startTile();
+  S.tab = 'map';
   S.lastSceneTile = null;
   closeModal();
   playIntro(); // tout effacé = nouveau départ, l'intro se rejoue (on peut toujours la passer)

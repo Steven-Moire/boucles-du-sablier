@@ -1,6 +1,7 @@
 // Lance le ruff du venv du projet (règle absolue : Python toujours dans un venv), jamais celui du PATH.
 //   node tools/qa/ruff.js check .        (arguments passés tels quels à ruff, code de sortie de ruff renvoyé)
 // Windows : .venv-win/Scripts/ruff.exe ; ailleurs : .venv/bin/ruff (venv WSL). Venv absent : erreur, pas de repli.
+// Même sortie sous Windows et sous WSL : chemins en « / », sans couleurs.
 import {spawnSync} from 'node:child_process';
 import {existsSync} from 'node:fs';
 import {dirname, join} from 'node:path';
@@ -17,9 +18,19 @@ if (!existsSync(RUFF)) {
   process.exit(1);
 }
 
-const run = spawnSync(RUFF, process.argv.slice(2), {cwd: ROOT, stdio: 'inherit'});
+// uniformité Windows / WSL : sortie captée sur les deux systèmes (donc sans couleurs), chemins des fichiers
+// écrits avec des « / » (ruff écrit « tools\x.py » sous Windows) : seuls les mots qui nomment un fichier .py ou .toml
+const isFileWord = w => /\.(?:py|pyi|toml)\b/.test(w);
+const slashes = text =>
+  text
+    .split(/(\s+)/)
+    .map(w => (isFileWord(w) ? w.replaceAll('\\', '/') : w))
+    .join('');
+const run = spawnSync(RUFF, process.argv.slice(2), {cwd: ROOT, encoding: 'utf8'});
 if (run.error) {
   console.error(`ruff n'a pas pu être lancé : ${run.error.message}`);
   process.exit(1);
 }
+process.stdout.write(slashes(run.stdout));
+process.stderr.write(slashes(run.stderr));
 process.exit(run.status ?? 1);

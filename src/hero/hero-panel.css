@@ -1,0 +1,76 @@
+/* colonne du héros, toujours à gauche (bande au-dessus des onglets en étroit : layout.css) */
+.hero-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hero-box {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hp-id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hp-por .spr {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  object-position: bottom;
+}
+.hp-bars {
+  flex: 1;
+  min-width: 0;
+}
+.hp-nm {
+  font-family: var(--pix);
+  font-size: 12px;
+  color: var(--muted);
+}
+.hp-nm b {
+  color: var(--gold);
+  font-weight: 400;
+  margin-left: 4px;
+}
+.hero-box .barline .n {
+  min-width: 0;
+  font-size: 11px;
+}
+.hero-box .stats {
+  grid-template-columns: 1fr 1fr;
+  margin-top: 0;
+}
+.hero-box .divh {
+  margin: 0;
+}
+.hero-box .note {
+  margin-top: 0;
+}
+.hero-box .row {
+  font-size: 12px;
+}
+/* étroit : la colonne s'efface, son haut reste au-dessus des onglets et son bas passe dessous (ordre : layout.css) */
+@media (max-width: 860px) {
+  .hero-col {
+    display: contents;
+  }
+  #heroMore {
+    order: 2;
+  }
+  .hero-box {
+    padding: 10px;
+    gap: 8px;
+  }
+  .hero-box .stats {
+    grid-template-columns: repeat(4, auto);
+  }
+}
+@media (max-width: 420px) {
+  .hp-por .spr {
+    width: 32px;
+    height: 32px;
+  }
+}
